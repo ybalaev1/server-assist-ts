@@ -61,10 +61,10 @@ const refreshPassword = (req: Request, res: Response) => {
         return result;
       });
     } else {
-      return res.status(401).json({ message: 'The fields new_pass are required', code: 401 });
+      return res.status(400).json({ message: 'The fields new_pass are required', code: 401 });
     }
   } else {
-    return res.status(401).json({ message: 'The fields email are required', code: 401 });
+    return res.status(400).json({ message: 'The fields email are required', code: 401 });
   }
 };
 export { login, validJWTNeeded, refreshPassword };
