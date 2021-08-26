@@ -5,11 +5,11 @@ type UserModel = Document & {
     email: string,
     password: string,
     information: string,
-    interest: string[],
+    interest: string,
     mobile_phone: string,
     followers: string,
     following: string,
-    posts: string[]
+    posts: string,
 };
 
 type UserInput = {
