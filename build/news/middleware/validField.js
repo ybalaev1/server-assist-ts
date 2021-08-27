@@ -36,26 +36,16 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var routes_config_1 = require("./users/routes.config");
-var mongoose_service_1 = require("./services/mongoose.service");
-var auth_config_1 = require("./services/auth/auth.config");
-var routes_config_2 = require("./news/routes.config");
-var express = require('express');
-var app = express();
-app.use(express.urlencoded({ extended: true }));
-app.use(express.json());
-app.use('/', routes_config_1.userRoute());
-app.use('/', auth_config_1.authRoute());
-app.use('/', routes_config_2.newsRoute());
-app.listen((process.env.PORT || 5000), function () { return __awaiter(void 0, void 0, void 0, function () {
+exports.validPostFields = void 0;
+var validPostFields = function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0: return [4 /*yield*/, mongoose_service_1.connectToDatabase()];
-            case 1:
-                _a.sent();
-                // eslint-disable-next-line no-console
-                console.log("Application started on URL " + 5000 + " \uD83C\uDF89");
-                return [2 /*return*/];
+        if (req.body) {
+            req.body.user = req.body.jwt.userId;
+            if (!req.body.message) {
+                return [2 /*return*/, res.status(422).json({ message: 'The fields message are required' })];
+            }
         }
+        return [2 /*return*/, next()];
     });
-}); });
+}); };
+exports.validPostFields = validPostFields;
