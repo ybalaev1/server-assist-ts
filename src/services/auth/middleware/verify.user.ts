@@ -20,13 +20,15 @@ const authValidFields = async (req: Request, res: Response, next: NextFunction) 
 };
 
 const matchUserAndPassword = async (req: Request, res: Response, next: NextFunction) => {
-  findByEmail(req.body.email).then((user: any) => {
+  const { data } = req.body;
+
+  findByEmail(data.email).then((user: any) => {
     if (!user[0]) {
       res.status(404).json({ message: 'User not found' });
     } else {
       const passField = user[0].password.split('$');
       const salt = passField[0];
-      const hash = crypto.createHmac('sha512', salt).update(req.body.password).digest('base64');
+      const hash = crypto.createHmac('sha512', salt).update(data.password).digest('base64');
       if (hash === passField[1]) {
         req.body = {
           userId: user[0].id,
