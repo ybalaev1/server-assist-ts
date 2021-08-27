@@ -4,11 +4,13 @@ import { findByEmail } from '../../../users/controllers/user.controller';
 const crypto = require('crypto');
 
 const authValidFields = async (req: Request, res: Response, next: NextFunction) => {
-  if (req.body) {
-    if (!req.body.email) {
+  const { data } = req.body;
+
+  if (data) {
+    if (!data.email) {
       return res.status(422).json({ message: 'The fields email are required' });
     }
-    if (!req.body.password) {
+    if (!data.password) {
       return res.status(422).json({ message: 'The fields password are required' });
     }
   } else {
