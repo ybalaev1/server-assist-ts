@@ -18,18 +18,19 @@ const createUser = async (userData: string[]) => {
 };
 
 const insertUser = async (req: Request, res: Response) => {
-  const { password } = req.body;
+  const { password } = req.body.data;
+  const { data } = req.body;
   const salt = crypto.randomBytes(16).toString('base64');
   if (password) {
     const hash = crypto.createHmac('sha512', salt).update(password).digest('base64');
     // eslint-disable-next-line prefer-template
-    req.body.password = salt + '$' + hash;
-    findByEmail(req.body.email).then((result: any) => {
+    data.password = salt + '$' + hash;
+    findByEmail(data.email).then((result: any) => {
       if (!result[0]) {
-        if (!req.body.fullName) {
+        if (!data.fullName) {
           res.status(400).send({ message: 'Field fullName is required.', code: 400 });
         } else {
-          return createUser(req.body).then((createdUser: any) => {
+          return createUser(data).then((createdUser: any) => {
             res.status(200).send({ id: createdUser.id });
           });
         }

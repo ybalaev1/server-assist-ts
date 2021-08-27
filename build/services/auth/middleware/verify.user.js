@@ -57,28 +57,27 @@ var authValidFields = function (req, res, next) { return __awaiter(void 0, void 
 }); };
 exports.authValidFields = authValidFields;
 var matchUserAndPassword = function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var email;
     return __generator(this, function (_a) {
-        email = req.params.email;
-        user_controller_1.findByEmail(email).then(function (user) {
-            if (!user) {
+        user_controller_1.findByEmail(req.body.email).then(function (user) {
+            if (!user[0]) {
                 res.status(404).json({ message: 'User not found' });
             }
             else {
-                var passField = user.password.split('$');
-                var salt = passField;
+                var passField = user[0].password.split('$');
+                var salt = passField[0];
                 var hash = crypto.createHmac('sha512', salt).update(req.body.password).digest('base64');
                 if (hash === passField[1]) {
                     req.body = {
-                        userId: user.id,
-                        email: user.email,
+                        userId: user[0].id,
+                        email: user[0].email,
                         provider: 'email',
-                        name: user.fullName,
+                        name: user[0].fullName,
                     };
                     return next();
                 }
                 return res.status(400).json({ message: 'Invalid e-mail or password' });
             }
+            return next();
         });
         return [2 /*return*/];
     });

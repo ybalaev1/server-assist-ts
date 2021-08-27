@@ -35,43 +35,74 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.findByEmail = exports.updateUser = exports.getUserById = exports.getAllUsers = exports.deleteUser = exports.createUser = void 0;
-var user_model_1 = require("../model/user.model");
-var crypto = require('crypto');
-var hashPassword = function (password) {
-    var salt = crypto.randomBytes(16).toString('base64');
-    var hash = crypto.createHmac('sha512', salt).update(password).digest('base64');
-    return hash;
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
 };
-var createUser = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var _a, posts, information, following, followers, fullName, email, password, mobile_phone, interest, userInput, userCreated;
-    return __generator(this, function (_b) {
-        switch (_b.label) {
-            case 0:
-                _a = req.body, posts = _a.posts, information = _a.information, following = _a.following, followers = _a.followers, fullName = _a.fullName, email = _a.email, password = _a.password, mobile_phone = _a.mobile_phone, interest = _a.interest;
-                if (!email || !fullName || !password) {
-                    return [2 /*return*/, res.status(422).json({ message: 'The fields email, fullName and password are required' })];
-                }
-                userInput = {
-                    fullName: fullName,
-                    email: email,
-                    password: hashPassword(password),
-                    mobile_phone: mobile_phone,
-                    interest: interest,
-                    followers: followers,
-                    following: following,
-                    information: information,
-                    posts: posts,
-                };
-                return [4 /*yield*/, user_model_1.User.create(userInput)];
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.findByEmail = exports.updateUser = exports.getUserById = exports.getAllUsers = exports.deleteUser = exports.insertUser = void 0;
+var crypto_1 = __importDefault(require("crypto"));
+var user_model_1 = require("../model/user.model");
+var findByEmail = function (value) { return __awaiter(void 0, void 0, void 0, function () {
+    return __generator(this, function (_a) {
+        return [2 /*return*/, new Promise(function (resolve, reject) {
+                user_model_1.User.find({ email: value }).exec(function (err, id) {
+                    if (err) {
+                        reject(err);
+                    }
+                    else {
+                        resolve(id);
+                    }
+                });
+            })];
+    });
+}); };
+exports.findByEmail = findByEmail;
+var createUser = function (userData) { return __awaiter(void 0, void 0, void 0, function () {
+    var user;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4 /*yield*/, user_model_1.User.create(userData)];
             case 1:
-                userCreated = _b.sent();
-                return [2 /*return*/, res.status(200).json({ data: userCreated })];
+                user = _a.sent();
+                return [2 /*return*/, user];
         }
     });
 }); };
-exports.createUser = createUser;
+var insertUser = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var password, data, salt, hash;
+    return __generator(this, function (_a) {
+        password = req.body.data.password;
+        data = req.body.data;
+        console.log(data);
+        salt = crypto_1.default.randomBytes(16).toString('base64');
+        if (password) {
+            hash = crypto_1.default.createHmac('sha512', salt).update(password).digest('base64');
+            // eslint-disable-next-line prefer-template
+            data.password = salt + '$' + hash;
+            findByEmail(data.email).then(function (result) {
+                if (!result[0]) {
+                    if (!data.fullName) {
+                        res.status(400).send({ message: 'Field fullName is required.', code: 400 });
+                    }
+                    else {
+                        return createUser(data).then(function (createdUser) {
+                            res.status(200).send({ id: createdUser.id });
+                        });
+                    }
+                }
+                res.status(403).json({ message: 'User already exists', code: 403 });
+                return result;
+            }).catch(function () {
+                res.status(400).send({ message: 'Field email is required.', code: 400 });
+            });
+        }
+        else {
+            res.status(400).send({ message: 'Field password is required.', code: 400 });
+        }
+        return [2 /*return*/];
+    });
+}); };
+exports.insertUser = insertUser;
 var getAllUsers = function (_req, res) { return __awaiter(void 0, void 0, void 0, function () {
     var users;
     return __generator(this, function (_a) {
@@ -94,58 +125,47 @@ var getUserById = function (req, res) { return __awaiter(void 0, void 0, void 0,
             case 1:
                 user = _a.sent();
                 if (!user) {
-                    return [2 /*return*/, res.status(404).json({ message: "User with id " + id + " not found" })];
+                    return [2 /*return*/, res.status(404).json({ message: 'User not found' })];
                 }
                 return [2 /*return*/, res.status(200).json({ data: user })];
         }
     });
 }); };
 exports.getUserById = getUserById;
-var findByEmail = function (email) { return __awaiter(void 0, void 0, void 0, function () {
-    return __generator(this, function (_a) {
-        return [2 /*return*/, new Promise(function (resolve, reject) {
-                user_model_1.User.findOne({ email: email }).exec(function (err, id) {
-                    if (err) {
-                        reject(err);
-                    }
-                    else {
-                        resolve(id);
-                    }
-                });
-            })];
-    });
-}); };
-exports.findByEmail = findByEmail;
 var updateUser = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var id, _a, posts, information, following, followers, fullName, email, password, mobile_phone, interest, user, userUpdated;
-    return __generator(this, function (_b) {
-        switch (_b.label) {
+    var id, email, user, userUpdated;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
             case 0:
                 id = req.params.id;
-                _a = req.body, posts = _a.posts, information = _a.information, following = _a.following, followers = _a.followers, fullName = _a.fullName, email = _a.email, password = _a.password, mobile_phone = _a.mobile_phone, interest = _a.interest;
+                email = req.body.email;
                 user = user_model_1.User.findById(id);
                 if (!user) {
-                    return [2 /*return*/, res.status(422).json({ message: "User with id " + id + " not found" })];
+                    return [2 /*return*/, res.status(422).json({ message: 'User not found', code: 422 })];
                 }
-                if (!fullName) {
-                    return [2 /*return*/, res.status(422).json({ message: 'The fields fullName are required' })];
-                }
-                return [4 /*yield*/, user_model_1.User.updateOne({ _id: id }, {
-                        posts: posts,
-                        information: information,
-                        following: following,
-                        followers: followers,
-                        fullName: fullName,
-                        email: email,
-                        password: password,
-                        mobile_phone: mobile_phone,
-                        interest: interest,
-                    })];
+                findByEmail(email).then(function (result) { return __awaiter(void 0, void 0, void 0, function () {
+                    var userUpdated_1;
+                    return __generator(this, function (_a) {
+                        switch (_a.label) {
+                            case 0:
+                                if (!!result[0]) return [3 /*break*/, 3];
+                                return [4 /*yield*/, user_model_1.User.updateOne({ _id: id }, req.body)];
+                            case 1:
+                                _a.sent();
+                                return [4 /*yield*/, user_model_1.User.findById(id)];
+                            case 2:
+                                userUpdated_1 = _a.sent();
+                                return [2 /*return*/, res.status(200).json({ data: userUpdated_1 })];
+                            case 3: return [2 /*return*/, res.status(403).json({ message: 'User with this email already exists', code: 403 })];
+                        }
+                    });
+                }); });
+                return [4 /*yield*/, user_model_1.User.updateOne({ _id: id }, req.body)];
             case 1:
-                _b.sent();
+                _a.sent();
                 return [4 /*yield*/, user_model_1.User.findById(id)];
             case 2:
-                userUpdated = _b.sent();
+                userUpdated = _a.sent();
                 return [2 /*return*/, res.status(200).json({ data: userUpdated })];
         }
     });
