@@ -9,7 +9,8 @@ const userRoute = () => {
   const app = Router();
 
   app.post('/users/', insertUser);
-  app.get('/users/', [validJWTNeeded, getAllUsers]);
+  app.get('/users/', getAllUsers);
+  // app.get('/users/', [validJWTNeeded, getAllUsers]);
   app.get('/users/:id', [validJWTNeeded, getUserById]);
   app.patch('/users/:id', [validJWTNeeded, updateUser]);
   app.delete('/users/:id', [validJWTNeeded, deleteUser]);
