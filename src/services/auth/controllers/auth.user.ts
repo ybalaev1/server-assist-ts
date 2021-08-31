@@ -15,7 +15,7 @@ const login = (req: Request, res: Response, next: NextFunction) => {
     const token = jwt.sign(req.body, jwtSecret);
     const buf = Buffer.from(hash);
     const refresh_token = buf.toString('base64');
-    res.status(201).send({
+    res.status(201).json({
       id: req.body.userId,
       accessToken: token,
       refreshToken: refresh_token,
