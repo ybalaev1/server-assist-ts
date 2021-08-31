@@ -73,7 +73,6 @@ var insertUser = function (req, res) { return __awaiter(void 0, void 0, void 0, 
     return __generator(this, function (_a) {
         password = req.body.data.password;
         data = req.body.data;
-        console.log(data);
         salt = crypto_1.default.randomBytes(16).toString('base64');
         if (password) {
             hash = crypto_1.default.createHmac('sha512', salt).update(password).digest('base64');

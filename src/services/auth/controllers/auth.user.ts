@@ -7,18 +7,14 @@ const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
 
 const login = (req: Request, res: Response, next: NextFunction) => {
+  const { data } = req.body;
   try {
-    const refreshId = req.body.userId + jwtSecret;
     const salt = crypto.randomBytes(16).toString('base64');
-    const hash = crypto.createHmac('sha512', salt).update(refreshId).digest('base64');
-    req.body.refreshKey = salt;
-    const token = jwt.sign(req.body, jwtSecret);
-    const buf = Buffer.from(hash);
-    const refresh_token = buf.toString('base64');
-    res.status(200).json({
-      id: req.body.userId,
+    data.refreshKey = salt;
+    const token = jwt.sign(data, jwtSecret);
+    return res.status(200).send({
+      id: data.userId,
       accessToken: token,
-      refreshToken: refresh_token,
     });
   } catch (error) {
     res.status(500).json({ message: error });
