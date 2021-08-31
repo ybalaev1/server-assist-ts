@@ -40,14 +40,14 @@ exports.authValidFields = exports.matchUserAndPassword = void 0;
 var user_controller_1 = require("../../../users/controllers/user.controller");
 var crypto = require('crypto');
 var authValidFields = function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var data;
+    var data_auth;
     return __generator(this, function (_a) {
-        data = req.body.data;
-        if (data) {
-            if (!data.email) {
+        data_auth = req.body.data_auth;
+        if (data_auth) {
+            if (!data_auth.email) {
                 return [2 /*return*/, res.status(422).json({ message: 'The fields email are required' })];
             }
-            if (!data.password) {
+            if (!data_auth.password) {
                 return [2 /*return*/, res.status(422).json({ message: 'The fields password are required' })];
             }
         }
@@ -59,17 +59,17 @@ var authValidFields = function (req, res, next) { return __awaiter(void 0, void 
 }); };
 exports.authValidFields = authValidFields;
 var matchUserAndPassword = function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var data;
+    var data_auth;
     return __generator(this, function (_a) {
-        data = req.body.data;
-        user_controller_1.findByEmail(data.email).then(function (user) {
+        data_auth = req.body.data_auth;
+        user_controller_1.findByEmail(data_auth.email).then(function (user) {
             if (!user[0]) {
                 res.status(404).json({ message: 'User not found' });
             }
             else {
                 var passField = user[0].password.split('$');
                 var salt = passField[0];
-                var hash = crypto.createHmac('sha512', salt).update(data.password).digest('base64');
+                var hash = crypto.createHmac('sha512', salt).update(data_auth.password).digest('base64');
                 if (hash === passField[1]) {
                     req.body = {
                         userId: user[0].id,
