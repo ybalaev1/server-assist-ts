@@ -7,13 +7,12 @@ const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
 
 const login = (req: Request, res: Response, next: NextFunction) => {
-  const { data_auth } = req.body;
   try {
     const salt = crypto.randomBytes(16).toString('base64');
-    data_auth.refreshKey = salt;
-    const token = jwt.sign(data_auth, jwtSecret);
+    req.body.refreshKey = salt;
+    const token = jwt.sign(req.body, jwtSecret);
     return res.status(200).send({
-      id: data_auth.userId,
+      id: req.body.userId,
       accessToken: token,
     });
   } catch (error) {

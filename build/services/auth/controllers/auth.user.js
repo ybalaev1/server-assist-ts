@@ -43,14 +43,12 @@ var jwtSecret = 'myS33!!creeeT';
 var jwt = require('jsonwebtoken');
 var crypto = require('crypto');
 var login = function (req, res, next) {
-    var data = req.body.data;
     try {
         var salt = crypto.randomBytes(16).toString('base64');
-        data.refreshKey = salt;
-        var token = jwt.sign(data, jwtSecret);
-        console.log(data, token);
+        req.body.refreshKey = salt;
+        var token = jwt.sign(req.body, jwtSecret);
         return res.status(200).send({
-            id: data.userId,
+            id: req.body.userId,
             accessToken: token,
         });
     }
