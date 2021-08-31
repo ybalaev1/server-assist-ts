@@ -4,12 +4,12 @@ import { findByEmail } from '../../../users/controllers/user.controller';
 const crypto = require('crypto');
 
 const authValidFields = async (req: Request, res: Response, next: NextFunction) => {
-  const { data } = req.body;
-  if (data) {
-    if (!data.email) {
+  const { data_auth } = req.body;
+  if (data_auth) {
+    if (!data_auth.email) {
       return res.status(422).json({ message: 'The fields email are required' });
     }
-    if (!data.password) {
+    if (!data_auth.password) {
       return res.status(422).json({ message: 'The fields password are required' });
     }
   } else {
@@ -19,15 +19,15 @@ const authValidFields = async (req: Request, res: Response, next: NextFunction) 
 };
 
 const matchUserAndPassword = async (req: Request, res: Response, next: NextFunction) => {
-  const { data } = req.body;
+  const { data_auth } = req.body;
 
-  findByEmail(data.email).then((user: any) => {
+  findByEmail(data_auth.email).then((user: any) => {
     if (!user[0]) {
       res.status(404).json({ message: 'User not found' });
     } else {
       const passField = user[0].password.split('$');
       const salt = passField[0];
-      const hash = crypto.createHmac('sha512', salt).update(data.password).digest('base64');
+      const hash = crypto.createHmac('sha512', salt).update(data_auth.password).digest('base64');
       if (hash === passField[1]) {
         req.body = {
           userId: user[0].id,
