@@ -43,18 +43,15 @@ var jwtSecret = 'myS33!!creeeT';
 var jwt = require('jsonwebtoken');
 var crypto = require('crypto');
 var login = function (req, res, next) {
+    var data = req.body.data;
     try {
-        var refreshId = req.body.userId + jwtSecret;
         var salt = crypto.randomBytes(16).toString('base64');
-        var hash = crypto.createHmac('sha512', salt).update(refreshId).digest('base64');
-        req.body.refreshKey = salt;
-        var token = jwt.sign(req.body, jwtSecret);
-        var buf = Buffer.from(hash);
-        var refresh_token = buf.toString('base64');
-        res.status(201).send({
-            id: req.body.userId,
+        data.refreshKey = salt;
+        var token = jwt.sign(data, jwtSecret);
+        console.log(data, token);
+        return res.status(200).send({
+            id: data.userId,
             accessToken: token,
-            refreshToken: refresh_token,
         });
     }
     catch (error) {

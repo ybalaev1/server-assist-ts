@@ -5,7 +5,6 @@ const crypto = require('crypto');
 
 const authValidFields = async (req: Request, res: Response, next: NextFunction) => {
   const { data } = req.body;
-  console.log('req data', data);
   if (data) {
     if (!data.email) {
       return res.status(422).json({ message: 'The fields email are required' });

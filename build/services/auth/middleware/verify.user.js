@@ -40,12 +40,14 @@ exports.authValidFields = exports.matchUserAndPassword = void 0;
 var user_controller_1 = require("../../../users/controllers/user.controller");
 var crypto = require('crypto');
 var authValidFields = function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+    var data;
     return __generator(this, function (_a) {
-        if (req.body) {
-            if (!req.body.email) {
+        data = req.body.data;
+        if (data) {
+            if (!data.email) {
                 return [2 /*return*/, res.status(422).json({ message: 'The fields email are required' })];
             }
-            if (!req.body.password) {
+            if (!data.password) {
                 return [2 /*return*/, res.status(422).json({ message: 'The fields password are required' })];
             }
         }
@@ -57,15 +59,17 @@ var authValidFields = function (req, res, next) { return __awaiter(void 0, void 
 }); };
 exports.authValidFields = authValidFields;
 var matchUserAndPassword = function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+    var data;
     return __generator(this, function (_a) {
-        user_controller_1.findByEmail(req.body.email).then(function (user) {
+        data = req.body.data;
+        user_controller_1.findByEmail(data.email).then(function (user) {
             if (!user[0]) {
                 res.status(404).json({ message: 'User not found' });
             }
             else {
                 var passField = user[0].password.split('$');
                 var salt = passField[0];
-                var hash = crypto.createHmac('sha512', salt).update(req.body.password).digest('base64');
+                var hash = crypto.createHmac('sha512', salt).update(data.password).digest('base64');
                 if (hash === passField[1]) {
                     req.body = {
                         userId: user[0].id,
