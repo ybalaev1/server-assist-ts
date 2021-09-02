@@ -11,12 +11,12 @@ const newsRoute = () => {
   app.post('/news/', [
     validJWTNeeded, validPostFields, insertPostData,
   ]);
-  app.get('/news/', [
-    validJWTNeeded, getAllPosts,
-  ]);
   // app.get('/news/', [
-  //   getAllPosts,
+  //   validJWTNeeded, getAllPosts,
   // ]);
+  app.get('/news/', [
+    getAllPosts,
+  ]);
   app.get('/news/:postId', [
     validJWTNeeded, findById,
   ]);

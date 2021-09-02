@@ -104,8 +104,7 @@ var getAllPosts = function (req, res) { return __awaiter(void 0, void 0, void 0,
             case 0: return [4 /*yield*/, post_model_1.Post.find().exec()];
             case 1:
                 posts = _a.sent();
-                console.log('mews', posts);
-                return [2 /*return*/, res.status(200).json({ posts: posts })];
+                return [2 /*return*/, res.status(200).send({ posts: posts })];
         }
     });
 }); };
