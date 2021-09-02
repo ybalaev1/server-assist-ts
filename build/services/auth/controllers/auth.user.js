@@ -59,7 +59,6 @@ var login = function (req, res, next) {
 };
 exports.login = login;
 var validJWTNeeded = function (req, res, next) {
-    console.log(req.headers);
     if (req.headers.authorization) {
         try {
             var auth = req.headers.authorization.split(' ');

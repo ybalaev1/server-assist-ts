@@ -10,12 +10,12 @@ var newsRoute = function () {
     app.post('/news/', [
         auth_user_1.validJWTNeeded, validField_1.validPostFields, post_controller_1.insertPostData,
     ]);
-    app.get('/news/', [
-        auth_user_1.validJWTNeeded, post_controller_1.getAllPosts,
-    ]);
     // app.get('/news/', [
-    //   getAllPosts,
+    //   validJWTNeeded, getAllPosts,
     // ]);
+    app.get('/news/', [
+        post_controller_1.getAllPosts,
+    ]);
     app.get('/news/:postId', [
         auth_user_1.validJWTNeeded, post_controller_1.findById,
     ]);
