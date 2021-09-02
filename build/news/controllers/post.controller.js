@@ -98,13 +98,14 @@ function insertPostData(req, res) {
 }
 exports.insertPostData = insertPostData;
 var getAllPosts = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var news;
+    var posts;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0: return [4 /*yield*/, post_model_1.Post.find().exec()];
             case 1:
-                news = _a.sent();
-                return [2 /*return*/, res.status(200).json({ news: news })];
+                posts = _a.sent();
+                console.log('news', posts);
+                return [2 /*return*/, res.status(200).json({ posts: posts })];
         }
     });
 }); };
