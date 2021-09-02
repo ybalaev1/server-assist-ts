@@ -5,7 +5,8 @@ type PostCreatedModel = Document & {
     user: string,
     comments: string[],
     likes: string[],
-    image: string
+    image: string,
+    timestamp: number,
 };
 
 const postShema = new Schema({
@@ -29,9 +30,12 @@ const postShema = new Schema({
     type: Schema.Types.String,
     required: false,
   },
+  timestamp: {
+    type: Schema.Types.Number,
+    required: false,
+  },
 }, {
   collection: 'news',
-  timestamps: true,
 });
 
 const Post: Model<PostCreatedModel> = mongosee.model < PostCreatedModel >('Post', postShema);
