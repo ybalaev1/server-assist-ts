@@ -33,7 +33,7 @@ async function insertPostData(req: Request, res: Response) {
 
 const getAllPosts = async (req: Request, res: Response) => {
   const posts = await Post.find().exec();
-  return res.status(200).json({ posts });
+  return res.status(200).send({ posts });
 };
 
 const deletePost = async (req: Request, res: Response) => {
