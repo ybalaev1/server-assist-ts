@@ -42,9 +42,12 @@ var postShema = new mongoose_1.Schema({
         type: mongoose_1.Schema.Types.String,
         required: false,
     },
+    timestamp: {
+        type: mongoose_1.Schema.Types.Number,
+        required: false,
+    },
 }, {
     collection: 'news',
-    timestamps: true,
 });
 var Post = mongoose_1.default.model('Post', postShema);
 exports.Post = Post;

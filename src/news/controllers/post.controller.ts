@@ -25,6 +25,8 @@ const postCreate = async (data: string[]) => new Promise((resolve) => {
 });
 
 async function insertPostData(req: Request, res: Response) {
+  const currentDate = new Date();
+  req.body.createdAt = currentDate.getTime() / 1000;
   return postCreate(req.body).then(async (post: any) => {
     await User.updateOne({ _id: req.body.user }, { $push: { posts: post.id } });
     res.status(200).json({ id: post.id });
