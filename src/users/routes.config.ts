@@ -1,5 +1,4 @@
 import { Router } from 'express';
-import { validJWTNeeded } from '../services/auth/controllers/auth.user';
 import { setFollowId, removeFollowId } from './controllers/update.user_info';
 import {
   insertUser, deleteUser, getAllUsers, getUserById, updateUser,
@@ -10,12 +9,12 @@ const userRoute = () => {
 
   app.post('/users/', insertUser);
   app.get('/users/', getAllUsers);
-  // app.get('/users/', [validJWTNeeded, getAllUsers]);
-  app.get('/users/:id', [validJWTNeeded, getUserById]);
-  app.patch('/users/:id', [validJWTNeeded, updateUser]);
-  app.delete('/users/:id', [validJWTNeeded, deleteUser]);
-  app.patch('/users/:id/followers', [validJWTNeeded, setFollowId]);
-  app.delete('/users/:id/followers', [validJWTNeeded, removeFollowId]);
+  // app.get('/users/', [getAllUsers]);
+  app.get('/users/:id', [getUserById]);
+  app.patch('/users/:id', [updateUser]);
+  app.delete('/users/:id', [deleteUser]);
+  app.patch('/users/:id/followers', [setFollowId]);
+  app.delete('/users/:id/followers', [removeFollowId]);
 
   return app;
 };
