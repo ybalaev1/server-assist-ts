@@ -84,7 +84,7 @@ function insertPostData(req, res) {
         var _this = this;
         return __generator(this, function (_a) {
             currentDate = new Date();
-            req.body.timestamp = currentDate.getTime() / 1000;
+            req.body.createdAt = currentDate.getTime() / 1000;
             return [2 /*return*/, postCreate(req.body).then(function (post) { return __awaiter(_this, void 0, void 0, function () {
                     return __generator(this, function (_a) {
                         switch (_a.label) {
