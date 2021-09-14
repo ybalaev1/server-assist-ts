@@ -1,3 +1,5 @@
+// import * as http from 'http';
+// import * as WebSocket from 'ws';
 import { userRoute } from './users/routes.config';
 import { connectToDatabase } from './services/mongoose.service';
 import { authRoute } from './services/auth/auth.config';
@@ -14,9 +16,27 @@ app.use('/', userRoute());
 app.use('/', authRoute());
 app.use('/', newsRoute());
 
+// const server = http.createServer(app);
+// const wws = new WebSocket.Server({ server });
+
+// wws.on('connection', (ws: WebSocket) => {
+//   ws.on('message', (message: string) => {
+//     // log the received message and send it back to the client
+//     console.log('received: %s', message);
+//     ws.send(`Hello, you sent -> ${message}`);
+//   });
+
+//   // send immediatly a feedback to the incoming connection
+//   ws.send('Hi there, I am a WebSocket server');
+// });
+
 app.listen((process.env.PORT || 5000), async () => {
   await connectToDatabase();
 
   // eslint-disable-next-line no-console
   console.log(`Application started on URL ${5000} 🎉`);
+
+  // server.listen(process.env.PORT || 8999, () => {
+  //   console.log(`Server started on port ${process.env.PORT} :) 8999`);
+  // });
 });
