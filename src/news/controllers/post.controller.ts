@@ -19,6 +19,25 @@ const getPostByUser = async (id: string) => {
   }
   return user;
 };
+
+async function getPostsByUserFun(req: Request, res: Response) {
+  const { id } = req.params;
+  const user = await User.findById({ _id: id });
+  if (user) {
+    const posts: Array<any> = [];
+    for (let post = 0; post < user.posts.length; post++) {
+      const item = user.posts[post];
+      // eslint-disable-next-line no-await-in-loop
+      const searchPost = await Post.findById(item);
+      posts.push(searchPost);
+    }
+    if (posts) {
+      res.status(200).json({ posts });
+    } else {
+      res.status(404);
+    }
+  }
+}
 const postCreate = async (data: string[]) => new Promise((resolve) => {
   const newPost = Post.create(data);
   resolve(newPost);
@@ -62,5 +81,5 @@ const deletePost = async (req: Request, res: Response) => {
 };
 
 export {
-  deletePost, findById, insertPostData, getAllPosts,
+  deletePost, findById, insertPostData, getAllPosts, getPostsByUserFun,
 };

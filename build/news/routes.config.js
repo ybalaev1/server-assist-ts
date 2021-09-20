@@ -17,10 +17,10 @@ var newsRoute = function () {
         post_controller_1.getAllPosts,
     ]);
     app.get('/news/:postId', [
-        auth_user_1.validJWTNeeded, post_controller_1.findById,
+        post_controller_1.findById,
     ]);
     app.delete('/news/:postId', [
-        auth_user_1.validJWTNeeded, post_controller_1.findById, post_controller_1.deletePost,
+        post_controller_1.findById, post_controller_1.deletePost,
     ]);
     return app;
 };
