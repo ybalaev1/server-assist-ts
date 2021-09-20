@@ -36,7 +36,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getAllPosts = exports.insertPostData = exports.findById = exports.deletePost = void 0;
+exports.getPostsByUserFun = exports.getAllPosts = exports.insertPostData = exports.findById = exports.deletePost = void 0;
 var user_model_1 = require("../../users/model/user.model");
 var post_model_1 = require("../model/post.model");
 var findById = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
@@ -70,6 +70,45 @@ var getPostByUser = function (id) { return __awaiter(void 0, void 0, void 0, fun
         }
     });
 }); };
+function getPostsByUserFun(req, res) {
+    return __awaiter(this, void 0, void 0, function () {
+        var id, user, posts, post, item, searchPost;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    id = req.params.id;
+                    return [4 /*yield*/, user_model_1.User.findById({ _id: id })];
+                case 1:
+                    user = _a.sent();
+                    if (!user) return [3 /*break*/, 6];
+                    posts = [];
+                    post = 0;
+                    _a.label = 2;
+                case 2:
+                    if (!(post < user.posts.length)) return [3 /*break*/, 5];
+                    item = user.posts[post];
+                    return [4 /*yield*/, post_model_1.Post.findById(item)];
+                case 3:
+                    searchPost = _a.sent();
+                    posts.push(searchPost);
+                    _a.label = 4;
+                case 4:
+                    post++;
+                    return [3 /*break*/, 2];
+                case 5:
+                    if (posts) {
+                        res.status(200).json({ posts: posts });
+                    }
+                    else {
+                        res.status(404);
+                    }
+                    _a.label = 6;
+                case 6: return [2 /*return*/];
+            }
+        });
+    });
+}
+exports.getPostsByUserFun = getPostsByUserFun;
 var postCreate = function (data) { return __awaiter(void 0, void 0, void 0, function () {
     return __generator(this, function (_a) {
         return [2 /*return*/, new Promise(function (resolve) {
