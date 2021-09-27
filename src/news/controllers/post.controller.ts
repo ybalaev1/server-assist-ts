@@ -5,21 +5,11 @@ import { Post } from '../model/post.model';
 const findById = async (req: Request, res: Response) => {
   const { postId } = req.params;
   const post = await Post.findOne({ _id: postId });
-  const user = await User.findById({ _id: post?.user });
 
-  const updatePost = {
-    comments: post?.comments,
-    likes: post?.likes,
-    _id: post?.id,
-    message: post?.message,
-    user: { fullName: user?.fullName, image: user?.image, id: user?.id },
-    createdAt: post?.createdAt,
-    image: post?.image,
-  };
   if (!post) {
     return res.status(404).json({ message: `Post with id ${postId} not found`, code: 404 });
   }
-  return res.status(200).json({ data: updatePost });
+  return res.status(200).json({ data: post });
 };
 
 const getPostByUser = async (id: string) => {
@@ -29,12 +19,37 @@ const getPostByUser = async (id: string) => {
   }
   return user;
 };
+const getAllPosts = async (req: Request, res: Response) => {
+// function getAllPosts(req: Request, res: Response) {
+  const allPosts = await Post.find().exec();
+  const posts: Array<any> = [];
+  for (let i = 0; i < allPosts.length; i++) {
+    const item = allPosts[i];
+    const user = await User.findById({ _id: allPosts[i]?.user });
+    const updatedPost = {
+      comments: item?.comments,
+      likes: item?.likes,
+      _id: item?.id,
+      message: item?.message,
+      createdAt: item?.createdAt,
+      image: item?.image,
+      user: {
+        fullName: user?.fullName,
+        image: user?.image,
+        id: item?.user,
+      },
+    };
+    posts.push(updatedPost);
+  }
+  return res.status(200).send({ posts });
+};
 
 async function getPostsByUserFun(req: Request, res: Response) {
   const { id } = req.params;
   const user = await User.findById({ _id: id });
   if (user) {
     const posts: Array<any> = [];
+    // eslint-disable-next-line no-plusplus
     for (let p = 0; p < user.posts.length; p++) {
       const item = user.posts[p];
       // eslint-disable-next-line no-await-in-loop
@@ -70,11 +85,6 @@ async function insertPostData(req: Request, res: Response) {
     res.status(200).json({ id: post.id });
   });
 }
-
-const getAllPosts = async (req: Request, res: Response) => {
-  const posts = await Post.find().exec();
-  return res.status(200).send({ posts });
-};
 
 const deletePost = async (req: Request, res: Response) => {
   const { postId } = req.params;

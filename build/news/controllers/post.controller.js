@@ -70,6 +70,59 @@ var getPostByUser = function (id) { return __awaiter(void 0, void 0, void 0, fun
         }
     });
 }); };
+var addInfoUserAtCurrentPost = function (id_post) { return __awaiter(void 0, void 0, void 0, function () {
+    var post, user, updatedPost;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4 /*yield*/, post_model_1.Post.findById({ _id: id_post })];
+            case 1:
+                post = _a.sent();
+                return [4 /*yield*/, user_model_1.User.findById({ _id: post === null || post === void 0 ? void 0 : post.user })];
+            case 2:
+                user = _a.sent();
+                updatedPost = {
+                    comments: post === null || post === void 0 ? void 0 : post.comments,
+                    likes: post === null || post === void 0 ? void 0 : post.likes,
+                    _id: post === null || post === void 0 ? void 0 : post.id,
+                    message: post === null || post === void 0 ? void 0 : post.message,
+                    createdAt: post === null || post === void 0 ? void 0 : post.createdAt,
+                    image: post === null || post === void 0 ? void 0 : post.image,
+                    user: {
+                        fullName: user === null || user === void 0 ? void 0 : user.fullName,
+                        image: user === null || user === void 0 ? void 0 : user.image,
+                        _id: post === null || post === void 0 ? void 0 : post.user,
+                    },
+                };
+                return [2 /*return*/, updatedPost];
+        }
+    });
+}); };
+var getAllPosts = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var allPosts, posts, i;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4 /*yield*/, post_model_1.Post.find().exec()];
+            case 1:
+                allPosts = _a.sent();
+                posts = [];
+                for (i = 0; i < allPosts.length; i++) {
+                    addInfoUserAtCurrentPost(allPosts[i].id).then(function (data) { return __awaiter(void 0, void 0, void 0, function () {
+                        return __generator(this, function (_a) {
+                            switch (_a.label) {
+                                case 0: return [4 /*yield*/, posts.push(data)];
+                                case 1:
+                                    _a.sent();
+                                    return [2 /*return*/];
+                            }
+                        });
+                    }); });
+                    console.log(posts);
+                }
+                return [2 /*return*/, res.status(200).send({ posts: posts })];
+        }
+    });
+}); };
+exports.getAllPosts = getAllPosts;
 function getPostsByUserFun(req, res) {
     return __awaiter(this, void 0, void 0, function () {
         var id, user, posts, p, item, searchPost, post;
@@ -96,7 +149,7 @@ function getPostsByUserFun(req, res) {
                         _id: searchPost === null || searchPost === void 0 ? void 0 : searchPost.id,
                         message: searchPost === null || searchPost === void 0 ? void 0 : searchPost.message,
                         user: { fullName: user === null || user === void 0 ? void 0 : user.fullName, image: user === null || user === void 0 ? void 0 : user.image, id: id },
-                        timestamp: searchPost === null || searchPost === void 0 ? void 0 : searchPost.timestamp,
+                        createdAt: searchPost === null || searchPost === void 0 ? void 0 : searchPost.createdAt,
                         image: searchPost === null || searchPost === void 0 ? void 0 : searchPost.image,
                     };
                     posts.push(post);
@@ -148,18 +201,6 @@ function insertPostData(req, res) {
     });
 }
 exports.insertPostData = insertPostData;
-var getAllPosts = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var posts;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0: return [4 /*yield*/, post_model_1.Post.find().exec()];
-            case 1:
-                posts = _a.sent();
-                return [2 /*return*/, res.status(200).send({ posts: posts })];
-        }
-    });
-}); };
-exports.getAllPosts = getAllPosts;
 var deletePost = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
     var postId, userId, takePost, error_1;
     return __generator(this, function (_a) {
