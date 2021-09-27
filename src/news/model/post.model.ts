@@ -6,7 +6,7 @@ type PostCreatedModel = Document & {
     comments: string[],
     likes: string[],
     image: string,
-    timestamp: number,
+    createdAt: number,
 };
 
 const postShema = new Schema({
@@ -30,7 +30,7 @@ const postShema = new Schema({
     type: Schema.Types.String,
     required: false,
   },
-  timestamp: {
+  createdAt: {
     type: Schema.Types.Number,
     required: false,
   },

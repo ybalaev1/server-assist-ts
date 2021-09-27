@@ -35,7 +35,7 @@ async function getPostsByUserFun(req: Request, res: Response) {
         _id: searchPost?.id,
         message: searchPost?.message,
         user: { fullName: user?.fullName, image: user?.image, id },
-        timestamp: searchPost?.timestamp,
+        createdAt: searchPost?.createdAt,
         image: searchPost?.image,
       };
       posts.push(post);
