@@ -72,7 +72,7 @@ var getPostByUser = function (id) { return __awaiter(void 0, void 0, void 0, fun
 }); };
 function getPostsByUserFun(req, res) {
     return __awaiter(this, void 0, void 0, function () {
-        var id, user, posts, post, item, searchPost;
+        var id, user, posts, p, item, searchPost, post;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
@@ -82,18 +82,27 @@ function getPostsByUserFun(req, res) {
                     user = _a.sent();
                     if (!user) return [3 /*break*/, 6];
                     posts = [];
-                    post = 0;
+                    p = 0;
                     _a.label = 2;
                 case 2:
-                    if (!(post < user.posts.length)) return [3 /*break*/, 5];
-                    item = user.posts[post];
+                    if (!(p < user.posts.length)) return [3 /*break*/, 5];
+                    item = user.posts[p];
                     return [4 /*yield*/, post_model_1.Post.findById(item)];
                 case 3:
                     searchPost = _a.sent();
-                    posts.push(searchPost);
+                    post = {
+                        comments: searchPost === null || searchPost === void 0 ? void 0 : searchPost.comments,
+                        likes: searchPost === null || searchPost === void 0 ? void 0 : searchPost.likes,
+                        _id: searchPost === null || searchPost === void 0 ? void 0 : searchPost.id,
+                        message: searchPost === null || searchPost === void 0 ? void 0 : searchPost.message,
+                        user: { fullName: user === null || user === void 0 ? void 0 : user.fullName, image: user === null || user === void 0 ? void 0 : user.image, id: id },
+                        timestamp: searchPost === null || searchPost === void 0 ? void 0 : searchPost.timestamp,
+                        image: searchPost === null || searchPost === void 0 ? void 0 : searchPost.image,
+                    };
+                    posts.push(post);
                     _a.label = 4;
                 case 4:
-                    post++;
+                    p++;
                     return [3 /*break*/, 2];
                 case 5:
                     if (posts) {

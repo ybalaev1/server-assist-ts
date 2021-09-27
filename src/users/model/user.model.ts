@@ -10,6 +10,8 @@ type UserModel = Document & {
     followers: string,
     following: string,
     posts: string,
+    image: string,
+    id: string,
 };
 
 type UserInput = {
@@ -58,6 +60,14 @@ const userShema = new Schema({
   },
   posts: {
     type: Schema.Types.Array,
+    required: false,
+  },
+  image: {
+    type: Schema.Types.String,
+    required: false,
+  },
+  id: {
+    type: Schema.Types.String,
     required: false,
   },
 },
