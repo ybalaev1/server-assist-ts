@@ -25,10 +25,13 @@ async function getPostsByUserFun(req: Request, res: Response) {
   const user = await User.findById({ _id: id });
   if (user) {
     const posts: Array<any> = [];
-    for (let post = 0; post < user.posts.length; post++) {
-      const item = user.posts[post];
+    const postsSecond: Array<any> = [];
+    for (let p = 0; p < user.posts.length; p++) {
+      const item = user.posts[p];
       // eslint-disable-next-line no-await-in-loop
       const searchPost = await Post.findById(item);
+      const addUserForPost = postsSecond.push(searchPost, user);
+      console.log(addUserForPost);
       posts.push(searchPost);
     }
     if (posts) {
