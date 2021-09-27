@@ -5,11 +5,21 @@ import { Post } from '../model/post.model';
 const findById = async (req: Request, res: Response) => {
   const { postId } = req.params;
   const post = await Post.findOne({ _id: postId });
+  const user = await User.findById({ _id: post?.user });
 
+  const updatePost = {
+    comments: post?.comments,
+    likes: post?.likes,
+    _id: post?.id,
+    message: post?.message,
+    user: { fullName: user?.fullName, image: user?.image, id: user?.id },
+    createdAt: post?.createdAt,
+    image: post?.image,
+  };
   if (!post) {
     return res.status(404).json({ message: `Post with id ${postId} not found`, code: 404 });
   }
-  return res.status(200).json({ data: post });
+  return res.status(200).json({ data: updatePost });
 };
 
 const getPostByUser = async (id: string) => {
