@@ -60,14 +60,14 @@ app.use('/', routes_config_2.newsRoute());
 //   // send immediatly a feedback to the incoming connection
 //   ws.send('Hi there, I am a WebSocket server');
 // });
-app.listen((process.env.PORT || 5000), function () { return __awaiter(void 0, void 0, void 0, function () {
+app.listen((process.env.PORT || 6000), function () { return __awaiter(void 0, void 0, void 0, function () {
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0: return [4 /*yield*/, mongoose_service_1.connectToDatabase()];
             case 1:
                 _a.sent();
                 // eslint-disable-next-line no-console
-                console.log("Application started on URL " + 5000 + " \uD83C\uDF89");
+                console.log("Application started on URL " + 6000 + " \uD83C\uDF89");
                 return [2 /*return*/];
         }
     });

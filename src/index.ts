@@ -30,11 +30,11 @@ app.use('/', newsRoute());
 //   ws.send('Hi there, I am a WebSocket server');
 // });
 
-app.listen((process.env.PORT || 5000), async () => {
+app.listen((process.env.PORT || 6000), async () => {
   await connectToDatabase();
 
   // eslint-disable-next-line no-console
-  console.log(`Application started on URL ${5000} 🎉`);
+  console.log(`Application started on URL ${6000} 🎉`);
 
   // server.listen(process.env.PORT || 8999, () => {
   //   console.log(`Server started on port ${process.env.PORT} :) 8999`);

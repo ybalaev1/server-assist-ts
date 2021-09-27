@@ -58,6 +58,14 @@ var userShema = new mongoose_1.Schema({
         type: mongoose_1.Schema.Types.Array,
         required: false,
     },
+    image: {
+        type: mongoose_1.Schema.Types.String,
+        required: false,
+    },
+    id: {
+        type: mongoose_1.Schema.Types.String,
+        required: false,
+    },
 }, {
     collection: 'users',
     timestamps: true,
