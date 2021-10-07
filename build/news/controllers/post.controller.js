@@ -70,55 +70,42 @@ var getPostByUser = function (id) { return __awaiter(void 0, void 0, void 0, fun
         }
     });
 }); };
-var addInfoUserAtCurrentPost = function (id_post) { return __awaiter(void 0, void 0, void 0, function () {
-    var post, user, updatedPost;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0: return [4 /*yield*/, post_model_1.Post.findById({ _id: id_post })];
+var getAllPosts = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var allPosts, posts, i, item, user, updatedPost;
+    var _a;
+    return __generator(this, function (_b) {
+        switch (_b.label) {
+            case 0: return [4 /*yield*/, post_model_1.Post.find().exec()];
             case 1:
-                post = _a.sent();
-                return [4 /*yield*/, user_model_1.User.findById({ _id: post === null || post === void 0 ? void 0 : post.user })];
+                allPosts = _b.sent();
+                posts = [];
+                i = 0;
+                _b.label = 2;
             case 2:
-                user = _a.sent();
+                if (!(i < allPosts.length)) return [3 /*break*/, 5];
+                item = allPosts[i];
+                return [4 /*yield*/, user_model_1.User.findById({ _id: (_a = allPosts[i]) === null || _a === void 0 ? void 0 : _a.user })];
+            case 3:
+                user = _b.sent();
                 updatedPost = {
-                    comments: post === null || post === void 0 ? void 0 : post.comments,
-                    likes: post === null || post === void 0 ? void 0 : post.likes,
-                    _id: post === null || post === void 0 ? void 0 : post.id,
-                    message: post === null || post === void 0 ? void 0 : post.message,
-                    createdAt: post === null || post === void 0 ? void 0 : post.createdAt,
-                    image: post === null || post === void 0 ? void 0 : post.image,
+                    comments: item === null || item === void 0 ? void 0 : item.comments,
+                    likes: item === null || item === void 0 ? void 0 : item.likes,
+                    _id: item === null || item === void 0 ? void 0 : item.id,
+                    message: item === null || item === void 0 ? void 0 : item.message,
+                    createdAt: item === null || item === void 0 ? void 0 : item.createdAt,
+                    image: item === null || item === void 0 ? void 0 : item.image,
                     user: {
                         fullName: user === null || user === void 0 ? void 0 : user.fullName,
                         image: user === null || user === void 0 ? void 0 : user.image,
-                        _id: post === null || post === void 0 ? void 0 : post.user,
+                        id: item === null || item === void 0 ? void 0 : item.user,
                     },
                 };
-                return [2 /*return*/, updatedPost];
-        }
-    });
-}); };
-var getAllPosts = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var allPosts, posts, i;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0: return [4 /*yield*/, post_model_1.Post.find().exec()];
-            case 1:
-                allPosts = _a.sent();
-                posts = [];
-                for (i = 0; i < allPosts.length; i++) {
-                    addInfoUserAtCurrentPost(allPosts[i].id).then(function (data) { return __awaiter(void 0, void 0, void 0, function () {
-                        return __generator(this, function (_a) {
-                            switch (_a.label) {
-                                case 0: return [4 /*yield*/, posts.push(data)];
-                                case 1:
-                                    _a.sent();
-                                    return [2 /*return*/];
-                            }
-                        });
-                    }); });
-                    console.log(posts);
-                }
-                return [2 /*return*/, res.status(200).send({ posts: posts })];
+                posts.push(updatedPost);
+                _b.label = 4;
+            case 4:
+                i++;
+                return [3 /*break*/, 2];
+            case 5: return [2 /*return*/, res.status(200).send({ posts: posts })];
         }
     });
 }); };

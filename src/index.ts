@@ -4,6 +4,7 @@ import { userRoute } from './users/routes.config';
 import { connectToDatabase } from './services/mongoose.service';
 import { authRoute } from './services/auth/auth.config';
 import { newsRoute } from './news/routes.config';
+import { chatsRoute } from './chats/routes.config';
 
 const express = require('express');
 
@@ -15,6 +16,7 @@ app.use(express.json());
 app.use('/', userRoute());
 app.use('/', authRoute());
 app.use('/', newsRoute());
+app.use('/', chatsRoute());
 
 // const server = http.createServer(app);
 // const wws = new WebSocket.Server({ server });
@@ -30,11 +32,11 @@ app.use('/', newsRoute());
 //   ws.send('Hi there, I am a WebSocket server');
 // });
 
-app.listen((process.env.PORT || 5000), async () => {
+app.listen((process.env.PORT || 3000), async () => {
   await connectToDatabase();
 
   // eslint-disable-next-line no-console
-  console.log(`Application started on URL ${5000} 🎉`);
+  console.log(`Application started on URL ${3000} 🎉`);
 
   // server.listen(process.env.PORT || 8999, () => {
   //   console.log(`Server started on port ${process.env.PORT} :) 8999`);
