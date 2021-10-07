@@ -42,6 +42,7 @@ var routes_config_1 = require("./users/routes.config");
 var mongoose_service_1 = require("./services/mongoose.service");
 var auth_config_1 = require("./services/auth/auth.config");
 var routes_config_2 = require("./news/routes.config");
+var routes_config_3 = require("./chats/routes.config");
 var express = require('express');
 var app = express();
 app.use(express.urlencoded({ extended: true }));
@@ -49,6 +50,7 @@ app.use(express.json());
 app.use('/', routes_config_1.userRoute());
 app.use('/', auth_config_1.authRoute());
 app.use('/', routes_config_2.newsRoute());
+app.use('/', routes_config_3.chatsRoute());
 // const server = http.createServer(app);
 // const wws = new WebSocket.Server({ server });
 // wws.on('connection', (ws: WebSocket) => {
@@ -60,14 +62,14 @@ app.use('/', routes_config_2.newsRoute());
 //   // send immediatly a feedback to the incoming connection
 //   ws.send('Hi there, I am a WebSocket server');
 // });
-app.listen((process.env.PORT || 6000), function () { return __awaiter(void 0, void 0, void 0, function () {
+app.listen((process.env.PORT || 3000), function () { return __awaiter(void 0, void 0, void 0, function () {
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0: return [4 /*yield*/, mongoose_service_1.connectToDatabase()];
             case 1:
                 _a.sent();
                 // eslint-disable-next-line no-console
-                console.log("Application started on URL " + 6000 + " \uD83C\uDF89");
+                console.log("Application started on URL " + 3000 + " \uD83C\uDF89");
                 return [2 /*return*/];
         }
     });
