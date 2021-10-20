@@ -23,8 +23,7 @@ app.use(cors({
   optionsSuccessStatus: 200,
   credentials: true,
 }));
-const PORT = 8999;
-const server = app.listen(PORT, () => console.log(`Server running on port ${8999}`));
+const server = app.listen(8999, () => console.log(`Server running on port ${8999}`));
 const socket = require('socket.io')(server);
 
 socket.on('connection', async (client) => {
@@ -49,13 +48,11 @@ socket.on('connection', async (client) => {
 socket.on('disconnected', async (client) => {
   client.emit('broadcast', '[Server]: Bye, bye!');
 });
-app.listen((process.env.PORT || 3000), async () => {
+app.listen((3000), async () => {
+  // await connectToDatabase(process.env.PORT || 3000); prod = process.env.PORT ; dev = 3000
   await connectToDatabase(3000);
 
   // eslint-disable-next-line no-console
-  console.log(`Application started on URL ${3000} 🎉, \n ${JSON.stringify(socket)}`);
+  console.log(`Application started on URL ${3000} 🎉, \n ${socket}`);
 
-  server.listen(process.env.PORT || 8999, () => {
-    console.log(`Server started on port ${server.address()?.toString()} :) 8999`);
-  });
 });
