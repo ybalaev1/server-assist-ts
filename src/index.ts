@@ -23,8 +23,8 @@ app.use(cors({
   optionsSuccessStatus: 200,
   credentials: true,
 }));
-const PORT = process.env.PORT || 8999;
-const server = app.listen(PORT, () => console.log(`Server running on port ${8999}. ${process.env.PORT}`));
+const PORT = 8999;
+const server = app.listen(PORT, () => console.log(`Server running on port ${8999}`));
 const socket = require('socket.io')(server);
 
 socket.on('connection', async (client) => {
