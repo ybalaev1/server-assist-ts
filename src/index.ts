@@ -19,12 +19,12 @@ app.use('/', authRoute());
 app.use('/', newsRoute());
 app.use('/', chatsRoute());
 app.use(cors({
-  origin: 'http://localhost:3000',
+  origin: 'https://assistapp.club/',
   optionsSuccessStatus: 200,
   credentials: true,
 }));
-
-const server = app.listen(8999, () => console.log(`Server running on port ${8999}.`));
+const PORT = process.env.PORT || 8999;
+const server = app.listen(PORT, () => console.log(`Server running on port ${8999}. ${process.env.PORT}`));
 const socket = require('socket.io')(server);
 
 socket.on('connection', async (client) => {
