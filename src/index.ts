@@ -24,7 +24,7 @@ app.use(cors({
   credentials: true,
 }));
 
-const server = app.listen(process.env.PORT || 8999, () => console.log(`Server running on port ${process.env.PORT} || ${8999}.`));
+const server = app.listen(8999, () => console.log(`Server running on port ${8999}.`));
 const socket = require('socket.io')(server);
 
 socket.on('connection', async (client) => {
