@@ -53,7 +53,7 @@ app.listen((process.env.PORT || 3000), async () => {
   await connectToDatabase(3000);
 
   // eslint-disable-next-line no-console
-  console.log(`Application started on URL ${3000} 🎉, \n ${socket}`);
+  console.log(`Application started on URL ${3000} 🎉, \n ${JSON.stringify(socket)}`);
 
   server.listen(process.env.PORT || 8999, () => {
     console.log(`Server started on port ${server.address()?.toString()} :) 8999`);
