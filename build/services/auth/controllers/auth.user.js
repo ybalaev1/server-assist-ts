@@ -53,7 +53,7 @@ var login = function (req, res, next) {
         });
     }
     catch (error) {
-        res.status(500).json({ message: error });
+        res.status(500).send({ message: error });
     }
     return next();
 };

@@ -12,19 +12,9 @@ type UserModel = Document & {
     posts: string,
     image: string,
     id: string,
+    proiritety: boolean,
 };
 
-type UserInput = {
-    fullName: UserModel['fullName'],
-    email: UserModel['email'],
-    password: UserModel['password'],
-    information: UserModel['information'],
-    interest: UserModel['interest'],
-    mobile_phone: UserModel['mobile_phone'],
-    followers: UserModel['followers'],
-    following: UserModel['following'],
-    posts: UserModel['posts']
-};
 const userShema = new Schema({
   fullName: {
     type: Schema.Types.String,
@@ -70,6 +60,10 @@ const userShema = new Schema({
     type: Schema.Types.String,
     required: false,
   },
+  proiritety: {
+    type: Schema.Types.Boolean,
+    required: false,
+  },
 },
 {
   collection: 'users',
@@ -77,4 +71,4 @@ const userShema = new Schema({
 });
 
 const User: Model<UserModel> = mongosee.model<UserModel>('User', userShema);
-export { User, UserInput, UserModel };
+export { User, UserModel };

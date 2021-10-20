@@ -1,4 +1,23 @@
 "use strict";
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -36,8 +55,8 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-// import * as http from 'http';
-// import * as WebSocket from 'ws';
+var http = __importStar(require("http"));
+var WebSocket = __importStar(require("ws"));
 var routes_config_1 = require("./users/routes.config");
 var mongoose_service_1 = require("./services/mongoose.service");
 var auth_config_1 = require("./services/auth/auth.config");
@@ -51,25 +70,44 @@ app.use('/', routes_config_1.userRoute());
 app.use('/', auth_config_1.authRoute());
 app.use('/', routes_config_2.newsRoute());
 app.use('/', routes_config_3.chatsRoute());
-// const server = http.createServer(app);
-// const wws = new WebSocket.Server({ server });
-// wws.on('connection', (ws: WebSocket) => {
-//   ws.on('message', (message: string) => {
-//     // log the received message and send it back to the client
-//     console.log('received: %s', message);
-//     ws.send(`Hello, you sent -> ${message}`);
-//   });
-//   // send immediatly a feedback to the incoming connection
-//   ws.send('Hi there, I am a WebSocket server');
-// });
+var User = {
+    uid: 'string',
+    gid: 'string',
+};
+var server = http.createServer(app);
+var wws = new WebSocket.Server({ server: server });
+var usersList = [];
+wws.on('connection', function (ws) {
+    // ws.on('new user', (uid) => usersList.push(new User(uid, ws.id)));
+    // ws.on('message', (message: any) => {
+    //   console.log('received: %s', message);
+    //   const broadcastRegex = /^broadcast\:/;
+    //   if (broadcastRegex.test(message)) {
+    //     // eslint-disable-next-line no-param-reassign
+    //     message = message.replace(broadcastRegex, '');
+    //     wws.clients
+    //       .forEach((client) => {
+    //         if (client !== ws) {
+    //           client.send(`Hello, broadcast message -> ${message}`);
+    //         }
+    //       });
+    //   } else {
+    //     ws.send(`Hello, you sent -> ${message}`);
+    //   }
+    // });
+});
 app.listen((process.env.PORT || 3000), function () { return __awaiter(void 0, void 0, void 0, function () {
     return __generator(this, function (_a) {
         switch (_a.label) {
-            case 0: return [4 /*yield*/, mongoose_service_1.connectToDatabase()];
+            case 0: return [4 /*yield*/, mongoose_service_1.connectToDatabase(3000)];
             case 1:
                 _a.sent();
                 // eslint-disable-next-line no-console
                 console.log("Application started on URL " + 3000 + " \uD83C\uDF89");
+                server.listen(process.env.PORT || 8999, function () {
+                    var _a;
+                    console.log("Server started on port " + ((_a = server.address()) === null || _a === void 0 ? void 0 : _a.toString()) + " :) 8999");
+                });
                 return [2 /*return*/];
         }
     });

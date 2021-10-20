@@ -10,16 +10,16 @@ var newsRoute = function () {
     app.post('/news/', [
         auth_user_1.validJWTNeeded, validField_1.validPostFields, post_controller_1.insertPostData,
     ]);
-    // app.get('/news/', [
-    //   validJWTNeeded, getAllPosts,
-    // ]);
     app.get('/news/', [
+        auth_user_1.validJWTNeeded,
         post_controller_1.getAllPosts,
     ]);
     app.get('/news/:postId', [
+        auth_user_1.validJWTNeeded,
         post_controller_1.findById,
     ]);
     app.delete('/news/:postId', [
+        auth_user_1.validJWTNeeded,
         post_controller_1.findById, post_controller_1.deletePost,
     ]);
     return app;

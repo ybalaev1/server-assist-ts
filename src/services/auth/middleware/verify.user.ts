@@ -20,17 +20,17 @@ const authValidFields = async (req: Request, res: Response, next: NextFunction) 
 
 const matchUserAndPassword = async (req: Request, res: Response, next: NextFunction) => {
   const { data_auth } = req.body;
-
   findByEmail(data_auth.email).then((user: any) => {
     if (!user[0]) {
-      res.status(404).json({ message: 'User not found' });
+      res.status(404).send({ message: 'User not found' });
     } else {
       const passField = user[0].password.split('$');
       const salt = passField[0];
       const hash = crypto.createHmac('sha512', salt).update(data_auth.password).digest('base64');
       if (hash === passField[1]) {
         req.body = {
-          userId: user[0].id,
+          // eslint-disable-next-line no-underscore-dangle
+          userId: user[0]._id,
           email: user[0].email,
           provider: 'email',
           name: user[0].fullName,
@@ -38,7 +38,7 @@ const matchUserAndPassword = async (req: Request, res: Response, next: NextFunct
         return next();
       }
 
-      return res.status(400).json({ message: 'Invalid e-mail or password' });
+      return res.status(400).send({ message: 'Invalid e-mail or password' });
     }
     return next();
   });

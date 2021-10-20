@@ -42,6 +42,17 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.findByEmail = exports.updateUser = exports.getUserById = exports.getAllUsers = exports.deleteUser = exports.insertUser = void 0;
 var crypto_1 = __importDefault(require("crypto"));
 var user_model_1 = require("../model/user.model");
+var createUser = function (userData) { return __awaiter(void 0, void 0, void 0, function () {
+    var user;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4 /*yield*/, user_model_1.User.create(userData)];
+            case 1:
+                user = _a.sent();
+                return [2 /*return*/, user];
+        }
+    });
+}); };
 var findByEmail = function (value) { return __awaiter(void 0, void 0, void 0, function () {
     return __generator(this, function (_a) {
         return [2 /*return*/, new Promise(function (resolve, reject) {
@@ -57,17 +68,6 @@ var findByEmail = function (value) { return __awaiter(void 0, void 0, void 0, fu
     });
 }); };
 exports.findByEmail = findByEmail;
-var createUser = function (userData) { return __awaiter(void 0, void 0, void 0, function () {
-    var user;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0: return [4 /*yield*/, user_model_1.User.create(userData)];
-            case 1:
-                user = _a.sent();
-                return [2 /*return*/, user];
-        }
-    });
-}); };
 var insertUser = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
     var password, data, salt, hash;
     return __generator(this, function (_a) {
@@ -76,24 +76,29 @@ var insertUser = function (req, res) { return __awaiter(void 0, void 0, void 0, 
         salt = crypto_1.default.randomBytes(16).toString('base64');
         if (password) {
             hash = crypto_1.default.createHmac('sha512', salt).update(password).digest('base64');
-            // eslint-disable-next-line prefer-template
-            data.password = salt + '$' + hash;
-            findByEmail(data.email).then(function (result) {
-                if (!result[0]) {
-                    if (!data.fullName) {
-                        res.status(400).send({ message: 'Field fullName is required.', code: 400 });
+            data.password = salt + "$" + hash;
+            if (data.email) {
+                findByEmail(data.email).then(function (result) {
+                    if (!result[0]) {
+                        if (!data.fullName) {
+                            res.status(400).send({ message: 'Field fullName is required.', code: 400 });
+                        }
+                        else {
+                            return createUser(data).then(function (createdUser) {
+                                // eslint-disable-next-line no-underscore-dangle
+                                res.status(200).json({ id: createdUser._id });
+                            });
+                        }
                     }
                     else {
-                        return createUser(data).then(function (createdUser) {
-                            res.status(200).send({ id: createdUser.id });
-                        });
+                        res.status(418).json({ message: 'User already exists', code: 418 });
                     }
-                }
-                res.status(403).json({ message: 'User already exists', code: 403 });
-                return result;
-            }).catch(function () {
+                    return result;
+                });
+            }
+            else {
                 res.status(400).send({ message: 'Field email is required.', code: 400 });
-            });
+            }
         }
         else {
             res.status(400).send({ message: 'Field password is required.', code: 400 });
@@ -132,16 +137,15 @@ var getUserById = function (req, res) { return __awaiter(void 0, void 0, void 0,
 }); };
 exports.getUserById = getUserById;
 var updateUser = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var id, email, user, userUpdated;
+    var id, email, userUpdated, error_1;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
                 id = req.params.id;
                 email = req.body.email;
-                user = user_model_1.User.findById(id);
-                if (!user) {
-                    return [2 /*return*/, res.status(422).json({ message: 'User not found', code: 422 })];
-                }
+                _a.label = 1;
+            case 1:
+                _a.trys.push([1, 4, , 5]);
                 findByEmail(email).then(function (result) { return __awaiter(void 0, void 0, void 0, function () {
                     var userUpdated_1;
                     return __generator(this, function (_a) {
@@ -154,18 +158,22 @@ var updateUser = function (req, res) { return __awaiter(void 0, void 0, void 0, 
                                 return [4 /*yield*/, user_model_1.User.findById(id)];
                             case 2:
                                 userUpdated_1 = _a.sent();
-                                return [2 /*return*/, res.status(200).json({ data: userUpdated_1 })];
+                                return [2 /*return*/, res.status(200).send({ data: userUpdated_1 })];
                             case 3: return [2 /*return*/, res.status(403).json({ message: 'User with this email already exists', code: 403 })];
                         }
                     });
                 }); });
                 return [4 /*yield*/, user_model_1.User.updateOne({ _id: id }, req.body)];
-            case 1:
-                _a.sent();
-                return [4 /*yield*/, user_model_1.User.findById(id)];
             case 2:
+                _a.sent();
+                return [4 /*yield*/, user_model_1.User.findById({ _id: id })];
+            case 3:
                 userUpdated = _a.sent();
-                return [2 /*return*/, res.status(200).json({ data: userUpdated })];
+                return [2 /*return*/, res.status(200).send({ data: userUpdated })];
+            case 4:
+                error_1 = _a.sent();
+                return [2 /*return*/, res.status(404).json({ message: 'User not found', code: 404 })];
+            case 5: return [2 /*return*/];
         }
     });
 }); };

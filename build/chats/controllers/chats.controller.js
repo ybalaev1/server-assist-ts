@@ -36,103 +36,11 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteMessage = exports.getConversationByRoomId = exports.getChatById = exports.getChats = exports.postMessageChat = exports.insertChat = void 0;
+exports.getMarkerRead = exports.markConversationReadByChatId = exports.deleteMessage = exports.getConversationByRoomId = exports.getDataChatById = exports.getChats = exports.postMessageChat = exports.insertChat = void 0;
 var user_model_1 = require("../../users/model/user.model");
 var chats_model_1 = require("../models/chats.model");
-var getChats = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var user, user_id, currentChat;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0: return [4 /*yield*/, user_model_1.User.findById({ _id: req.query.id }).exec()];
-            case 1:
-                user = _a.sent();
-                user_id = user === null || user === void 0 ? void 0 : user._id.toString();
-                return [4 /*yield*/, chats_model_1.Chat.find({ users: { $in: user_id } })];
-            case 2:
-                currentChat = _a.sent();
-                return [2 /*return*/, res.status(200).json({ data: currentChat })];
-        }
-    });
-}); };
-exports.getChats = getChats;
-var getChatById = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var id, chat, favoriteUser, user, user_id, currentUser, costumer, newDataChat;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0:
-                id = req.params.id;
-                return [4 /*yield*/, chats_model_1.Chat.findById({ _id: id })];
-            case 1:
-                chat = _a.sent();
-                if (!chat) {
-                    return [2 /*return*/, res.status(404).json({ message: 'Chat not found' })];
-                }
-                if (chat.users[0] === req.query.user && chat.users[1] === req.query.user) {
-                    favoriteUser = {
-                        user: {
-                            fullName: 'Favorite messages',
-                            image: 'favor',
-                        },
-                        id: id,
-                        chat: chat,
-                        last_user: chat === null || chat === void 0 ? void 0 : chat.last_user,
-                    };
-                    return [2 /*return*/, res.status(200).json({ data: favoriteUser })];
-                }
-                return [4 /*yield*/, user_model_1.User.findById({ _id: req.query.user })];
-            case 2:
-                user = _a.sent();
-                user_id = user === null || user === void 0 ? void 0 : user._id.toString();
-                currentUser = chat.users.filter(function (u) { return u !== user_id; }).toString();
-                return [4 /*yield*/, user_model_1.User.findById({ _id: currentUser })];
-            case 3:
-                costumer = _a.sent();
-                newDataChat = {
-                    user: {
-                        fullName: costumer === null || costumer === void 0 ? void 0 : costumer.fullName,
-                        image: costumer === null || costumer === void 0 ? void 0 : costumer.image,
-                    },
-                    id: id,
-                    chat: chat,
-                    last_user: chat === null || chat === void 0 ? void 0 : chat.last_user,
-                };
-                return [2 /*return*/, res.status(200).json({ data: newDataChat })];
-        }
-    });
-}); };
-exports.getChatById = getChatById;
-var getConversationByRoomId = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var id, chat, conversation;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0:
-                id = req.params.id;
-                return [4 /*yield*/, chats_model_1.Chat.findById({ _id: id })];
-            case 1:
-                chat = _a.sent();
-                if (!chat) {
-                    return [2 /*return*/, res.status(400).json({
-                            message: 'No chat exists for this id',
-                        })];
-                }
-                return [4 /*yield*/, chats_model_1.Message.aggregate([
-                        { $match: { chat_id: id } },
-                        { $sort: { createdAt: 1 } },
-                        { $unwind: '$user_id' },
-                        // { $sort: { createdAt: 1 } },
-                        // { $skip: 14 },
-                        // { $limit: 10 },
-                    ])];
-            case 2:
-                conversation = _a.sent();
-                // console.log(conversation, chat.users);
-                return [2 /*return*/, res.status(200).json({
-                        conversation: conversation,
-                    })];
-        }
-    });
-}); };
-exports.getConversationByRoomId = getConversationByRoomId;
+var encryption_1 = require("../../services/crypto/encryption");
+var decryption_1 = require("../../services/crypto/decryption");
 var createChat = function (data) { return __awaiter(void 0, void 0, void 0, function () {
     var chat;
     return __generator(this, function (_a) {
@@ -144,48 +52,287 @@ var createChat = function (data) { return __awaiter(void 0, void 0, void 0, func
         }
     });
 }); };
-var createMessage = function (data) { return __awaiter(void 0, void 0, void 0, function () {
-    var message;
+var markMessageRead = function (chat_id, user) { return __awaiter(void 0, void 0, void 0, function () {
+    return __generator(this, function (_a) {
+        console.log(chat_id, user);
+        // eslint-disable-next-line no-useless-catch
+        try {
+            return [2 /*return*/, chats_model_1.Message.updateMany({
+                    chat_id: chat_id,
+                    'readByRecipients.readByUserId': { $ne: user },
+                }, {
+                    $addToSet: {
+                        readByRecipients: { readByUserId: user },
+                    },
+                }, {
+                    multi: true,
+                })];
+        }
+        catch (error) {
+            throw error;
+        }
+        return [2 /*return*/];
+    });
+}); };
+var markConversationReadByChatId = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var id, userId, chat, result, error_1;
     return __generator(this, function (_a) {
         switch (_a.label) {
-            case 0: return [4 /*yield*/, chats_model_1.Message.create(data)];
+            case 0:
+                _a.trys.push([0, 3, , 4]);
+                id = req.params.id;
+                userId = req.body.jwt.userId;
+                return [4 /*yield*/, chats_model_1.Chat.findById(id)];
             case 1:
-                message = _a.sent();
-                return [2 /*return*/, message];
+                chat = _a.sent();
+                if (!chat) {
+                    return [2 /*return*/, res.status(400).json({
+                            success: false,
+                            message: 'No chat exists for this id',
+                        })];
+                }
+                return [4 /*yield*/, markMessageRead(id, userId)];
+            case 2:
+                result = _a.sent();
+                return [2 /*return*/, res.status(200).json({ success: true, data: result })];
+            case 3:
+                error_1 = _a.sent();
+                return [2 /*return*/, res.status(500).json({ success: false, error: error_1 })];
+            case 4: return [2 /*return*/];
+        }
+    });
+}); };
+exports.markConversationReadByChatId = markConversationReadByChatId;
+var getDataChatById = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var id, jwt, chat, last_1, favoriteUser, user, user_id, currentUser, costumer, last, newDataChat_1, newDataChat;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                id = req.params.id;
+                jwt = req.body.jwt;
+                return [4 /*yield*/, chats_model_1.Chat.findById({ _id: id })];
+            case 1:
+                chat = _a.sent();
+                if (!chat) {
+                    return [2 /*return*/, res.status(404).json({ message: 'Chat not found' })];
+                }
+                if (jwt.userId !== chat.users[0] && jwt.userId !== chat.users[1]) {
+                    return [2 /*return*/, res.status(404).json({ message: 'Chat not found' })];
+                }
+                if (chat.users[0] === jwt.userId && chat.users[1] === jwt.userId) {
+                    last_1 = decryption_1.decrypt(chat.latestMessage[0], id);
+                    favoriteUser = {
+                        user: {
+                            fullName: 'Favorite messages',
+                        },
+                        latestMessage: last_1,
+                        favorite: true,
+                        id: id,
+                        chat: chat,
+                    };
+                    return [2 /*return*/, res.status(200).json({ data: favoriteUser })];
+                }
+                return [4 /*yield*/, user_model_1.User.findById({ _id: jwt.userId })];
+            case 2:
+                user = _a.sent();
+                user_id = user === null || user === void 0 ? void 0 : user._id.toString();
+                currentUser = chat.users.filter(function (u) { return u !== user_id; }).toString();
+                return [4 /*yield*/, user_model_1.User.findById({ _id: currentUser })];
+            case 3:
+                costumer = _a.sent();
+                last = decryption_1.decrypt(chat.latestMessage[0], id);
+                if (last) {
+                    newDataChat_1 = {
+                        user: {
+                            fullName: costumer === null || costumer === void 0 ? void 0 : costumer.fullName,
+                            image: costumer === null || costumer === void 0 ? void 0 : costumer.image,
+                        },
+                        latestMessage: last,
+                        chat: chat,
+                    };
+                    return [2 /*return*/, res.status(200).send({ data: newDataChat_1 })];
+                }
+                newDataChat = {
+                    user: {
+                        fullName: costumer === null || costumer === void 0 ? void 0 : costumer.fullName,
+                        image: costumer === null || costumer === void 0 ? void 0 : costumer.image,
+                    },
+                    chat: chat,
+                };
+                return [2 /*return*/, res.status(200).send({ data: newDataChat })];
+        }
+    });
+}); };
+exports.getDataChatById = getDataChatById;
+var getChats = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var jwt, user, user_id, data;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                jwt = req.body.jwt;
+                return [4 /*yield*/, user_model_1.User.findById({ _id: jwt.userId }).exec()];
+            case 1:
+                user = _a.sent();
+                user_id = user === null || user === void 0 ? void 0 : user._id.toString();
+                return [4 /*yield*/, chats_model_1.Chat.find({ users: user_id })];
+            case 2:
+                data = _a.sent();
+                res.status(200).json({ data: data });
+                return [2 /*return*/];
+        }
+    });
+}); };
+exports.getChats = getChats;
+var getMarkerRead = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var id, conversation;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                id = req.params.id;
+                return [4 /*yield*/, chats_model_1.Message.aggregate([
+                        { $match: { chat_id: id } },
+                        { $sort: { createdAt: -1 } },
+                        { $unwind: '$readByRecipients' },
+                        {
+                            $group: {
+                                _id: '$chat_id',
+                                chat_id: { $last: '$chat_id' },
+                                message: { $last: '$message' },
+                                readByRecipients: { $addToSet: '$readByRecipients' },
+                                createdAt: { $last: '$createdAt' },
+                            },
+                        },
+                    ])];
+            case 1:
+                conversation = _a.sent();
+                return [2 /*return*/, res.status(200).json({
+                        conversation: conversation,
+                    })];
+        }
+    });
+}); };
+exports.getMarkerRead = getMarkerRead;
+var getConversationByRoomId = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var id, jwt, chat, conversation, chat_messages, i, element, item;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                id = req.params.id;
+                jwt = req.body.jwt;
+                return [4 /*yield*/, chats_model_1.Chat.findById({ _id: id })];
+            case 1:
+                chat = _a.sent();
+                if (!chat) {
+                    return [2 /*return*/, res.status(400).json({
+                            message: 'No chat exists for this id',
+                        })];
+                }
+                if (jwt.userId !== chat.users[0] && jwt.userId !== chat.users[1]) {
+                    return [2 /*return*/, res.status(404).json({ message: 'Chat not found' })];
+                }
+                return [4 /*yield*/, chats_model_1.Message.aggregate([
+                        { $match: { chat_id: id } },
+                        { $sort: { createdAt: 1 } },
+                        { $unwind: '$user_id' },
+                    ])];
+            case 2:
+                conversation = _a.sent();
+                chat_messages = conversation;
+                for (i = 0; i < chat_messages.length; i++) {
+                    element = chat_messages[i].message[0];
+                    item = decryption_1.decrypt(element, id);
+                    conversation[i].message = item;
+                }
+                return [2 /*return*/, res.status(200).json({
+                        conversation: conversation,
+                    })];
+        }
+    });
+}); };
+exports.getConversationByRoomId = getConversationByRoomId;
+var createMessage = function (data) { return __awaiter(void 0, void 0, void 0, function () {
+    var hash;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                hash = encryption_1.encrypt(data.message, data.chat_id);
+                data.message = hash;
+                return [4 /*yield*/, chats_model_1.Message.create(data)];
+            case 1:
+                _a.sent();
+                return [2 /*return*/, hash];
         }
     });
 }); };
 var insertChat = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var data;
+    var data, userId, currentUser, costumer;
     return __generator(this, function (_a) {
-        data = req.body.data;
-        data.users = [data.costumer, data.initiator];
-        return [2 /*return*/, createChat(data).then(function (createdChat) {
-                res.status(200).send({ id: createdChat.id });
-            })];
+        switch (_a.label) {
+            case 0:
+                data = req.body.data;
+                userId = req.body.jwt.userId;
+                if (!data) {
+                    return [2 /*return*/, res.status(401).json({ message: 'Need data', code: 401 })];
+                }
+                if (!data.costumer) {
+                    return [2 /*return*/, res.status(401).json({ message: 'Need costumer', code: 401 })];
+                }
+                if (!data.initiator) {
+                    return [2 /*return*/, res.status(401).json({ message: 'Need initiator', code: 401 })];
+                }
+                if (data.costumer === data.initiator) {
+                    data.favorite = true;
+                    data.user = {
+                        fullName: 'Favorite messages',
+                    };
+                }
+                data.users = [data.costumer, data.initiator];
+                currentUser = data.users.filter(function (u) { return u !== userId; }).toString();
+                return [4 /*yield*/, user_model_1.User.findById({ _id: currentUser })];
+            case 1:
+                costumer = _a.sent();
+                data.user = {
+                    fullName: costumer === null || costumer === void 0 ? void 0 : costumer.fullName,
+                    image: costumer === null || costumer === void 0 ? void 0 : costumer.image,
+                };
+                return [2 /*return*/, createChat(data).then(function (createdChat) {
+                        res.status(200).send({ id: createdChat.id });
+                    })];
+        }
     });
 }); };
 exports.insertChat = insertChat;
 var postMessageChat = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var data;
-    return __generator(this, function (_a) {
-        data = req.body.data;
-        return [2 /*return*/, createMessage(data).then(function (createMess) { return __awaiter(void 0, void 0, void 0, function () {
+    var _a, data, jwt, id, message_data;
+    return __generator(this, function (_b) {
+        _a = req.body, data = _a.data, jwt = _a.jwt;
+        id = req.params.id;
+        message_data = {
+            message: data.message,
+            user_id: jwt.userId,
+            chat_id: id,
+            createdAt: new Date(),
+            readByRecipients: { readByUserId: jwt.userId },
+        };
+        return [2 /*return*/, createMessage(message_data).then(function (createMess) { return __awaiter(void 0, void 0, void 0, function () {
                 var currentChat, lastUser;
                 return __generator(this, function (_a) {
                     switch (_a.label) {
-                        case 0: return [4 /*yield*/, chats_model_1.Chat.findById({ _id: createMess.chat_id })];
+                        case 0: return [4 /*yield*/, chats_model_1.Chat.findById({ _id: id })];
                         case 1:
                             currentChat = _a.sent();
-                            return [4 /*yield*/, user_model_1.User.findById({ _id: createMess.user_id })];
+                            return [4 /*yield*/, user_model_1.User.findById({ _id: jwt.userId })];
                         case 2:
                             lastUser = _a.sent();
+                            // eslint-disable-next-line no-underscore-dangle
                             return [4 /*yield*/, chats_model_1.Chat.replaceOne({ _id: currentChat === null || currentChat === void 0 ? void 0 : currentChat._id }, {
-                                    latestMessage: createMess.message,
+                                    latestMessage: createMess,
                                     last_user: lastUser === null || lastUser === void 0 ? void 0 : lastUser.fullName,
                                     users: currentChat === null || currentChat === void 0 ? void 0 : currentChat.users,
+                                    updatedAt: new Date(),
                                 })];
                         case 3:
+                            // eslint-disable-next-line no-underscore-dangle
                             _a.sent();
                             res.status(200).send({ data: createMess });
                             return [2 /*return*/];
