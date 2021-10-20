@@ -11,16 +11,16 @@ const newsRoute = () => {
   app.post('/news/', [
     validJWTNeeded, validPostFields, insertPostData,
   ]);
-  // app.get('/news/', [
-  //   validJWTNeeded, getAllPosts,
-  // ]);
   app.get('/news/', [
+    validJWTNeeded,
     getAllPosts,
   ]);
   app.get('/news/:postId', [
+    validJWTNeeded,
     findById,
   ]);
   app.delete('/news/:postId', [
+    validJWTNeeded,
     findById, deletePost,
   ]);
 

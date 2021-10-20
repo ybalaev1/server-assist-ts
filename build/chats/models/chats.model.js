@@ -21,13 +21,26 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Message = exports.Chat = void 0;
 var mongoose_1 = __importStar(require("mongoose"));
+var readByRecipientSchema = new mongoose_1.Schema({
+    readByUserId: {
+        type: mongoose_1.Schema.Types.String,
+        require: true,
+    },
+    readAt: {
+        type: mongoose_1.Schema.Types.Date,
+        require: true,
+        default: new Date(),
+    },
+}, {
+    timestamps: false,
+});
 var messageSchema = new mongoose_1.Schema({
     chat_id: {
         type: mongoose_1.Schema.Types.String,
         require: true,
     },
     message: {
-        type: mongoose_1.Schema.Types.String,
+        type: mongoose_1.Schema.Types.Array,
         require: true,
     },
     user_id: {
@@ -36,6 +49,10 @@ var messageSchema = new mongoose_1.Schema({
     },
     createdAt: {
         type: mongoose_1.Schema.Types.Date,
+        require: true,
+    },
+    readByRecipients: {
+        type: readByRecipientSchema,
         require: true,
     },
 }, {
@@ -55,8 +72,26 @@ var chatSchema = new mongoose_1.Schema({
         type: mongoose_1.Schema.Types.String,
         require: false,
     },
+    user: {
+        type: mongoose_1.Schema.Types.Array,
+        require: true,
+    },
+    createdAt: {
+        type: mongoose_1.Schema.Types.Date,
+        default: new Date(),
+        require: true,
+    },
+    updatedAt: {
+        type: mongoose_1.Schema.Types.Date,
+        require: true,
+    },
+    favorite: {
+        type: mongoose_1.Schema.Types.Boolean,
+        require: true,
+        default: false,
+    },
 }, {
-    timestamps: true,
+    timestamps: false,
     collection: 'chats',
 });
 var Chat = mongoose_1.default.model('Chat', chatSchema);

@@ -16,7 +16,7 @@ const login = (req: Request, res: Response, next: NextFunction) => {
       accessToken: token,
     });
   } catch (error) {
-    res.status(500).json({ message: error });
+    res.status(500).send({ message: error });
   }
   return next();
 };

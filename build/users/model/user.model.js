@@ -66,6 +66,10 @@ var userShema = new mongoose_1.Schema({
         type: mongoose_1.Schema.Types.String,
         required: false,
     },
+    proiritety: {
+        type: mongoose_1.Schema.Types.Boolean,
+        required: false,
+    },
 }, {
     collection: 'users',
     timestamps: true,
