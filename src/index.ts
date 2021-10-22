@@ -26,9 +26,6 @@ app.use(cors({
 
 const server = app.listen(process.env.PORT, () => console.log(`Server running on port ${process.env.PORT}.`));
 const socket = require('socket.io')(server);
-
-socket.set('transports', ['xhr-polling']);
-socket.set('polling duration', 10);
 app.listen((process.env.PORT || 3000), async () => {
   await connectToDatabase(3000);
 
