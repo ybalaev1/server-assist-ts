@@ -24,42 +24,48 @@ app.use(cors({
   credentials: true,
 }));
 
-// const server = app.listen(process.env.PORT,
-// () => console.log(`Server running on port ${process.env.PORT}.`));
-
-const io = require('socket.io');
-
-// app.listen((process.env.PORT || 3000), async (server) => {
-app.listen(process.env.PORT, async () => {
+const server = app.listen(4200, async () => {
   await connectToDatabase(3000);
-  const socket = io(process.env.PORT);
 
-  // eslint-disable-next-line no-console
-  console.log(`Application started on URL ${3000} 🎉 `, socket);
-  socket.on('connection', async (client) => {
-    console.log('client connected...');
-
-    client.on('message', async (msg: any) => {
-      // const message = await createMessage(msg);
-      const message = msg;
-      socket.emit('message', message);
-    });
-    client.on('chat_id', async (id: string) => {
-      const last = await lattestMessage(id);
-      socket.emit('latest', last);
-    });
-    // client.on('latest', async () => {
-    //   const latest = await lattestMesage(10);
-    //   socket.emit('latest', latest);
-    // });
-    // client.on('user writing', async () => {
-    //   socket.emit('typping');
-    // });
-  });
-  socket.on('disconnected', async (client) => {
-    client.emit('broadcast', '[Server]: Bye, bye!');
-  });
-  // server.listen(8999, () => {
-  //   console.log(`Server started on port ${server.address()?.toString()} :) 8999`);
-  // });
+  console.log(`Server running on port ${4200}.`);
 });
+const io = require('socket.io')(server);
+
+io.on('connection', (socket) => {
+  socket.on('beep', () => {
+    socket.emit('beep', { data: 5 });
+    console.log('beep recieved');
+  });
+});
+
+// app.listen((process.env.PORT || 3000), async () => {
+
+//   // eslint-disable-next-line no-console
+// console.log(`Application started on URL ${3000} 🎉`);
+//   socket.on('connection', async (client) => {
+//     console.log('client connected...');
+
+//     client.on('message', async (msg: any) => {
+//       // const message = await createMessage(msg);
+//       const message = msg;
+//       socket.emit('message', message);
+//     });
+//     client.on('chat_id', async (id: string) => {
+//       const last = await lattestMessage(id);
+//       socket.emit('latest', last);
+//     });
+//     // client.on('latest', async () => {
+//     //   const latest = await lattestMesage(10);
+//     //   socket.emit('latest', latest);
+//     // });
+//     // client.on('user writing', async () => {
+//     //   socket.emit('typping');
+//     // });
+//   });
+//   socket.on('disconnected', async (client) => {
+//     client.emit('broadcast', '[Server]: Bye, bye!');
+//   });
+//   // server.listen(8999, () => {
+//   //   console.log(`Server started on port ${server.address()?.toString()} :) 8999`);
+//   // });
+// });
