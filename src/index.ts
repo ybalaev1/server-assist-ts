@@ -24,17 +24,18 @@ app.use(cors({
   credentials: true,
 }));
 
-// const server = app.listen(process.env.PORT, 
+// const server = app.listen(process.env.PORT,
 // () => console.log(`Server running on port ${process.env.PORT}.`));
 
 const io = require('socket.io');
 
-app.listen((process.env.PORT || 3000), async (server) => {
+// app.listen((process.env.PORT || 3000), async (server) => {
+app.listen(process.env.PORT, async () => {
   await connectToDatabase(3000);
-  const socket = io(server);
+  const socket = io(process.env.PORT);
 
   // eslint-disable-next-line no-console
-  console.log(`Application started on URL ${3000} 🎉`);
+  console.log(`Application started on URL ${3000} 🎉 `, socket);
   socket.on('connection', async (client) => {
     console.log('client connected...');
 
