@@ -19,11 +19,11 @@ app.use('/', authRoute());
 app.use('/', newsRoute());
 app.use('/', chatsRoute());
 app.use(cors({
-  origin: 'https://assistapp.club/',
+  origin: 'http://localhost:8999',
   optionsSuccessStatus: 200,
   credentials: true,
 }));
-const server = app.listen(8999, () => console.log(`Server running on port ${8999}`));
+const server = app.listen((process.env.PORT || 8999), () => console.log(`Server running on port ${8999 || process.env.PORT}`));
 const socket = require('socket.io')(server);
 
 socket.on('connection', async (client) => {
@@ -48,11 +48,10 @@ socket.on('connection', async (client) => {
 socket.on('disconnected', async (client) => {
   client.emit('broadcast', '[Server]: Bye, bye!');
 });
-app.listen((3000), async () => {
+app.listen((process.env.PORT || 3000), async () => {
   // await connectToDatabase(process.env.PORT || 3000); prod = process.env.PORT ; dev = 3000
   await connectToDatabase(3000);
 
   // eslint-disable-next-line no-console
-  console.log(`Application started on URL ${3000} 🎉, \n ${socket}`);
-
+  console.log(`Application started on URL ${3000} 🎉`);
 });
