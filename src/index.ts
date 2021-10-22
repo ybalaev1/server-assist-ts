@@ -19,12 +19,12 @@ app.use('/', authRoute());
 app.use('/', newsRoute());
 app.use('/', chatsRoute());
 app.use(cors({
-  origin: 'https://assistapp.club:3000',
+  origin: 'https://assistapp.club:4200',
   optionsSuccessStatus: 200,
   credentials: true,
 }));
-
-const server = app.listen(4200, async () => {
+const PORT = process.env.PORT || 4200;
+const server = app.listen(PORT, async () => {
   await connectToDatabase(3000);
 
   console.log(`Server running on port ${4200}.`);
