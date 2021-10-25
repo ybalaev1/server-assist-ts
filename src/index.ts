@@ -3,7 +3,7 @@ import { connectToDatabase } from './services/mongoose.service';
 import { authRoute } from './services/auth/auth.config';
 import { newsRoute } from './news/routes.config';
 import { chatsRoute } from './chats/routes.config';
-import { createMessage, lattestMessage } from './chats/controllers/chats.controller';
+import { createMessage, lattestMessage, getSocketTyping } from './chats/controllers/chats.controller';
 
 const cors = require('cors');
 
@@ -19,8 +19,8 @@ app.use('/', authRoute());
 app.use('/', newsRoute());
 app.use('/', chatsRoute());
 app.use(cors({
-  // origin: 'http://localhost:3000',
-  origin: 'https://assistapp.club:4200',
+  origin: 'http://localhost:3000',
+  // origin: 'https://assistapp.club:4200',
   optionsSuccessStatus: 200,
   credentials: true,
 }));
@@ -30,13 +30,14 @@ const server = app.listen(PORT, async () => {
 
   console.log(`Server running on port ${4200}.`);
 });
+
 const io = require('socket.io')(server);
+
 const sockets = {};
 io.on('connection', (socket) => {
   console.log('user connected');
 
   socket.on('init', (userId) => {
-    console.log('user connected', userId);
     sockets[userId] = socket;
   });
   socket.on('message', async (msg) => {
@@ -46,6 +47,20 @@ io.on('connection', (socket) => {
   socket.on('latest', async (id: string) => {
     const last = await lattestMessage(id);
     socket.emit('latest', last);
+  });
+  socket.on('typing', async (user: string) => {
+    const typing_user = await getSocketTyping(user);
+    // eslint-disable-next-line no-underscore-dangle
+    const message = {
+      message: `${typing_user?.fullName} typing...`,
+      // eslint-disable-next-line no-underscore-dangle
+      user_id: typing_user?._id,
+    };
+    io.emit('typing', message);
+  });
+
+  socket.on('notyping', async () => {
+    io.emit('typing', '');
   });
 });
 

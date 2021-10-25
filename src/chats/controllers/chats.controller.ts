@@ -1,4 +1,4 @@
-import { NextFunction, Request, Response } from 'express';
+import { Request, Response } from 'express';
 import { User } from '../../users/model/user.model';
 import { Chat, Message } from '../models/chats.model';
 import { encrypt } from '../../services/crypto/encryption';
@@ -10,7 +10,6 @@ const createChat = async (data: string[]) => {
 };
 
 const markMessageRead = async (chat_id: string, user: string) => {
-  console.log(chat_id, user);
   // eslint-disable-next-line no-useless-catch
   try {
     return Message.updateMany(
@@ -107,6 +106,13 @@ const getChats = async (req: Request, res: Response) => {
   // eslint-disable-next-line no-underscore-dangle
   const user_id = user?._id.toString();
   const data = await Chat.find({ users: user_id });
+  const chat_messages = data;
+  for (let i = 0; i < chat_messages.length; i++) {
+    const element = chat_messages[i].latestMessage[0];
+    // eslint-disable-next-line no-underscore-dangle
+    const item = decrypt(element, chat_messages[i]._id);
+    data[i].latestMessage = item;
+  }
   res.status(200).json({ data });
 };
 
@@ -160,15 +166,21 @@ const getConversationByRoomId = async (req: Request, res: Response) => {
 };
 
 const createMessage = async (data: any) => {
-  // const salt = crypto.randomBytes(8).toString('ascii');
   const hash = encrypt(data.message, data.chat_id);
-  // const hash = encrypt(data.message, data.chat_id);
-  // eslint-disable-next-line no-param-reassign
   data.message = hash;
   const mes = await Message.create(data);
   // eslint-disable-next-line no-underscore-dangle
   const mess_id = mes?._id;
   const dec_message = decrypt(data.message, data.chat_id);
+  const last_user = await User.findById({ _id: mes.user_id });
+  const crntChat = await Chat.findById({ _id: data.chat_id });
+  await Chat.replaceOne({ _id: data.chat_id }, {
+    latestMessage: mes.message,
+    users: crntChat?.users,
+    last_user: last_user?.fullName,
+    updatedAt: new Date(),
+  });
+
   const recievedMessage = {
     message: dec_message,
     chat_id: mes.chat_id,
@@ -182,23 +194,7 @@ const createMessage = async (data: any) => {
 };
 
 const lattestMessage = async (id: string) => {
-  // const chat_messages = last;
-  console.log('lattest message begin', id);
-  // const id = '616e8c3de1ef67989b8a6bd8';
   const conversation = await Message.find({ chat_id: id }).sort({ createdAt: 1 });
-
-  // const conversation = await Message.aggregate([
-  // { $match: { chat_id: id } },
-  //   { $limit: count },
-  //   { $sort: { createdAt: 1 } },
-  // ]).limit(count);
-  // const conversation = await Message.aggregate(
-  //   [
-  //   { $match: { chat_id: id } },
-  //   { $sort: { createdAt: 1 } },
-  //   ],
-  // );
-  // conversation[0].message[0] = decrypt(conversation[0].message[0], id);
 
   const chat_messages = conversation;
   for (let i = 0; i < chat_messages.length; i++) {
@@ -206,8 +202,6 @@ const lattestMessage = async (id: string) => {
     const item = decrypt(element, id);
     conversation[i].message = item;
   }
-  // console.log('conversation', conversation);
-
   return conversation;
 };
 
@@ -266,6 +260,11 @@ const postMessageChat = async (req: Request, res: Response) => {
   });
 };
 
+const getSocketTyping = async (user_id: string) => {
+  const user = await User.findById({ _id: user_id });
+  return user;
+};
+
 const deleteMessage = async (req: Request, res: Response) => {
   const { id } = req.params;
   const message = await Message.deleteOne({ _id: id });
@@ -275,4 +274,5 @@ const deleteMessage = async (req: Request, res: Response) => {
 export {
   insertChat, postMessageChat, getChats, getDataChatById, getConversationByRoomId,
   deleteMessage, markConversationReadByChatId, getMarkerRead, createMessage, lattestMessage,
+  getSocketTyping,
 };
