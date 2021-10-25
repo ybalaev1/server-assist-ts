@@ -19,8 +19,8 @@ app.use('/', authRoute());
 app.use('/', newsRoute());
 app.use('/', chatsRoute());
 app.use(cors({
-  origin: 'http://localhost:3000',
-  // origin: 'https://assistapp.club:4200',
+  // origin: 'http://localhost:3000',
+  origin: 'https://assistapp.club:4200',
   optionsSuccessStatus: 200,
   credentials: true,
 }));
