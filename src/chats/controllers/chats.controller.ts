@@ -163,11 +163,22 @@ const createMessage = async (data: any) => {
   // const salt = crypto.randomBytes(8).toString('ascii');
   const hash = encrypt(data.message, data.chat_id);
   // const hash = encrypt(data.message, data.chat_id);
+  // eslint-disable-next-line no-param-reassign
   data.message = hash;
-  await Message.create(data);
-  // console.log('message', message);
+  const mes = await Message.create(data);
+  // eslint-disable-next-line no-underscore-dangle
+  const mess_id = mes?._id;
   const dec_message = decrypt(data.message, data.chat_id);
-  return dec_message;
+  const recievedMessage = {
+    message: dec_message,
+    chat_id: mes.chat_id,
+    user_id: mes.user_id,
+    createdAt: mes.createdAt,
+    _id: mess_id,
+    readByRecipients: { readByUserId: mes.user_id },
+  };
+
+  return recievedMessage;
 };
 
 const lattestMessage = async (id: string) => {
@@ -195,7 +206,7 @@ const lattestMessage = async (id: string) => {
     const item = decrypt(element, id);
     conversation[i].message = item;
   }
-  console.log('conversation', conversation);
+  // console.log('conversation', conversation);
 
   return conversation;
 };

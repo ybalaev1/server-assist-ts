@@ -19,22 +19,33 @@ app.use('/', authRoute());
 app.use('/', newsRoute());
 app.use('/', chatsRoute());
 app.use(cors({
+  // origin: 'http://localhost:3000',
   origin: 'https://assistapp.club:4200',
   optionsSuccessStatus: 200,
   credentials: true,
 }));
-const PORT = process.env.PORT || 4200;
+const PORT = process.env.PORT || 3000;
 const server = app.listen(PORT, async () => {
   await connectToDatabase(3000);
 
   console.log(`Server running on port ${4200}.`);
 });
 const io = require('socket.io')(server);
-
+const sockets = {};
 io.on('connection', (socket) => {
-  socket.on('beep', () => {
-    socket.emit('beep', { data: 5 });
-    console.log('beep recieved');
+  console.log('user connected');
+
+  socket.on('init', (userId) => {
+    console.log('user connected', userId);
+    sockets[userId] = socket;
+  });
+  socket.on('message', async (msg) => {
+    const message = await createMessage(msg);
+    io.emit('message', message);
+  });
+  socket.on('latest', async (id: string) => {
+    const last = await lattestMessage(id);
+    socket.emit('latest', last);
   });
 });
 
