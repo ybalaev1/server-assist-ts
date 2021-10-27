@@ -107,6 +107,7 @@ const getChats = async (req: Request, res: Response) => {
   const user_id = user?._id.toString();
   const data = await Chat.find({ users: user_id });
   const chat_messages = data;
+  // eslint-disable-next-line no-plusplus
   for (let i = 0; i < chat_messages.length; i++) {
     const element = chat_messages[i].latestMessage[0];
     // eslint-disable-next-line no-underscore-dangle
@@ -149,12 +150,9 @@ const getConversationByRoomId = async (req: Request, res: Response) => {
   if (jwt.userId !== chat.users[0] && jwt.userId !== chat.users[1]) {
     return res.status(404).json({ message: 'Chat not found' });
   }
-  const conversation = await Message.aggregate([
-    { $match: { chat_id: id } },
-    { $sort: { createdAt: 1 } },
-    { $unwind: '$user_id' },
-  ]);
+  const conversation = await Message.aggregate([{ $match: { chat_id: id } }, { $sort: { createdAt: 1 } }, { $unwind: '$user_id' }]);
   const chat_messages = conversation;
+  // eslint-disable-next-line no-plusplus
   for (let i = 0; i < chat_messages.length; i++) {
     const element = chat_messages[i].message[0];
     const item = decrypt(element, id);
@@ -167,6 +165,7 @@ const getConversationByRoomId = async (req: Request, res: Response) => {
 
 const createMessage = async (data: any) => {
   const hash = encrypt(data.message, data.chat_id);
+  // eslint-disable-next-line no-param-reassign
   data.message = hash;
   const mes = await Message.create(data);
   // eslint-disable-next-line no-underscore-dangle
@@ -174,12 +173,18 @@ const createMessage = async (data: any) => {
   const dec_message = decrypt(data.message, data.chat_id);
   const last_user = await User.findById({ _id: mes.user_id });
   const crntChat = await Chat.findById({ _id: data.chat_id });
-  await Chat.replaceOne({ _id: data.chat_id }, {
-    latestMessage: mes.message,
-    users: crntChat?.users,
-    last_user: last_user?.fullName,
-    updatedAt: new Date(),
-  });
+
+  markMessageRead(data.chat_id, mes.user_id);
+
+  await Chat.replaceOne(
+    { _id: data.chat_id },
+    {
+      latestMessage: mes.message,
+      users: crntChat?.users,
+      last_user: last_user?.fullName,
+      updatedAt: new Date(),
+    },
+  );
 
   const recievedMessage = {
     message: dec_message,
@@ -197,6 +202,7 @@ const lattestMessage = async (id: string) => {
   const conversation = await Message.find({ chat_id: id }).sort({ createdAt: 1 });
 
   const chat_messages = conversation;
+  // eslint-disable-next-line no-plusplus
   for (let i = 0; i < chat_messages.length; i++) {
     const element = chat_messages[i].message[0];
     const item = decrypt(element, id);
@@ -249,13 +255,16 @@ const postMessageChat = async (req: Request, res: Response) => {
   return createMessage(message_data).then(async (createMess: any) => {
     const currentChat = await Chat.findById({ _id: id });
     const lastUser = await User.findById({ _id: jwt.userId });
+    await Chat.replaceOne(
     // eslint-disable-next-line no-underscore-dangle
-    await Chat.replaceOne({ _id: currentChat?._id }, {
-      latestMessage: createMess,
-      last_user: lastUser?.fullName,
-      users: currentChat?.users,
-      updatedAt: new Date(),
-    });
+      { _id: currentChat?._id },
+      {
+        latestMessage: createMess,
+        last_user: lastUser?.fullName,
+        users: currentChat?.users,
+        updatedAt: new Date(),
+      },
+    );
     res.status(200).send({ data: createMess });
   });
 };
@@ -272,7 +281,15 @@ const deleteMessage = async (req: Request, res: Response) => {
 };
 
 export {
-  insertChat, postMessageChat, getChats, getDataChatById, getConversationByRoomId,
-  deleteMessage, markConversationReadByChatId, getMarkerRead, createMessage, lattestMessage,
+  insertChat,
+  postMessageChat,
+  getChats,
+  getDataChatById,
+  getConversationByRoomId,
+  deleteMessage,
+  markConversationReadByChatId,
+  getMarkerRead,
+  createMessage,
+  lattestMessage,
   getSocketTyping,
 };

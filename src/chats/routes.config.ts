@@ -1,8 +1,14 @@
 import { Router } from 'express';
 import { validJWTNeeded } from '../services/auth/controllers/auth.user';
 import {
-  getDataChatById, getChats, insertChat, postMessageChat, getConversationByRoomId, deleteMessage,
-  markConversationReadByChatId, getMarkerRead,
+  getDataChatById,
+  getChats,
+  insertChat,
+  postMessageChat,
+  getConversationByRoomId,
+  deleteMessage,
+  markConversationReadByChatId,
+  getMarkerRead,
 } from './controllers/chats.controller';
 
 const chatsRoute = () => {

@@ -1,9 +1,10 @@
+import { noticeRoute } from './notice/routes.config';
 import { userRoute } from './users/routes.config';
 import { connectToDatabase } from './services/mongoose.service';
 import { authRoute } from './services/auth/auth.config';
 import { newsRoute } from './news/routes.config';
 import { chatsRoute } from './chats/routes.config';
-import { createMessage, lattestMessage, getSocketTyping } from './chats/controllers/chats.controller';
+import * as socketMiddleware from './services/socket/middleware/socket.middleware';
 
 const cors = require('cors');
 
@@ -17,81 +18,35 @@ app.use(express.json());
 app.use('/', userRoute());
 app.use('/', authRoute());
 app.use('/', newsRoute());
+app.use('/', noticeRoute());
 app.use('/', chatsRoute());
-app.use(cors({
-  // origin: 'http://localhost:3000',
-  origin: 'https://assistapp.club:4200',
-  optionsSuccessStatus: 200,
-  credentials: true,
-}));
+app.use(
+  cors({
+    //     origin: 'http://localhost:3000',
+    origin: 'https://assistapp.club:4200',
+    optionsSuccessStatus: 200,
+    credentials: true,
+  }),
+);
 const PORT = process.env.PORT || 3000;
 const server = app.listen(PORT, async () => {
   await connectToDatabase(3000);
-
+  // eslint-disable-next-line no-console
   console.log(`Server running on port ${4200}.`);
 });
 
 const io = require('socket.io')(server);
 
-const sockets = {};
 io.on('connection', (socket) => {
-  console.log('user connected');
-
-  socket.on('init', (userId) => {
-    sockets[userId] = socket;
-  });
-  socket.on('message', async (msg) => {
-    const message = await createMessage(msg);
-    io.emit('message', message);
-  });
-  socket.on('latest', async (id: string) => {
-    const last = await lattestMessage(id);
-    socket.emit('latest', last);
-  });
-  socket.on('typing', async (user: string) => {
-    const typing_user = await getSocketTyping(user);
-    // eslint-disable-next-line no-underscore-dangle
-    const message = {
-      message: `${typing_user?.fullName} typing...`,
-      // eslint-disable-next-line no-underscore-dangle
-      user_id: typing_user?._id,
-    };
-    io.emit('typing', message);
-  });
+  socketMiddleware.userInitCocket(socket);
+  socketMiddleware.messagingSocket(socket, 'message', io);
+  socketMiddleware.latestMessageSocket(socket);
+  socketMiddleware.typpingUserSocket(socket, io);
+  //   socket.on('online', async (id: string) => {
+  //     socket.emit('online', id);
+  //   });
 
   socket.on('notyping', async () => {
     io.emit('typing', '');
   });
 });
-
-// app.listen((process.env.PORT || 3000), async () => {
-
-//   // eslint-disable-next-line no-console
-// console.log(`Application started on URL ${3000} 🎉`);
-//   socket.on('connection', async (client) => {
-//     console.log('client connected...');
-
-//     client.on('message', async (msg: any) => {
-//       // const message = await createMessage(msg);
-//       const message = msg;
-//       socket.emit('message', message);
-//     });
-//     client.on('chat_id', async (id: string) => {
-//       const last = await lattestMessage(id);
-//       socket.emit('latest', last);
-//     });
-//     // client.on('latest', async () => {
-//     //   const latest = await lattestMesage(10);
-//     //   socket.emit('latest', latest);
-//     // });
-//     // client.on('user writing', async () => {
-//     //   socket.emit('typping');
-//     // });
-//   });
-//   socket.on('disconnected', async (client) => {
-//     client.emit('broadcast', '[Server]: Bye, bye!');
-//   });
-//   // server.listen(8999, () => {
-//   //   console.log(`Server started on port ${server.address()?.toString()} :) 8999`);
-//   // });
-// });
