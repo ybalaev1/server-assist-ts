@@ -1,15 +1,14 @@
 import mongosee, { Schema, Model, Document } from 'mongoose';
 
-type PostCreatedModel = Document & {
+type NoticeModel = Document & {
         message: string;
         user: string;
-        comments: string[];
-        likes: string[];
-        image: string;
+        title: string;
+        type: string;
         createdAt: number;
 };
 
-const postShema = new Schema(
+const noticeSchema = new Schema(
   {
     message: {
       type: Schema.Types.String,
@@ -19,15 +18,11 @@ const postShema = new Schema(
       type: Schema.Types.String,
       required: true,
     },
-    comments: {
-      type: Schema.Types.Array,
+    title: {
+      type: Schema.Types.String,
       required: false,
     },
-    likes: {
-      type: Schema.Types.Array,
-      required: false,
-    },
-    image: {
+    type: {
       type: Schema.Types.String,
       required: false,
     },
@@ -37,9 +32,9 @@ const postShema = new Schema(
     },
   },
   {
-    collection: 'news',
+    collection: 'notice',
   },
 );
 
-const Post: Model<PostCreatedModel> = mongosee.model<PostCreatedModel>('Post', postShema);
-export { Post, PostCreatedModel };
+const Notice: Model<NoticeModel> = mongosee.model<NoticeModel>('Notice', noticeSchema);
+export { Notice, NoticeModel };

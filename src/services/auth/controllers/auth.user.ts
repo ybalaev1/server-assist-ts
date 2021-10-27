@@ -38,6 +38,7 @@ const validJWTNeeded = (req: Request, res: Response, next: NextFunction) => {
   return res.status(401).json({ message: 'Need auth token', code: 401 });
 };
 
+// eslint-disable-next-line consistent-return
 const refreshPassword = (req: Request, res: Response) => {
   const { email, new_pass } = req.body;
   if (email) {
