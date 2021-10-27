@@ -7,6 +7,7 @@ import { chatsRoute } from './chats/routes.config';
 import * as socketMiddleware from './services/socket/middleware/socket.middleware';
 
 const cors = require('cors');
+const dotenv = require('dotenv');
 
 const express = require('express');
 
@@ -30,6 +31,7 @@ app.use(
 );
 const PORT = process.env.PORT || 3000;
 const server = app.listen(PORT, async () => {
+  dotenv.config();
   await connectToDatabase(3000);
   // eslint-disable-next-line no-console
   console.log(`Server running on port ${4200}.`);
