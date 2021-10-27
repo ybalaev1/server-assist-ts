@@ -1,5 +1,4 @@
 import { Response, Request, NextFunction } from 'express';
-import { jwtSecret } from '../../../services/key';
 import { findByEmail } from '../../../users/controllers/user.controller';
 import { User } from '../../../users/model/user.model';
 
@@ -8,7 +7,7 @@ const crypto = require('crypto');
 
 const login = (req: Request, res: Response, next: NextFunction) => {
   try {
-    const token = jwt.sign(req.body, jwtSecret);
+    const token = jwt.sign(req.body, process.env.jwtSecret);
     return res.status(200).send({
       id: req.body.userId,
       accessToken: token,
@@ -26,7 +25,7 @@ const validJWTNeeded = (req: Request, res: Response, next: NextFunction) => {
       if (auth[0] !== 'Bearer') {
         return res.status(401).json({ message: 'Need auth token', code: 401 });
       }
-      req.body.jwt = jwt.verify(auth[1], jwtSecret);
+      req.body.jwt = jwt.verify(auth[1], process.env.jwtSecret);
       return next();
     } catch (err) {
       res.status(403).json({ message: err });
