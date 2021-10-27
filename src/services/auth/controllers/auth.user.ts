@@ -1,22 +1,20 @@
 import { Response, Request, NextFunction } from 'express';
+import { jwtSecret } from '../../../services/key';
 import { findByEmail } from '../../../users/controllers/user.controller';
 import { User } from '../../../users/model/user.model';
 
-const jwtSecret = 'myS33!!creeeT';
 const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
 
 const login = (req: Request, res: Response, next: NextFunction) => {
   try {
-    const salt = crypto.randomBytes(16).toString('base64');
-    req.body.refreshKey = salt;
     const token = jwt.sign(req.body, jwtSecret);
     return res.status(200).send({
       id: req.body.userId,
       accessToken: token,
     });
   } catch (error) {
-    res.status(500).send({ message: error });
+    res.status(500).send({ message: 'error' });
   }
   return next();
 };
