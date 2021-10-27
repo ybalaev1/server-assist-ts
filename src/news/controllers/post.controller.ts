@@ -25,7 +25,8 @@ const getAllPosts = async (req: Request, res: Response) => {
   // eslint-disable-next-line no-plusplus
   for (let i = 0; i < allPosts.length; i++) {
     const item = allPosts[i];
-    const user = User.findById({ _id: allPosts[i]?.user });
+    // eslint-disable-next-line no-await-in-loop
+    const user = await User.findById({ _id: allPosts[i]?.user });
     const updatedPost = {
       comments: item?.comments,
       likes: item?.likes,
@@ -34,9 +35,7 @@ const getAllPosts = async (req: Request, res: Response) => {
       createdAt: item?.createdAt,
       image: item?.image,
       user: {
-        // eslint-disable-next-line no-underscore-dangle
         fullName: user?.fullName,
-        // eslint-disable-next-line no-underscore-dangle
         image: user?.image,
         id: item?.user,
       },
