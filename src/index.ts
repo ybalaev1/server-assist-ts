@@ -1,6 +1,6 @@
 import { noticeRoute } from './notice/routes.config';
 import { userRoute } from './users/routes.config';
-import { connectToDatabase } from './services/mongoose.service 2';
+import { connectToDatabase } from './services/mongoose.service';
 import { authRoute } from './services/auth/auth.config';
 import { newsRoute } from './news/routes.config';
 import { chatsRoute } from './chats/routes.config';
