@@ -26,8 +26,8 @@ app.use('/', communitiesRoute());
 const PORT = process.env.PORT || 4200;
 app.use(
   cors({
-        origin: `http://localhost:${PORT}`,
-    // origin: 'https://assistapp.club:4200',
+        // origin: `http://localhost:${PORT}`,
+    origin: 'https://dance-connect-528e8b559e89.herokuapp.com:4200',
     optionsSuccessStatus: 200,
     credentials: true,
   }),
