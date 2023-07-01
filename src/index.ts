@@ -23,11 +23,11 @@ app.use('/', communitiesRoute());
 // app.use('/', noticeRoute());
 // app.use('/', chatsRoute());
 
-const PORT = 4200;
+const PORT = process.env.PORT || 3000;
 app.use(
   cors({
         // origin: `http://localhost:${PORT}`,
-    origin: 'https://dance-connect-528e8b559e89.herokuapp.com:4200',
+    origin: `https://dance-connect-528e8b559e89.herokuapp.com:${PORT}`,
     optionsSuccessStatus: 200,
     credentials: true,
   }),
