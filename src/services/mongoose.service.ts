@@ -8,7 +8,7 @@ const connectToDatabase = async (): Promise<void> => {
   const options: ConnectionOptions = {
     useNewUrlParser: true, useFindAndModify: false, useCreateIndex: true, useUnifiedTopology: true,
   };
-    await mongoose.connect(`mongodb+srv://${process.env.db_user}:${process.env.db_pass}@cluster0.3ygft.mongodb.net/testingDB?retryWrites=true&w=majority`, options);
+    await mongoose.connect(`mongodb+srv://${process.env.db_user}:${process.env.db_pass}@cluster0.tozhfgs.mongodb.net/testingDB?retryWrites=true&w=majority`, options);
 };
 
 export { connectToDatabase };
