@@ -23,7 +23,7 @@ app.use('/', communitiesRoute());
 // app.use('/', noticeRoute());
 // app.use('/', chatsRoute());
 
-const PORT = process.env.PORT || 4200;
+const PORT = 4200;
 app.use(
   cors({
         // origin: `http://localhost:${PORT}`,
