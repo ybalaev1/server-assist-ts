@@ -2,8 +2,8 @@ import mongosee, { Schema, Model, Document } from 'mongoose';
 
 type UserModel = Document & {
         fullName: string;
-        email: string;
-        password: string;
+        // email: string;
+        // password: string;
         information: string;
         interest: string;
         mobile_phone: string;
@@ -13,11 +13,18 @@ type UserModel = Document & {
         image: string;
         id: string;
         proiritety: boolean;
+        email: string;
+        password: string;
+        userName: string;
+        userGender: string;
+        userCountry: string;
+        userRole: string[];
+        individualStyles: string[];
 };
 
 const userShema = new Schema(
   {
-    fullName: {
+    userName: {
       type: Schema.Types.String,
       required: true,
     },
@@ -29,40 +36,24 @@ const userShema = new Schema(
       type: Schema.Types.String,
       required: true,
     },
-    information: {
+    userGender: {
       type: Schema.Types.String,
-      required: false,
+      required: true,
     },
-    interest: {
-      type: Schema.Types.Array,
-      required: false,
-    },
-    mobile_phone: {
+    userCountry: {
       type: Schema.Types.String,
-      required: false,
+      required: true,
     },
-    followers: {
+    userRole: {
       type: Schema.Types.Array,
-      required: false,
+      required: true,
     },
-    following: {
+    individualStyles: {
       type: Schema.Types.Array,
-      required: false,
-    },
-    posts: {
-      type: Schema.Types.Array,
-      required: false,
-    },
-    image: {
-      type: Schema.Types.String,
-      required: false,
+      required: true,
     },
     id: {
       type: Schema.Types.String,
-      required: false,
-    },
-    proiritety: {
-      type: Schema.Types.Boolean,
       required: false,
     },
   },

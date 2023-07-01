@@ -21,6 +21,7 @@ const findByEmail = async (value: string) =>
 const insertUser = async (req: Request, res: Response) => {
         const { password } = req.body.data;
         const { data } = req.body;
+        console.log('insertUser', req.body);
         const salt = crypto.randomBytes(16).toString('base64');
         if (password) {
                 const hash = crypto.createHmac('sha512', salt).update(password).digest('base64');
@@ -28,8 +29,8 @@ const insertUser = async (req: Request, res: Response) => {
                 if (data.email) {
                         findByEmail(data.email).then((result: any) => {
                                 if (!result[0]) {
-                                        if (!data.fullName) {
-                                                res.status(400).send({ message: 'Field fullName is required.', code: 400 });
+                                        if (!data.userName) {
+                                                res.status(400).send({ message: 'Field userName is required.', code: 400 });
                                         } else {
                                                 return createUser(data).then((createdUser?: string | unknown | any) => {
                                                         // eslint-disable-next-line no-underscore-dangle
@@ -40,7 +41,9 @@ const insertUser = async (req: Request, res: Response) => {
                                         res.status(418).json({ message: 'User already exists', code: 418 });
                                 }
                                 return result;
-                        });
+                        }).catch(() => {
+                                res.status(418).json({ message: 'User already exists', code: 418 });
+                        })
                 } else {
                         res.status(400).send({ message: 'Field email is required.', code: 400 });
                 }

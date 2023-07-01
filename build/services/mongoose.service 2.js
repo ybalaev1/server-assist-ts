@@ -35,56 +35,26 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.authValidFields = exports.matchUserAndPassword = void 0;
-var user_controller_1 = require("../../../users/controllers/user.controller");
-var crypto = require('crypto');
-var authValidFields = function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var data_auth;
+exports.connectToDatabase = void 0;
+var mongoose_1 = __importDefault(require("mongoose"));
+mongoose_1.default.Promise = global.Promise;
+var connectToDatabase = function (port) { return __awaiter(void 0, void 0, void 0, function () {
+    var options;
     return __generator(this, function (_a) {
-        data_auth = req.body.data_auth;
-        if (data_auth) {
-            if (!data_auth.email) {
-                return [2, res.status(422).json({ message: 'The fields email are required' })];
-            }
-            if (!data_auth.password) {
-                return [2, res.status(422).json({ message: 'The fields password are required' })];
-            }
+        switch (_a.label) {
+            case 0:
+                options = {
+                    useNewUrlParser: true, useFindAndModify: false, useCreateIndex: true, useUnifiedTopology: true,
+                };
+                return [4, mongoose_1.default.connect("mongodb+srv://y1balaev:rVsueR6Q4UYwG6pb@cluster0.tozhfgs.mongodb.net/testingDB?retryWrites=true&w=majority", options)];
+            case 1:
+                _a.sent();
+                return [2];
         }
-        else {
-            return [2, res.status(400).json({ message: 'Missing email and password' })];
-        }
-        return [2, next()];
     });
 }); };
-exports.authValidFields = authValidFields;
-var matchUserAndPassword = function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var data_auth;
-    return __generator(this, function (_a) {
-        data_auth = req.body.data_auth;
-        console.log('matchUserAndPassword', req.body);
-        (0, user_controller_1.findByEmail)(data_auth.email).then(function (user) {
-            if (!user[0]) {
-                res.status(404).send({ message: 'User not found' });
-            }
-            else {
-                var passField = user[0].password.split('$');
-                var salt = passField[0];
-                var hash = crypto.createHmac('sha512', salt).update(data_auth.password).digest('base64');
-                if (hash === passField[1]) {
-                    req.body = {
-                        userId: user[0]._id,
-                        email: user[0].email,
-                        provider: 'email',
-                        name: user[0].fullName,
-                    };
-                    return next();
-                }
-                return res.status(400).send({ message: 'Invalid e-mail or password' });
-            }
-            return next();
-        });
-        return [2];
-    });
-}); };
-exports.matchUserAndPassword = matchUserAndPassword;
+exports.connectToDatabase = connectToDatabase;

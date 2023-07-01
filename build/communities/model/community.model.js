@@ -19,35 +19,44 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Post = void 0;
+exports.Community = void 0;
 var mongoose_1 = __importStar(require("mongoose"));
-var postShema = new mongoose_1.Schema({
-    message: {
+var communityShema = new mongoose_1.Schema({
+    title: {
         type: mongoose_1.Schema.Types.String,
         required: true,
     },
-    user: {
+    description: {
         type: mongoose_1.Schema.Types.String,
         required: true,
     },
-    comments: {
+    images: {
         type: mongoose_1.Schema.Types.Array,
         required: false,
     },
-    likes: {
+    categories: {
         type: mongoose_1.Schema.Types.Array,
-        required: false,
+        required: true,
     },
-    image: {
+    location: {
         type: mongoose_1.Schema.Types.String,
+        required: true,
+    },
+    creatorUid: {
+        type: mongoose_1.Schema.Types.String,
+        required: true,
+    },
+    events: {
+        type: mongoose_1.Schema.Types.Array,
         required: false,
     },
-    createdAt: {
-        type: mongoose_1.Schema.Types.Number,
+    id: {
+        type: mongoose_1.Schema.Types.String,
         required: false,
     },
 }, {
-    collection: 'news',
+    collection: 'communities',
+    timestamps: true,
 });
-var Post = mongoose_1.default.model('Post', postShema);
-exports.Post = Post;
+var Community = mongoose_1.default.model('Community', communityShema);
+exports.Community = Community;

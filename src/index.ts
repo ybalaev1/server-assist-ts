@@ -1,13 +1,13 @@
 import { noticeRoute } from './notice/routes.config';
 import { userRoute } from './users/routes.config';
-import { connectToDatabase } from './services/mongoose.service';
+import { connectToDatabase } from './services/mongoose.service 2';
 import { authRoute } from './services/auth/auth.config';
 import { newsRoute } from './news/routes.config';
 import { chatsRoute } from './chats/routes.config';
 import * as socketMiddleware from './services/socket/middleware/socket.middleware';
+import { communitiesRoute } from './communities/routes.config';
 
 const cors = require('cors');
-const dotenv = require('dotenv');
 
 const express = require('express');
 
@@ -18,23 +18,24 @@ app.use(express.json());
 
 app.use('/', userRoute());
 app.use('/', authRoute());
-app.use('/', newsRoute());
-app.use('/', noticeRoute());
-app.use('/', chatsRoute());
+app.use('/', communitiesRoute());
+// app.use('/', newsRoute());
+// app.use('/', noticeRoute());
+// app.use('/', chatsRoute());
+
+const PORT = process.env.PORT || 4200;
 app.use(
   cors({
-    //     origin: 'http://localhost:3000',
-    origin: 'https://assistapp.club:4200',
+        origin: `http://localhost:${PORT}`,
+    // origin: 'https://assistapp.club:4200',
     optionsSuccessStatus: 200,
     credentials: true,
   }),
 );
-const PORT = process.env.PORT || 3000;
 const server = app.listen(PORT, async () => {
-  dotenv.config();
-  await connectToDatabase(3000);
+  await connectToDatabase();
   // eslint-disable-next-line no-console
-  console.log(`Server running on port ${4200}.`);
+  console.log(`Server running on port ${PORT}.`);
 });
 
 const io = require('socket.io')(server);

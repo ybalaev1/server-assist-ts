@@ -20,6 +20,7 @@ const authValidFields = async (req: Request, res: Response, next: NextFunction) 
 
 const matchUserAndPassword = async (req: Request, res: Response, next: NextFunction) => {
   const { data_auth } = req.body;
+  console.log('matchUserAndPassword', req.body);
   findByEmail(data_auth.email).then((user: any) => {
     if (!user[0]) {
       res.status(404).send({ message: 'User not found' });
