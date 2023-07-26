@@ -46,9 +46,29 @@ var userShema = new mongoose_1.Schema({
         type: mongoose_1.Schema.Types.Array,
         required: true,
     },
+    userImage: {
+        type: mongoose_1.Schema.Types.ObjectId,
+        required: false,
+    },
     individualStyles: {
         type: mongoose_1.Schema.Types.Array,
         required: true,
+    },
+    myCommunities: {
+        type: mongoose_1.Schema.Types.Array,
+        required: false,
+    },
+    joinedCommunities: {
+        type: mongoose_1.Schema.Types.Array,
+        required: false,
+    },
+    events: {
+        type: mongoose_1.Schema.Types.Array,
+        required: false,
+    },
+    goingEvent: {
+        type: mongoose_1.Schema.Types.Array,
+        required: false,
     },
     id: {
         type: mongoose_1.Schema.Types.String,

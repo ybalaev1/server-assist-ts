@@ -1,23 +1,4 @@
 "use strict";
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
-};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -56,28 +37,32 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var routes_config_1 = require("./users/routes.config");
-var mongoose_service_2_1 = require("./services/mongoose.service 2");
+var mongoose_service_1 = require("./services/mongoose.service");
 var auth_config_1 = require("./services/auth/auth.config");
-var socketMiddleware = __importStar(require("./services/socket/middleware/socket.middleware"));
 var routes_config_2 = require("./communities/routes.config");
+var routes_config_3 = require("./events/routes.config");
+var constants_config_1 = require("./services/constans/constants.config");
 var cors = require('cors');
 var express = require('express');
 var app = express();
-app.use(express.urlencoded({ extended: true }));
+app.use(express.json({ limit: '50mb' }));
+app.use(express.urlencoded({ limit: '50mb', extended: true, parameterLimit: 50000 }));
 app.use(express.json());
 app.use('/', (0, routes_config_1.userRoute)());
 app.use('/', (0, auth_config_1.authRoute)());
 app.use('/', (0, routes_config_2.communitiesRoute)());
-var PORT = process.env.PORT || 4200;
+app.use('/', (0, routes_config_3.eventsRoute)());
+app.use('/', (0, constants_config_1.constansRoute)());
+var PORT = process.env.PORT || 3000;
 app.use(cors({
-    origin: "http://localhost:" + PORT,
+    origin: "https://dance-connect-528e8b559e89.herokuapp.com:" + PORT,
     optionsSuccessStatus: 200,
     credentials: true,
 }));
 var server = app.listen(PORT, function () { return __awaiter(void 0, void 0, void 0, function () {
     return __generator(this, function (_a) {
         switch (_a.label) {
-            case 0: return [4, (0, mongoose_service_2_1.connectToDatabase)()];
+            case 0: return [4, (0, mongoose_service_1.connectToDatabase)()];
             case 1:
                 _a.sent();
                 console.log("Server running on port " + PORT + ".");
@@ -85,16 +70,3 @@ var server = app.listen(PORT, function () { return __awaiter(void 0, void 0, voi
         }
     });
 }); });
-var io = require('socket.io')(server);
-io.on('connection', function (socket) {
-    socketMiddleware.userInitCocket(socket);
-    socketMiddleware.messagingSocket(socket, 'message', io);
-    socketMiddleware.latestMessageSocket(socket);
-    socketMiddleware.typpingUserSocket(socket, io);
-    socket.on('notyping', function () { return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
-            io.emit('typing', '');
-            return [2];
-        });
-    }); });
-});

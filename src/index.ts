@@ -1,11 +1,10 @@
-import { noticeRoute } from './notice/routes.config';
 import { userRoute } from './users/routes.config';
 import { connectToDatabase } from './services/mongoose.service';
 import { authRoute } from './services/auth/auth.config';
-import { newsRoute } from './news/routes.config';
-import { chatsRoute } from './chats/routes.config';
-import * as socketMiddleware from './services/socket/middleware/socket.middleware';
+// import * as socketMiddleware from './services/socket/middleware/socket.middleware';
 import { communitiesRoute } from './communities/routes.config';
+import { eventsRoute } from './events/routes.config';
+import { constansRoute } from './services/constans/constants.config';
 
 const cors = require('cors');
 
@@ -13,15 +12,15 @@ const express = require('express');
 
 const app = express();
 
-app.use(express.urlencoded({ extended: true }));
+app.use(express.json({limit: '50mb'}));
+app.use(express.urlencoded({limit: '50mb', extended: true, parameterLimit:50000 }));
 app.use(express.json());
 
 app.use('/', userRoute());
 app.use('/', authRoute());
 app.use('/', communitiesRoute());
-// app.use('/', newsRoute());
-// app.use('/', noticeRoute());
-// app.use('/', chatsRoute());
+app.use('/', eventsRoute());
+app.use('/', constansRoute());
 
 const PORT = process.env.PORT || 3000;
 app.use(
@@ -38,18 +37,18 @@ const server = app.listen(PORT, async () => {
   console.log(`Server running on port ${PORT}.`);
 });
 
-const io = require('socket.io')(server);
+// const io = require('socket.io')(server);
 
-io.on('connection', (socket) => {
-  socketMiddleware.userInitCocket(socket);
-  socketMiddleware.messagingSocket(socket, 'message', io);
-  socketMiddleware.latestMessageSocket(socket);
-  socketMiddleware.typpingUserSocket(socket, io);
-  //   socket.on('online', async (id: string) => {
-  //     socket.emit('online', id);
-  //   });
+// io.on('connection', (socket) => {
+//   socketMiddleware.userInitCocket(socket);
+//   socketMiddleware.messagingSocket(socket, 'message', io);
+//   socketMiddleware.latestMessageSocket(socket);
+//   socketMiddleware.typpingUserSocket(socket, io);
+//   //   socket.on('online', async (id: string) => {
+//   //     socket.emit('online', id);
+//   //   });
 
-  socket.on('notyping', async () => {
-    io.emit('typing', '');
-  });
-});
+//   socket.on('notyping', async () => {
+//     io.emit('typing', '');
+//   });
+// });

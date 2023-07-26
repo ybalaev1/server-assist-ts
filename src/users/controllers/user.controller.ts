@@ -3,8 +3,27 @@ import crypto from 'crypto';
 import { User } from '../model/user.model';
 
 const createUser = async (userData: string[]) => {
-        const user = await User.create(userData);
+        const userD = await User.create(userData);
+        const user = {
+                ...userD,
+                userName: userD?.name ?? userD?.userName,
+                userGender: userD?.gender ?? userD?.userGender,
+                userCountry: userD?.country ?? userD?.userCountry,
+                userImage: userD?.image ?? userD?.userImage,
+                userRole: userD?.role ?? userD?.userRole,
+         }
         return user;
+};
+
+const userExistByEmail = async (req:Request, res: Response) => {
+        // console.log(req.params);
+        const {email} = req.params;
+        User.find({ 'email': email }).exec((err, result) => {
+                if (err) {
+                        res.status(404);
+                }
+                res.status(200).send({ user: result });
+        });
 };
 
 const findByEmail = async (value: string) =>
@@ -60,7 +79,7 @@ const getAllUsers = async (_req: Request, res: Response) => {
 
 const getUserById = async (req: Request, res: Response) => {
         const { id } = req.params;
-        const user = await User.findOne({ _id: id });
+        const user = await User.findOne({'id': id});
 
         if (!user) {
                 return res.status(404).json({ message: 'User not found' });
@@ -97,4 +116,4 @@ const deleteUser = async (req: Request, res: Response) => {
         return res.status(200).json({ message: 'User deleted successfully.' });
 };
 
-export { insertUser, deleteUser, getAllUsers, getUserById, updateUser, findByEmail };
+export { insertUser, deleteUser, getAllUsers, getUserById, updateUser, findByEmail, userExistByEmail };

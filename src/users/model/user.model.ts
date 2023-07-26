@@ -4,22 +4,24 @@ type UserModel = Document & {
         fullName: string;
         // email: string;
         // password: string;
-        information: string;
-        interest: string;
-        mobile_phone: string;
-        followers: string;
-        following: string;
-        posts: string;
-        image: string;
         id: string;
-        proiritety: boolean;
         email: string;
         password: string;
         userName: string;
         userGender: string;
         userCountry: string;
+        userImage: object;
+        name?: string;
+        gender?: string;
+        country?: string;
+        image?: object;
         userRole: string[];
+        role?: string[];
         individualStyles: string[];
+        myCommunities: string[];
+        joinedCommunities: string[];
+        events: string[];
+        goingEvent: string[];
 };
 
 const userShema = new Schema(
@@ -48,9 +50,29 @@ const userShema = new Schema(
       type: Schema.Types.Array,
       required: true,
     },
+    userImage: {
+      type: Schema.Types.ObjectId,
+      required: false,
+    },
     individualStyles: {
       type: Schema.Types.Array,
       required: true,
+    },
+    myCommunities: {
+      type: Schema.Types.Array,
+      required: false,
+    },
+    joinedCommunities: {
+      type: Schema.Types.Array,
+      required: false,
+    },
+    events: {
+      type: Schema.Types.Array,
+      required: false,
+    },
+    goingEvent: {
+      type: Schema.Types.Array,
+      required: false,
     },
     id: {
       type: Schema.Types.String,

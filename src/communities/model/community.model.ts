@@ -6,9 +6,17 @@ type CommunityModel = Document & {
         images: string[];
         categories: string[];
         location: string;
-        creatorUid: string;
+        // creatorUid: string;
         id: string;
+        eventsIds: string[];
         events: string[];
+        followers: string[];
+        creatorUid?: string;
+        creator: {
+          uid: string;
+          image: string;
+          name: string;
+        };
 };
 
 const communityShema = new Schema(
@@ -33,11 +41,19 @@ const communityShema = new Schema(
       type: Schema.Types.String,
       required: true,
     },
-    creatorUid: {
-      type: Schema.Types.String,
+    creator: {
+      type: Schema.Types.Mixed,
       required: true,
     },
+    eventsIds: {
+      type: Schema.Types.Array,
+      required: false,
+    },
     events: {
+      type: Schema.Types.Array,
+      required: false,
+    },
+    followers: {
       type: Schema.Types.Array,
       required: false,
     },

@@ -20,8 +20,8 @@ const authValidFields = async (req: Request, res: Response, next: NextFunction) 
 
 const matchUserAndPassword = async (req: Request, res: Response, next: NextFunction) => {
   const { data_auth } = req.body;
-  console.log('matchUserAndPassword', req.body);
   findByEmail(data_auth.email).then((user: any) => {
+    // console.log('matchUserAndPassword', user)
     if (!user[0]) {
       res.status(404).send({ message: 'User not found' });
     } else {
@@ -31,10 +31,10 @@ const matchUserAndPassword = async (req: Request, res: Response, next: NextFunct
       if (hash === passField[1]) {
         req.body = {
           // eslint-disable-next-line no-underscore-dangle
-          userId: user[0]._id,
+          userId: user[0].id,
           email: user[0].email,
           provider: 'email',
-          name: user[0].fullName,
+          name: user[0].userName,
         };
         return next();
       }
@@ -42,7 +42,9 @@ const matchUserAndPassword = async (req: Request, res: Response, next: NextFunct
       return res.status(400).send({ message: 'Invalid e-mail or password' });
     }
     return next();
-  });
+  }).catch((error) => {
+     return res.status(404).send({ message: 'User not found' });
+  })
 };
 
 export { matchUserAndPassword, authValidFields };

@@ -42,19 +42,32 @@ var user_model_1 = require("../../../users/model/user.model");
 var jwt = require('jsonwebtoken');
 var crypto = require('crypto');
 var jwtSecret = 'yUdmI2BvcLZ8g1lh3f9JztLlkL3NA9gQ';
-var login = function (req, res, next) {
-    try {
-        var token = jwt.sign(req.body, jwtSecret);
-        return res.status(200).send({
-            id: req.body.userId,
-            accessToken: token,
-        });
-    }
-    catch (error) {
-        res.status(500).send({ message: 'error' });
-    }
-    return next();
-};
+var login = function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+    var user, token, user_1;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4, user_model_1.User.findOne({ _id: req.body.userId })];
+            case 1:
+                user = _a.sent();
+                console.log('login user', user);
+                if (!!user) return [3, 2];
+                res.status(404);
+                return [3, 4];
+            case 2:
+                token = jwt.sign(req.body, jwtSecret);
+                return [4, user_model_1.User.findOne({ _id: req.body.userId })];
+            case 3:
+                user_1 = _a.sent();
+                res.status(200).send({
+                    id: req.body.userId,
+                    accessToken: token,
+                    user: user_1,
+                });
+                return [2, next()];
+            case 4: return [2];
+        }
+    });
+}); };
 exports.login = login;
 var validJWTNeeded = function (req, res, next) {
     if (req.headers.authorization) {

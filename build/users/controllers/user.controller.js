@@ -1,4 +1,15 @@
 "use strict";
+var __assign = (this && this.__assign) || function () {
+    __assign = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign.apply(this, arguments);
+};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -39,20 +50,36 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.findByEmail = exports.updateUser = exports.getUserById = exports.getAllUsers = exports.deleteUser = exports.insertUser = void 0;
+exports.userExistByEmail = exports.findByEmail = exports.updateUser = exports.getUserById = exports.getAllUsers = exports.deleteUser = exports.insertUser = void 0;
 var crypto_1 = __importDefault(require("crypto"));
 var user_model_1 = require("../model/user.model");
 var createUser = function (userData) { return __awaiter(void 0, void 0, void 0, function () {
-    var user;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
+    var userD, user;
+    var _a, _b, _c, _d, _e;
+    return __generator(this, function (_f) {
+        switch (_f.label) {
             case 0: return [4, user_model_1.User.create(userData)];
             case 1:
-                user = _a.sent();
+                userD = _f.sent();
+                user = __assign(__assign({}, userD), { userName: (_a = userD === null || userD === void 0 ? void 0 : userD.name) !== null && _a !== void 0 ? _a : userD === null || userD === void 0 ? void 0 : userD.userName, userGender: (_b = userD === null || userD === void 0 ? void 0 : userD.gender) !== null && _b !== void 0 ? _b : userD === null || userD === void 0 ? void 0 : userD.userGender, userCountry: (_c = userD === null || userD === void 0 ? void 0 : userD.country) !== null && _c !== void 0 ? _c : userD === null || userD === void 0 ? void 0 : userD.userCountry, userImage: (_d = userD === null || userD === void 0 ? void 0 : userD.image) !== null && _d !== void 0 ? _d : userD === null || userD === void 0 ? void 0 : userD.userImage, userRole: (_e = userD === null || userD === void 0 ? void 0 : userD.role) !== null && _e !== void 0 ? _e : userD === null || userD === void 0 ? void 0 : userD.userRole });
                 return [2, user];
         }
     });
 }); };
+var userExistByEmail = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var email;
+    return __generator(this, function (_a) {
+        email = req.params.email;
+        user_model_1.User.find({ 'email': email }).exec(function (err, result) {
+            if (err) {
+                res.status(404);
+            }
+            res.status(200).send({ user: result });
+        });
+        return [2];
+    });
+}); };
+exports.userExistByEmail = userExistByEmail;
 var findByEmail = function (value) { return __awaiter(void 0, void 0, void 0, function () {
     return __generator(this, function (_a) {
         return [2, new Promise(function (resolve, reject) {
@@ -127,7 +154,7 @@ var getUserById = function (req, res) { return __awaiter(void 0, void 0, void 0,
         switch (_a.label) {
             case 0:
                 id = req.params.id;
-                return [4, user_model_1.User.findOne({ _id: id })];
+                return [4, user_model_1.User.findOne({ 'id': id })];
             case 1:
                 user = _a.sent();
                 if (!user) {

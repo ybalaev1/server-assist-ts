@@ -43,17 +43,25 @@ exports.connectToDatabase = void 0;
 var mongoose_1 = __importDefault(require("mongoose"));
 mongoose_1.default.Promise = global.Promise;
 var connectToDatabase = function (port) { return __awaiter(void 0, void 0, void 0, function () {
-    var options;
+    var options, error_1;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
                 options = {
                     useNewUrlParser: true, useFindAndModify: false, useCreateIndex: true, useUnifiedTopology: true,
                 };
-                return [4, mongoose_1.default.connect("mongodb+srv://y1balaev:rVsueR6Q4UYwG6pb@cluster0.tozhfgs.mongodb.net/testingDB?retryWrites=true&w=majority", options)];
+                _a.label = 1;
             case 1:
+                _a.trys.push([1, 3, , 4]);
+                return [4, mongoose_1.default.connect("mongodb+srv://y1balaev:rVsueR6Q4UYwG6pb@cluster0.tozhfgs.mongodb.net/testingDB?retryWrites=true&w=majority", options)];
+            case 2:
                 _a.sent();
-                return [2];
+                return [3, 4];
+            case 3:
+                error_1 = _a.sent();
+                console.log('connectToDatabase', error_1);
+                return [3, 4];
+            case 4: return [2];
         }
     });
 }); };

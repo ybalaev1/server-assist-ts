@@ -19,9 +19,9 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Community = void 0;
+exports.Event = void 0;
 var mongoose_1 = __importStar(require("mongoose"));
-var communityShema = new mongoose_1.Schema({
+var eventShema = new mongoose_1.Schema({
     title: {
         type: mongoose_1.Schema.Types.String,
         required: true,
@@ -30,7 +30,7 @@ var communityShema = new mongoose_1.Schema({
         type: mongoose_1.Schema.Types.String,
         required: true,
     },
-    images: {
+    attendedPeople: {
         type: mongoose_1.Schema.Types.Array,
         required: false,
     },
@@ -38,33 +38,40 @@ var communityShema = new mongoose_1.Schema({
         type: mongoose_1.Schema.Types.Array,
         required: true,
     },
+    images: {
+        type: mongoose_1.Schema.Types.Array,
+        required: false,
+    },
+    communityUid: {
+        type: mongoose_1.Schema.Types.String,
+        required: false,
+    },
+    creator: {
+        type: mongoose_1.Schema.Types.Mixed,
+        required: false,
+    },
+    eventDate: {
+        type: mongoose_1.Schema.Types.Mixed,
+        required: false,
+    },
+    eventUid: {
+        type: mongoose_1.Schema.Types.String,
+        required: false,
+    },
     location: {
         type: mongoose_1.Schema.Types.String,
         required: true,
     },
-    creator: {
-        type: mongoose_1.Schema.Types.Mixed,
+    place: {
+        type: mongoose_1.Schema.Types.String,
         required: true,
     },
-    eventsIds: {
-        type: mongoose_1.Schema.Types.Array,
-        required: false,
-    },
-    events: {
-        type: mongoose_1.Schema.Types.Array,
-        required: false,
-    },
-    followers: {
-        type: mongoose_1.Schema.Types.Array,
-        required: false,
-    },
-    id: {
+    typeEvent: {
         type: mongoose_1.Schema.Types.String,
-        required: false,
+        required: true,
     },
 }, {
-    collection: 'communities',
-    timestamps: true,
+    collection: 'events',
 });
-var Community = mongoose_1.default.model('Community', communityShema);
-exports.Community = Community;
+var Event = mongoose_1.default.model('Event', eventShema);
+exports.Event = Event;

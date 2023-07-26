@@ -5,17 +5,34 @@ import { User } from '../../../users/model/user.model';
 const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
 const jwtSecret = 'yUdmI2BvcLZ8g1lh3f9JztLlkL3NA9gQ';
-const login = (req: Request, res: Response, next: NextFunction) => {
-  try {
+const login = async (req: Request, res: Response, next: NextFunction) => {
+  const user = await User.findOne({ _id: req.body.userId});
+  console.log('login user', user);
+  if (!user) {
+    res.status(404);
+  } else {
     const token = jwt.sign(req.body, jwtSecret);
-    return res.status(200).send({
+    const user = await User.findOne({ _id: req.body.userId});
+    res.status(200).send({
       id: req.body.userId,
       accessToken: token,
+      user: user,
     });
-  } catch (error) {
-    res.status(500).send({ message: 'error' });
+    return next();
   }
-  return next();
+  // try {
+  //   const token = jwt.sign(req.body, jwtSecret);
+  //   const user = await User.findOne({ _id: req.body.userId});
+  //   return res.status(200).send({
+  //     id: req.body.userId,
+  //     accessToken: token,
+  //     user: user,
+  //   });
+  // } catch (error) {
+  //   console.log('login error', error);
+  //   res.status(500);
+  // }
+  // return next();
 };
 
 const validJWTNeeded = (req: Request, res: Response, next: NextFunction) => {

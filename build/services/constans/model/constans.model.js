@@ -19,35 +19,19 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Post = void 0;
+exports.Constans = void 0;
 var mongoose_1 = __importStar(require("mongoose"));
-var postShema = new mongoose_1.Schema({
-    message: {
-        type: mongoose_1.Schema.Types.String,
-        required: true,
-    },
-    user: {
-        type: mongoose_1.Schema.Types.String,
-        required: true,
-    },
-    comments: {
+var constansShema = new mongoose_1.Schema({
+    typesEvents: {
         type: mongoose_1.Schema.Types.Array,
         required: false,
     },
-    likes: {
+    danceStyles: {
         type: mongoose_1.Schema.Types.Array,
-        required: false,
-    },
-    image: {
-        type: mongoose_1.Schema.Types.String,
-        required: false,
-    },
-    createdAt: {
-        type: mongoose_1.Schema.Types.Number,
         required: false,
     },
 }, {
-    collection: 'news',
+    collection: 'appConstans',
 });
-var Post = mongoose_1.default.model('Post', postShema);
-exports.Post = Post;
+var Constans = mongoose_1.default.model('Constants', constansShema);
+exports.Constans = Constans;

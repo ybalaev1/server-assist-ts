@@ -36,16 +36,17 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.validPostFields = void 0;
-var validPostFields = function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+exports.getConstants = void 0;
+var constans_model_1 = require("../model/constans.model");
+var getConstants = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var appConstants;
     return __generator(this, function (_a) {
-        if (req.body) {
-            req.body.user = req.body.jwt.userId;
-            if (!req.body.message) {
-                return [2, res.status(422).json({ message: 'The fields message are required' })];
-            }
+        switch (_a.label) {
+            case 0: return [4, constans_model_1.Constans.find().exec()];
+            case 1:
+                appConstants = _a.sent();
+                return [2, res.status(200).json({ data: appConstants })];
         }
-        return [2, next()];
     });
 }); };
-exports.validPostFields = validPostFields;
+exports.getConstants = getConstants;
