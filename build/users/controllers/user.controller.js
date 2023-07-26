@@ -170,7 +170,7 @@ var updateUser = function (req, res) { return __awaiter(void 0, void 0, void 0, 
                         switch (_a.label) {
                             case 0:
                                 if (!!result[0]) return [3, 3];
-                                return [4, user_model_1.User.updateOne({ _id: id }, req.body)];
+                                return [4, user_model_1.User.updateOne({ 'id': id }, req.body)];
                             case 1:
                                 _a.sent();
                                 return [4, user_model_1.User.findById(id)];
@@ -181,10 +181,10 @@ var updateUser = function (req, res) { return __awaiter(void 0, void 0, void 0, 
                         }
                     });
                 }); });
-                return [4, user_model_1.User.updateOne({ _id: id }, req.body)];
+                return [4, user_model_1.User.updateOne({ 'id': id }, req.body)];
             case 2:
                 _a.sent();
-                return [4, user_model_1.User.findById({ _id: id })];
+                return [4, user_model_1.User.findById({ 'id': id })];
             case 3:
                 userUpdated = _a.sent();
                 return [2, res.status(200).send({ data: userUpdated })];

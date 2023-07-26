@@ -26,7 +26,7 @@ const insertCommunity = async (req: Request, res: Response) => {
                         return createCommunity(requestData).then(async (community: any) => {
                                 const myCommunities = !user?.myCommunities?.length ?  [community?.id] : [...user?.myCommunities, community?.id];
                                 await User.updateOne({ 'id': jwt?.userId }, {$set: {myCommunities: myCommunities}});
-                                await Community.updateOne({ '_id': community?.id }, {$set: {id: community?.id}});
+                                await Community.updateOne({ 'id': community?.id }, {$set: {id: community?.id}});
 
                                 return res.status(200).json({ ...community?.toJSON() });
                         }).catch((er) => {
@@ -85,15 +85,16 @@ const deleteCommunity = async (req: Request, res: Response) => {
 const subscribeCommunity = async (req: Request, res: Response) => {
         const { id } = req.params;
         const { jwt } = req.body;
+        
         const community = await Community.findOne({ 'id': id});
         const user = await User.findOne({ 'id': jwt?.userId });
-        
+
         const userUid = jwt?.userId;
         const userCommunities = !user?.joinedCommunities?.length ?  [id] : [...user?.joinedCommunities, id];
         const followers = !community?.followers?.length ? [userUid] : [...community?.followers, {'userUid': userUid}];
       
         await User.updateOne({ 'id': jwt?.userId }, {$set: {joinedCommunities: userCommunities}});
-        await Event.updateOne({ 'id': id }, {$set: {followers: followers}});
+        await Community.updateOne({ 'id': id }, {$set: {followers: followers}});
         const communityUpdated = await Community.findOne({ 'id': id });
       
         return res.status(200).send({ ...communityUpdated?.toJSON() });

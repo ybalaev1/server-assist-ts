@@ -6,21 +6,33 @@ const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
 const jwtSecret = 'yUdmI2BvcLZ8g1lh3f9JztLlkL3NA9gQ';
 const login = async (req: Request, res: Response, next: NextFunction) => {
-  // const user = await User.findOne({ _id: req.body.userId});
-  const token = jwt.sign(req.body.data_auth, jwtSecret);
+  // const token = jwt.sign(req.body.data_auth, jwtSecret);
+  // console.log('user', req.body?.data_auth, user);
 
   const {email} = req.body?.data_auth;
-  console.log(email)
-  User.find({ 'email': email }).exec((err, result) => {
+  User.find({ 'email': email }).exec(async (err, user) => {
+    const userData = await User.findOne({ 'id': user[0]?.id});
+    const body = {
+      userId: user[0].id,
+      email: email,
+      provider: 'email',
+    }
+    const token = jwt.sign(body, jwtSecret);
+    res.status(200).send({
+        id: body.userId,
+        accessToken: token,
+        user: userData,
+      });
           // if (err) {
           //         res.status(404);
           // }
           // res.status(200).send({ user: result });
-          res.status(200).send({
-            id: req.body.userId,
-            accessToken: token,
-            user: result,
-          });
+          // res.status(200).send({
+          //   id: user[0]?.id,
+          //   accessToken: token,
+          //   user: user,
+          // });
+          // console.log('afaf', user)
           return next();
  });
   // console.log('login user', user);
@@ -37,13 +49,13 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
   //   return next();
   // }
   // try {
-  //   const token = jwt.sign(req.body, jwtSecret);
-  //   const user = await User.findOne({ _id: req.body.userId});
-  //   return res.status(200).send({
-  //     id: req.body.userId,
-  //     accessToken: token,
-  //     user: user,
-  //   });
+    // const token = jwt.sign(req.body, jwtSecret);
+    // const user = await User.findOne({ _id: req.body.userId});
+    // return res.status(200).send({
+    //   id: req.body.userId,
+    //   accessToken: token,
+    //   user: user,
+    // });
   // } catch (error) {
   //   console.log('login error', error);
   //   res.status(500);

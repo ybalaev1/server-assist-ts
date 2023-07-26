@@ -86,14 +86,14 @@ const updateUser = async (req: Request, res: Response) => {
         try {
                 findByEmail(email).then(async (result: any) => {
                         if (!result[0]) {
-                                await User.updateOne({ _id: id }, req.body);
+                                await User.updateOne({ 'id': id }, req.body);
                                 const userUpdated = await User.findById(id);
                                 return res.status(200).send({ data: userUpdated });
                         }
                         return res.status(403).json({ message: 'User with this email already exists', code: 403 });
                 });
-                await User.updateOne({ _id: id }, req.body);
-                const userUpdated = await User.findById({ _id: id });
+                await User.updateOne({ 'id': id }, req.body);
+                const userUpdated = await User.findById({ 'id': id });
 
                 return res.status(200).send({ data: userUpdated });
         } catch (error) {

@@ -43,20 +43,33 @@ var jwt = require('jsonwebtoken');
 var crypto = require('crypto');
 var jwtSecret = 'yUdmI2BvcLZ8g1lh3f9JztLlkL3NA9gQ';
 var login = function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var token, email;
+    var email;
     var _a;
     return __generator(this, function (_b) {
-        token = jwt.sign(req.body.data_auth, jwtSecret);
         email = ((_a = req.body) === null || _a === void 0 ? void 0 : _a.data_auth).email;
-        console.log(email);
-        user_model_1.User.find({ 'email': email }).exec(function (err, result) {
-            res.status(200).send({
-                id: req.body.userId,
-                accessToken: token,
-                user: result,
+        user_model_1.User.find({ 'email': email }).exec(function (err, user) { return __awaiter(void 0, void 0, void 0, function () {
+            var userData, body, token;
+            var _a;
+            return __generator(this, function (_b) {
+                switch (_b.label) {
+                    case 0: return [4, user_model_1.User.findOne({ 'id': (_a = user[0]) === null || _a === void 0 ? void 0 : _a.id })];
+                    case 1:
+                        userData = _b.sent();
+                        body = {
+                            userId: user[0].id,
+                            email: email,
+                            provider: 'email',
+                        };
+                        token = jwt.sign(body, jwtSecret);
+                        res.status(200).send({
+                            id: body.userId,
+                            accessToken: token,
+                            user: userData,
+                        });
+                        return [2, next()];
+                }
             });
-            return next();
-        });
+        }); });
         return [2];
     });
 }); };

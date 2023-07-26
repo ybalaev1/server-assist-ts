@@ -59,7 +59,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.unSubscribeCommunity = exports.subscribeCommunity = exports.insertCommunity = exports.getCommunityById = exports.getAllCommunities = exports.updateCommunity = exports.deleteCommunity = void 0;
 var community_model_1 = require("../model/community.model");
 var user_model_1 = require("../../users/model/user.model");
-var event_model_1 = require("../../events/model/event.model");
 var createCommunity = function (data) { return __awaiter(void 0, void 0, void 0, function () {
     var community;
     return __generator(this, function (_a) {
@@ -99,7 +98,7 @@ var insertCommunity = function (req, res) { return __awaiter(void 0, void 0, voi
                                             return [4, user_model_1.User.updateOne({ 'id': jwt === null || jwt === void 0 ? void 0 : jwt.userId }, { $set: { myCommunities: myCommunities } })];
                                         case 1:
                                             _b.sent();
-                                            return [4, community_model_1.Community.updateOne({ '_id': community === null || community === void 0 ? void 0 : community.id }, { $set: { id: community === null || community === void 0 ? void 0 : community.id } })];
+                                            return [4, community_model_1.Community.updateOne({ 'id': community === null || community === void 0 ? void 0 : community.id }, { $set: { id: community === null || community === void 0 ? void 0 : community.id } })];
                                         case 2:
                                             _b.sent();
                                             return [2, res.status(200).json(__assign({}, community === null || community === void 0 ? void 0 : community.toJSON()))];
@@ -220,7 +219,7 @@ var subscribeCommunity = function (req, res) { return __awaiter(void 0, void 0, 
                 return [4, user_model_1.User.updateOne({ 'id': jwt === null || jwt === void 0 ? void 0 : jwt.userId }, { $set: { joinedCommunities: userCommunities } })];
             case 3:
                 _c.sent();
-                return [4, event_model_1.Event.updateOne({ 'id': id }, { $set: { followers: followers } })];
+                return [4, community_model_1.Community.updateOne({ 'id': id }, { $set: { followers: followers } })];
             case 4:
                 _c.sent();
                 return [4, community_model_1.Community.findOne({ 'id': id })];
