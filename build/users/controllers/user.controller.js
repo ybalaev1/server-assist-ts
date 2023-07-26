@@ -107,20 +107,9 @@ var insertUser = function (req, res) { return __awaiter(void 0, void 0, void 0, 
             data.password = salt + "$" + hash;
             if (data.email) {
                 findByEmail(data.email).then(function (result) {
-                    if (!result[0]) {
-                        if (!data.userName) {
-                            res.status(400).send({ message: 'Field userName is required.', code: 400 });
-                        }
-                        else {
-                            return createUser(data).then(function (createdUser) {
-                                res.status(200).json({ id: createdUser._id });
-                            });
-                        }
-                    }
-                    else {
-                        res.status(418).json({ message: 'User already exists', code: 418 });
-                    }
-                    return result;
+                    return createUser(data).then(function (createdUser) {
+                        res.status(200).json({ id: createdUser._id });
+                    });
                 }).catch(function () {
                     res.status(418).json({ message: 'User already exists', code: 418 });
                 });

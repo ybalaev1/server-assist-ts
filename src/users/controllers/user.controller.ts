@@ -47,19 +47,12 @@ const insertUser = async (req: Request, res: Response) => {
                 data.password = `${salt}$${hash}`;
                 if (data.email) {
                         findByEmail(data.email).then((result: any) => {
-                                if (!result[0]) {
-                                        if (!data.userName) {
-                                                res.status(400).send({ message: 'Field userName is required.', code: 400 });
-                                        } else {
-                                                return createUser(data).then((createdUser?: string | unknown | any) => {
-                                                        // eslint-disable-next-line no-underscore-dangle
-                                                        res.status(200).json({ id: createdUser._id });
-                                                });
-                                        }
-                                } else {
-                                        res.status(418).json({ message: 'User already exists', code: 418 });
-                                }
-                                return result;
+                                // if (!result[0]) {
+                                        return createUser(data).then((createdUser?: string | unknown | any) => {
+                                                // eslint-disable-next-line no-underscore-dangle
+                                                res.status(200).json({ id: createdUser._id });
+                                        });
+                                // }
                         }).catch(() => {
                                 res.status(418).json({ message: 'User already exists', code: 418 });
                         })
