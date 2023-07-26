@@ -6,20 +6,36 @@ const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
 const jwtSecret = 'yUdmI2BvcLZ8g1lh3f9JztLlkL3NA9gQ';
 const login = async (req: Request, res: Response, next: NextFunction) => {
-  const user = await User.findOne({ _id: req.body.userId});
-  console.log('login user', user);
-  if (!user) {
-    res.status(404);
-  } else {
-    const token = jwt.sign(req.body, jwtSecret);
-    const user = await User.findOne({ _id: req.body.userId});
-    res.status(200).send({
-      id: req.body.userId,
-      accessToken: token,
-      user: user,
-    });
-    return next();
-  }
+  // const user = await User.findOne({ _id: req.body.userId});
+  const token = jwt.sign(req.body.data_auth, jwtSecret);
+
+  const {email} = req.body?.data_auth;
+  console.log(email)
+  User.find({ 'email': email }).exec((err, result) => {
+          // if (err) {
+          //         res.status(404);
+          // }
+          // res.status(200).send({ user: result });
+          res.status(200).send({
+            id: req.body.userId,
+            accessToken: token,
+            user: result,
+          });
+          return next();
+ });
+  // console.log('login user', user);
+  // if (!user) {
+  //   res.status(404);
+  // } else {
+  //   const token = jwt.sign(req.body, jwtSecret);
+  //   const user = await User.findOne({ _id: req.body.userId});
+  //   res.status(200).send({
+  //     id: req.body.userId,
+  //     accessToken: token,
+  //     user: user,
+  //   });
+  //   return next();
+  // }
   // try {
   //   const token = jwt.sign(req.body, jwtSecret);
   //   const user = await User.findOne({ _id: req.body.userId});
