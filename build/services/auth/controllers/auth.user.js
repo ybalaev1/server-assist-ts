@@ -60,18 +60,18 @@ var login = function (req, res, next) { return __awaiter(void 0, void 0, void 0,
         email = ((_a = req.body) === null || _a === void 0 ? void 0 : _a.data_auth).email;
         user_model_1.User.find({ 'email': email }).exec(function (err, user) { return __awaiter(void 0, void 0, void 0, function () {
             var userData, body, us, token;
-            var _a;
-            return __generator(this, function (_b) {
-                switch (_b.label) {
+            var _a, _b, _c, _d, _e;
+            return __generator(this, function (_f) {
+                switch (_f.label) {
                     case 0: return [4, user_model_1.User.findOne({ 'id': (_a = user[0]) === null || _a === void 0 ? void 0 : _a.id })];
                     case 1:
-                        userData = _b.sent();
+                        userData = _f.sent();
                         body = {
                             userId: user[0].id,
                             email: email,
                             provider: 'email',
                         };
-                        us = __assign(__assign({}, userData), { userName: userData === null || userData === void 0 ? void 0 : userData.name, userCountry: userData === null || userData === void 0 ? void 0 : userData.country, userGender: userData === null || userData === void 0 ? void 0 : userData.gender, userImage: userData === null || userData === void 0 ? void 0 : userData.image });
+                        us = __assign(__assign({}, userData), { userName: (_b = user[0]) === null || _b === void 0 ? void 0 : _b.name, userCountry: (_c = user[0]) === null || _c === void 0 ? void 0 : _c.country, userGender: (_d = user[0]) === null || _d === void 0 ? void 0 : _d.gender, userImage: (_e = user[0]) === null || _e === void 0 ? void 0 : _e.image });
                         token = jwt.sign(body, jwtSecret);
                         res.status(200).send({
                             id: body.userId,

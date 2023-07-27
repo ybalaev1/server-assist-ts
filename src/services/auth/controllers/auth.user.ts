@@ -19,10 +19,10 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
     }
     const us = {
       ...userData,
-      userName: userData?.name,
-      userCountry: userData?.country,
-      userGender: userData?.gender,
-      userImage: userData?.image,
+      userName: user[0]?.name,
+      userCountry: user[0]?.country,
+      userGender: user[0]?.gender,
+      userImage: user[0]?.image,
     }
     const token = jwt.sign(body, jwtSecret);
     res.status(200).send({
