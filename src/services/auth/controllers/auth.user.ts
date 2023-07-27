@@ -7,26 +7,28 @@ const crypto = require('crypto');
 const jwtSecret = 'yUdmI2BvcLZ8g1lh3f9JztLlkL3NA9gQ';
 const login = async (req: Request, res: Response, next: NextFunction) => {
   // const token = jwt.sign(req.body.data_auth, jwtSecret);
-  // console.log('user', req.body?.data_auth, user);
+  console.log('user', req.body);
 
   const {email} = req.body?.data_auth;
   User.find({ 'email': email }).exec(async (err, user) => {
-    // const userData = await User.findOne({ 'id': user[0]?.id});
+    if (err) {
+      console.log('err', err)
+    }
     const body = {
       userId: user[0].id,
       email: email,
       provider: 'email',
     }
-    const use = {
-      user: user[0],
-    }
+    // const use = {
+    //   user: user[0],
+    // }
     const token = jwt.sign(body, jwtSecret);
-    // console.log('login',  use);
+    console.log('login',  user[0]);
 
     res.status(200).send({
         id: body.userId,
         accessToken: token,
-        user: use?.user,
+        user: user[0],
       });
           // if (err) {
           //         res.status(404);

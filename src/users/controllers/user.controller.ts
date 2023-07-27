@@ -22,7 +22,7 @@ const userExistByEmail = async (req:Request, res: Response) => {
                 if (err) {
                         res.status(404);
                 }
-                res.status(200).send({ user: result });
+                res.status(200).send({ user: result[0] });
         });
 };
 
@@ -81,22 +81,27 @@ const getUserById = async (req: Request, res: Response) => {
 };
 
 const updateUser = async (req: Request, res: Response) => {
-        const { id } = req.params;
+        // const { id } = req.params;
+        const { jwt } = req.body;
+        const userUid = jwt?.userId;
+
         const { email } = req.body;
+        console.log('updateUser', req.body);
         try {
-                findByEmail(email).then(async (result: any) => {
-                        if (!result[0]) {
-                                await User.updateOne({ 'id': id }, req.body);
-                                const userUpdated = await User.findById(id);
-                                return res.status(200).send({ data: userUpdated });
-                        }
-                        return res.status(403).json({ message: 'User with this email already exists', code: 403 });
-                });
-                await User.updateOne({ 'id': id }, req.body);
-                const userUpdated = await User.findById({ 'id': id });
+                // findByEmail(email).then(async (result: any) => {
+                //         if (!result[0]) {
+                //                 await User.updateOne({ 'id': userUid }, req.body);
+                //                 const userUpdated = await User.findOne({'id' :userUid});
+                //                 return res.status(200).send({ data: userUpdated });
+                //         }
+                //         return res.status(403).json({ message: 'User with this email already exists', code: 403 });
+                // });
+                await User.updateOne({ 'id': userUid }, req.body);
+                const userUpdated = await User.findOne({ 'id': userUid });
 
                 return res.status(200).send({ data: userUpdated });
         } catch (error) {
+                console.log('er', error)
                 return res.status(404).json({ message: 'User not found', code: 404 });
         }
 };

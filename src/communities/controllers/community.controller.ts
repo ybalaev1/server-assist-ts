@@ -12,7 +12,7 @@ const createCommunity = async (data: any) => {
 const insertCommunity = async (req: Request, res: Response) => {
         const { data } = req.body;
         const { jwt } = req.body;
-        const user = await User.findById({ 'id': jwt?.userId });
+        const user = await User.findOne({ 'id': jwt?.userId });
         const requestData = {
                 ...data,
                 creator: {
@@ -24,11 +24,16 @@ const insertCommunity = async (req: Request, res: Response) => {
         if (data.title) {
                 if (data.description) {
                         return createCommunity(requestData).then(async (community: any) => {
-                                const myCommunities = !user?.myCommunities?.length ?  [community?.id] : [...user?.myCommunities, community?.id];
+                                console.log('comm', community);
+                                const myCommunities = !user?.myCommunities?.length ?  [community?._id] : [...user?.myCommunities, community?._id];
                                 await User.updateOne({ 'id': jwt?.userId }, {$set: {myCommunities: myCommunities}});
-                                await Community.updateOne({ 'id': community?.id }, {$set: {id: community?.id}});
+                                await Community.updateOne({_id: community?._id}, {'id': community?._id});
+                                const data = {
+                                        ...community?.toJSON(),
+                                        id: community?._id,
+                                }
 
-                                return res.status(200).json({ ...community?.toJSON() });
+                                return res.status(200).json({ ...data });
                         }).catch((er) => {
                                 return res.status(500).json({ error: er})
                         })
@@ -71,10 +76,10 @@ const updateCommunity = async (req: Request, res: Response) => {
 
 const deleteCommunity = async (req: Request, res: Response) => {
         const { id } = req.params;
-        const community = await Community.findById({ 'id': id });
+        const community = await Community.findOne({ 'id': id });
         const creatorId = community?.creatorUid || community?.creator?.uid;
-        const user = await User.findById({ 'id': creatorId });
-        const communities = user?.myCommunities?.filter(i => i.toString() !== id);
+        const user = await User.findOne({ 'id': creatorId });
+        const communities = user?.myCommunities?.filter(i => i !== id);
         
         await User.updateOne({ 'id': creatorId }, {$set: {myCommunities: communities}});
         await Community.findByIdAndDelete(id);
@@ -93,7 +98,7 @@ const subscribeCommunity = async (req: Request, res: Response) => {
         const userCommunities = !user?.joinedCommunities?.length ?  [id] : [...user?.joinedCommunities, id];
         const followers = !community?.followers?.length ? [userUid] : [...community?.followers, {'userUid': userUid}];
       
-        await User.updateOne({ 'id': jwt?.userId }, {$set: {joinedCommunities: userCommunities}});
+        await User.updateOne({ 'id': userUid }, {$set: {joinedCommunities: userCommunities}});
         await Community.updateOne({ 'id': id }, {$set: {followers: followers}});
         const communityUpdated = await Community.findOne({ 'id': id });
       

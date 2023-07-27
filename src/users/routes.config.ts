@@ -10,7 +10,7 @@ const userRoute = () => {
         app.get('/users/', [validJWTNeeded, getAllUsers]);
         app.get('/user/:email', userExistByEmail);
         app.get('/users/:id', [validJWTNeeded, getUserById]);
-        app.post('/users/:id/update', [validJWTNeeded, updateUser]);
+        app.post('/user/update', [validJWTNeeded, updateUser]);
         app.delete('/users/:id', [validJWTNeeded, deleteUser]);
         // app.post('/users/:id/followers', [validJWTNeeded, setFollowId]);
         // app.delete('/users/:id/followers', [validJWTNeeded, removeFollowId]);

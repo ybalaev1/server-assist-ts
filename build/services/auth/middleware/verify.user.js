@@ -63,11 +63,10 @@ var matchUserAndPassword = function (req, res, next) { return __awaiter(void 0, 
     return __generator(this, function (_a) {
         data_auth = req.body.data_auth;
         (0, user_controller_1.findByEmail)(data_auth.email).then(function (user) {
-            if (!user[0]) {
-                res.status(404).send({ message: 'User not found' });
-            }
-            else {
+            console.log('matchUserAndPassword', user[0]);
+            if (user[0]) {
                 var passField = user[0].password.split('$');
+                console.log('pass', passField, user[0]);
                 var salt = passField[0];
                 var hash = crypto.createHmac('sha512', salt).update(data_auth.password).digest('base64');
                 if (hash === passField[1]) {
@@ -80,6 +79,9 @@ var matchUserAndPassword = function (req, res, next) { return __awaiter(void 0, 
                     return next();
                 }
                 return res.status(400).send({ message: 'Invalid e-mail or password' });
+            }
+            else {
+                res.status(404).send({ message: 'User not found' });
             }
             return next();
         }).catch(function (error) {

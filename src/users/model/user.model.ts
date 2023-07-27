@@ -10,7 +10,7 @@ type UserModel = Document & {
         userName: string;
         userGender: string;
         userCountry: string;
-        userImage: object;
+        userImage?: object;
         name?: string;
         gender?: string;
         country?: string;

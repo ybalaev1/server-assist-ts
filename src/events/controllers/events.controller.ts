@@ -66,9 +66,14 @@ const insertEvent = async (req: Request, res: Response) => {
       await User.updateOne({ 'id': jwt?.userId }, {$set: {goingEvent: userEvents}});
       await User.updateOne({ 'id': jwt?.userId }, {$set: {events: userEvents}});
       await Community.updateOne({ 'id': data.communityUid }, {$set: {eventsIds: events}});
-      await Event.updateOne({ 'id': event?.id }, {$set: {id: event?.id}});
+      await Event.updateOne({_id: event?._id}, {'id': event?._id});
+                                // await Event.updateOne({ 'id': event?.id }, {$set: {id: event?.id}});
+      const dataEvent = { 
+        ...event?.toJSON(),
+        id: event?._id,
+      }
       
-      return res.status(200).json({ ...event?.toJSON() });
+      return res.status(200).json({ ...dataEvent });
 
     })
 }
@@ -91,8 +96,8 @@ const deleteEvent = async (req: Request, res: Response) => {
         const user = await User.findOne({ 'id': jwt?.userId });
         const community = await Community.findOne({ 'id': event?.communityUid });
 
-        const userEvents = user?.events?.filter(i => i.toString() !== id);
-        const events = community?.eventsIds?.filter(i => i.toString() !== id);
+        const userEvents = user?.events?.filter(i => i !== id);
+        const events = community?.eventsIds?.filter(i => i !== id);
 
         await User.updateOne({ 'id': jwt?.userId }, {$set: {events: userEvents}});
         await User.updateOne({ 'id': jwt?.userId }, {$set: {goingEvent: userEvents}});

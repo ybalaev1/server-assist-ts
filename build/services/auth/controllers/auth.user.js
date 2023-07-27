@@ -46,23 +46,25 @@ var login = function (req, res, next) { return __awaiter(void 0, void 0, void 0,
     var email;
     var _a;
     return __generator(this, function (_b) {
+        console.log('user', req.body);
         email = ((_a = req.body) === null || _a === void 0 ? void 0 : _a.data_auth).email;
         user_model_1.User.find({ 'email': email }).exec(function (err, user) { return __awaiter(void 0, void 0, void 0, function () {
-            var body, use, token;
+            var body, token;
             return __generator(this, function (_a) {
+                if (err) {
+                    console.log('err', err);
+                }
                 body = {
                     userId: user[0].id,
                     email: email,
                     provider: 'email',
                 };
-                use = {
-                    user: user[0],
-                };
                 token = jwt.sign(body, jwtSecret);
+                console.log('login', user[0]);
                 res.status(200).send({
                     id: body.userId,
                     accessToken: token,
-                    user: use === null || use === void 0 ? void 0 : use.user,
+                    user: user[0],
                 });
                 return [2, next()];
             });

@@ -78,7 +78,7 @@ var insertCommunity = function (req, res) { return __awaiter(void 0, void 0, voi
             case 0:
                 data = req.body.data;
                 jwt = req.body.jwt;
-                return [4, user_model_1.User.findById({ 'id': jwt === null || jwt === void 0 ? void 0 : jwt.userId })];
+                return [4, user_model_1.User.findOne({ 'id': jwt === null || jwt === void 0 ? void 0 : jwt.userId })];
             case 1:
                 user = _b.sent();
                 requestData = __assign(__assign({}, data), { creator: {
@@ -89,19 +89,21 @@ var insertCommunity = function (req, res) { return __awaiter(void 0, void 0, voi
                 if (data.title) {
                     if (data.description) {
                         return [2, createCommunity(requestData).then(function (community) { return __awaiter(void 0, void 0, void 0, function () {
-                                var myCommunities;
+                                var myCommunities, data;
                                 var _a;
                                 return __generator(this, function (_b) {
                                     switch (_b.label) {
                                         case 0:
-                                            myCommunities = !((_a = user === null || user === void 0 ? void 0 : user.myCommunities) === null || _a === void 0 ? void 0 : _a.length) ? [community === null || community === void 0 ? void 0 : community.id] : __spreadArray(__spreadArray([], user === null || user === void 0 ? void 0 : user.myCommunities, true), [community === null || community === void 0 ? void 0 : community.id], false);
+                                            console.log('comm', community);
+                                            myCommunities = !((_a = user === null || user === void 0 ? void 0 : user.myCommunities) === null || _a === void 0 ? void 0 : _a.length) ? [community === null || community === void 0 ? void 0 : community._id] : __spreadArray(__spreadArray([], user === null || user === void 0 ? void 0 : user.myCommunities, true), [community === null || community === void 0 ? void 0 : community._id], false);
                                             return [4, user_model_1.User.updateOne({ 'id': jwt === null || jwt === void 0 ? void 0 : jwt.userId }, { $set: { myCommunities: myCommunities } })];
                                         case 1:
                                             _b.sent();
-                                            return [4, community_model_1.Community.updateOne({ 'id': community === null || community === void 0 ? void 0 : community.id }, { $set: { id: community === null || community === void 0 ? void 0 : community.id } })];
+                                            return [4, community_model_1.Community.updateOne({ _id: community === null || community === void 0 ? void 0 : community._id }, { 'id': community === null || community === void 0 ? void 0 : community._id })];
                                         case 2:
                                             _b.sent();
-                                            return [2, res.status(200).json(__assign({}, community === null || community === void 0 ? void 0 : community.toJSON()))];
+                                            data = __assign(__assign({}, community === null || community === void 0 ? void 0 : community.toJSON()), { id: community === null || community === void 0 ? void 0 : community._id });
+                                            return [2, res.status(200).json(__assign({}, data))];
                                     }
                                 });
                             }); }).catch(function (er) {
@@ -180,14 +182,14 @@ var deleteCommunity = function (req, res) { return __awaiter(void 0, void 0, voi
         switch (_c.label) {
             case 0:
                 id = req.params.id;
-                return [4, community_model_1.Community.findById({ 'id': id })];
+                return [4, community_model_1.Community.findOne({ 'id': id })];
             case 1:
                 community = _c.sent();
                 creatorId = (community === null || community === void 0 ? void 0 : community.creatorUid) || ((_a = community === null || community === void 0 ? void 0 : community.creator) === null || _a === void 0 ? void 0 : _a.uid);
-                return [4, user_model_1.User.findById({ 'id': creatorId })];
+                return [4, user_model_1.User.findOne({ 'id': creatorId })];
             case 2:
                 user = _c.sent();
-                communities = (_b = user === null || user === void 0 ? void 0 : user.myCommunities) === null || _b === void 0 ? void 0 : _b.filter(function (i) { return i.toString() !== id; });
+                communities = (_b = user === null || user === void 0 ? void 0 : user.myCommunities) === null || _b === void 0 ? void 0 : _b.filter(function (i) { return i !== id; });
                 return [4, user_model_1.User.updateOne({ 'id': creatorId }, { $set: { myCommunities: communities } })];
             case 3:
                 _c.sent();
@@ -216,7 +218,7 @@ var subscribeCommunity = function (req, res) { return __awaiter(void 0, void 0, 
                 userUid = jwt === null || jwt === void 0 ? void 0 : jwt.userId;
                 userCommunities = !((_a = user === null || user === void 0 ? void 0 : user.joinedCommunities) === null || _a === void 0 ? void 0 : _a.length) ? [id] : __spreadArray(__spreadArray([], user === null || user === void 0 ? void 0 : user.joinedCommunities, true), [id], false);
                 followers = !((_b = community === null || community === void 0 ? void 0 : community.followers) === null || _b === void 0 ? void 0 : _b.length) ? [userUid] : __spreadArray(__spreadArray([], community === null || community === void 0 ? void 0 : community.followers, true), [{ 'userUid': userUid }], false);
-                return [4, user_model_1.User.updateOne({ 'id': jwt === null || jwt === void 0 ? void 0 : jwt.userId }, { $set: { joinedCommunities: userCommunities } })];
+                return [4, user_model_1.User.updateOne({ 'id': userUid }, { $set: { joinedCommunities: userCommunities } })];
             case 3:
                 _c.sent();
                 return [4, community_model_1.Community.updateOne({ 'id': id }, { $set: { followers: followers } })];

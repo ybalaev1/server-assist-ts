@@ -74,7 +74,7 @@ var userExistByEmail = function (req, res) { return __awaiter(void 0, void 0, vo
             if (err) {
                 res.status(404);
             }
-            res.status(200).send({ user: result });
+            res.status(200).send({ user: result[0] });
         });
         return [2];
     });
@@ -155,41 +155,27 @@ var getUserById = function (req, res) { return __awaiter(void 0, void 0, void 0,
 }); };
 exports.getUserById = getUserById;
 var updateUser = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var id, email, userUpdated, error_1;
+    var jwt, userUid, email, userUpdated, error_1;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
-                id = req.params.id;
+                jwt = req.body.jwt;
+                userUid = jwt === null || jwt === void 0 ? void 0 : jwt.userId;
                 email = req.body.email;
+                console.log('updateUser', req.body);
                 _a.label = 1;
             case 1:
                 _a.trys.push([1, 4, , 5]);
-                findByEmail(email).then(function (result) { return __awaiter(void 0, void 0, void 0, function () {
-                    var userUpdated_1;
-                    return __generator(this, function (_a) {
-                        switch (_a.label) {
-                            case 0:
-                                if (!!result[0]) return [3, 3];
-                                return [4, user_model_1.User.updateOne({ 'id': id }, req.body)];
-                            case 1:
-                                _a.sent();
-                                return [4, user_model_1.User.findById(id)];
-                            case 2:
-                                userUpdated_1 = _a.sent();
-                                return [2, res.status(200).send({ data: userUpdated_1 })];
-                            case 3: return [2, res.status(403).json({ message: 'User with this email already exists', code: 403 })];
-                        }
-                    });
-                }); });
-                return [4, user_model_1.User.updateOne({ 'id': id }, req.body)];
+                return [4, user_model_1.User.updateOne({ 'id': userUid }, req.body)];
             case 2:
                 _a.sent();
-                return [4, user_model_1.User.findById({ 'id': id })];
+                return [4, user_model_1.User.findOne({ 'id': userUid })];
             case 3:
                 userUpdated = _a.sent();
                 return [2, res.status(200).send({ data: userUpdated })];
             case 4:
                 error_1 = _a.sent();
+                console.log('er', error_1);
                 return [2, res.status(404).json({ message: 'User not found', code: 404 })];
             case 5: return [2];
         }
