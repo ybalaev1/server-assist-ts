@@ -17,11 +17,18 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
       email: email,
       provider: 'email',
     }
+    const us = {
+      ...userData,
+      userName: userData?.name,
+      userCountry: userData?.country,
+      userGender: userData?.gender,
+      userImage: userData?.image,
+    }
     const token = jwt.sign(body, jwtSecret);
     res.status(200).send({
         id: body.userId,
         accessToken: token,
-        user: userData,
+        user: us,
       });
           // if (err) {
           //         res.status(404);
