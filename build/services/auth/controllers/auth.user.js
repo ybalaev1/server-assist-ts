@@ -1,15 +1,4 @@
 "use strict";
-var __assign = (this && this.__assign) || function () {
-    __assign = Object.assign || function(t) {
-        for (var s, i = 1, n = arguments.length; i < n; i++) {
-            s = arguments[i];
-            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
-                t[p] = s[p];
-        }
-        return t;
-    };
-    return __assign.apply(this, arguments);
-};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -59,27 +48,23 @@ var login = function (req, res, next) { return __awaiter(void 0, void 0, void 0,
     return __generator(this, function (_b) {
         email = ((_a = req.body) === null || _a === void 0 ? void 0 : _a.data_auth).email;
         user_model_1.User.find({ 'email': email }).exec(function (err, user) { return __awaiter(void 0, void 0, void 0, function () {
-            var userData, body, us, token;
-            var _a, _b, _c, _d, _e;
-            return __generator(this, function (_f) {
-                switch (_f.label) {
-                    case 0: return [4, user_model_1.User.findOne({ 'id': (_a = user[0]) === null || _a === void 0 ? void 0 : _a.id })];
-                    case 1:
-                        userData = _f.sent();
-                        body = {
-                            userId: user[0].id,
-                            email: email,
-                            provider: 'email',
-                        };
-                        us = __assign(__assign({}, userData), { userName: (_b = user[0]) === null || _b === void 0 ? void 0 : _b.name, userCountry: (_c = user[0]) === null || _c === void 0 ? void 0 : _c.country, userGender: (_d = user[0]) === null || _d === void 0 ? void 0 : _d.gender, userImage: (_e = user[0]) === null || _e === void 0 ? void 0 : _e.image });
-                        token = jwt.sign(body, jwtSecret);
-                        res.status(200).send({
-                            id: body.userId,
-                            accessToken: token,
-                            user: us,
-                        });
-                        return [2, next()];
-                }
+            var body, use, token;
+            return __generator(this, function (_a) {
+                body = {
+                    userId: user[0].id,
+                    email: email,
+                    provider: 'email',
+                };
+                use = {
+                    user: user[0],
+                };
+                token = jwt.sign(body, jwtSecret);
+                res.status(200).send({
+                    id: body.userId,
+                    accessToken: token,
+                    user: use === null || use === void 0 ? void 0 : use.user,
+                });
+                return [2, next()];
             });
         }); });
         return [2];

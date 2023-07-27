@@ -11,24 +11,22 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
 
   const {email} = req.body?.data_auth;
   User.find({ 'email': email }).exec(async (err, user) => {
-    const userData = await User.findOne({ 'id': user[0]?.id});
+    // const userData = await User.findOne({ 'id': user[0]?.id});
     const body = {
       userId: user[0].id,
       email: email,
       provider: 'email',
     }
-    const us = {
-      ...userData,
-      userName: user[0]?.name,
-      userCountry: user[0]?.country,
-      userGender: user[0]?.gender,
-      userImage: user[0]?.image,
+    const use = {
+      user: user[0],
     }
     const token = jwt.sign(body, jwtSecret);
+    // console.log('login',  use);
+
     res.status(200).send({
         id: body.userId,
         accessToken: token,
-        user: us,
+        user: use?.user,
       });
           // if (err) {
           //         res.status(404);
