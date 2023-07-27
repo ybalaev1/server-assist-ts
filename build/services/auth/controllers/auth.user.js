@@ -1,4 +1,15 @@
 "use strict";
+var __assign = (this && this.__assign) || function () {
+    __assign = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign.apply(this, arguments);
+};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -48,7 +59,7 @@ var login = function (req, res, next) { return __awaiter(void 0, void 0, void 0,
     return __generator(this, function (_b) {
         email = ((_a = req.body) === null || _a === void 0 ? void 0 : _a.data_auth).email;
         user_model_1.User.find({ 'email': email }).exec(function (err, user) { return __awaiter(void 0, void 0, void 0, function () {
-            var userData, body, token;
+            var userData, body, us, token;
             var _a;
             return __generator(this, function (_b) {
                 switch (_b.label) {
@@ -60,11 +71,12 @@ var login = function (req, res, next) { return __awaiter(void 0, void 0, void 0,
                             email: email,
                             provider: 'email',
                         };
+                        us = __assign(__assign({}, userData), { userName: userData === null || userData === void 0 ? void 0 : userData.name, userCountry: userData === null || userData === void 0 ? void 0 : userData.country, userGender: userData === null || userData === void 0 ? void 0 : userData.gender, userImage: userData === null || userData === void 0 ? void 0 : userData.image });
                         token = jwt.sign(body, jwtSecret);
                         res.status(200).send({
                             id: body.userId,
                             accessToken: token,
-                            user: userData,
+                            user: us,
                         });
                         return [2, next()];
                 }
