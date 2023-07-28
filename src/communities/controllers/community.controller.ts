@@ -66,9 +66,9 @@ const updateCommunity = async (req: Request, res: Response) => {
         const { id } = req.params;
         try {
                 await Community.updateOne({ 'id': id }, req.body.data);
-                const communityUpdated = await Community.findById({ 'id': id });
+                const communityUpdated = await Community.findOne({ 'id': id }).exec();
 
-                return res.status(200).send({ data: communityUpdated });
+                return res.status(200).send({ ...communityUpdated?.toJSON() });
         } catch (error) {
                 return res.status(404).json({ message: 'Community not found', code: 404 });
         }

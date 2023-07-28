@@ -163,10 +163,10 @@ var updateCommunity = function (req, res) { return __awaiter(void 0, void 0, voi
                 return [4, community_model_1.Community.updateOne({ 'id': id }, req.body.data)];
             case 2:
                 _a.sent();
-                return [4, community_model_1.Community.findById({ 'id': id })];
+                return [4, community_model_1.Community.findOne({ 'id': id }).exec()];
             case 3:
                 communityUpdated = _a.sent();
-                return [2, res.status(200).send({ data: communityUpdated })];
+                return [2, res.status(200).send(__assign({}, communityUpdated === null || communityUpdated === void 0 ? void 0 : communityUpdated.toJSON()))];
             case 4:
                 error_1 = _a.sent();
                 return [2, res.status(404).json({ message: 'Community not found', code: 404 })];

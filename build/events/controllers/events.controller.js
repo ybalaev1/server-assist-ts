@@ -189,10 +189,10 @@ var updateEvent = function (req, res) { return __awaiter(void 0, void 0, void 0,
                 return [4, event_model_1.Event.updateOne({ 'id': id }, req.body.data)];
             case 2:
                 _a.sent();
-                return [4, event_model_1.Event.findById({ 'id': id })];
+                return [4, event_model_1.Event.findOne({ 'id': id }).exec()];
             case 3:
                 eventUpdated = _a.sent();
-                return [2, res.status(200).send({ data: eventUpdated })];
+                return [2, res.status(200).send(__assign({}, eventUpdated === null || eventUpdated === void 0 ? void 0 : eventUpdated.toJSON()))];
             case 4:
                 error_1 = _a.sent();
                 return [2, res.status(404).json({ message: 'Event not found', code: 404 })];
