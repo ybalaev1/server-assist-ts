@@ -51,7 +51,7 @@ const userShema = new Schema(
       required: true,
     },
     userImage: {
-      type: Schema.Types.ObjectId,
+      type: Schema.Types.Mixed,
       required: false,
     },
     individualStyles: {

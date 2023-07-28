@@ -81,29 +81,17 @@ const getUserById = async (req: Request, res: Response) => {
 };
 
 const updateUser = async (req: Request, res: Response) => {
-        // const { id } = req.params;
+
         const { jwt } = req.body;
-        const userUid = jwt?.userId;
-
-        const { email } = req.body;
-        console.log('updateUser', req.body);
         try {
-                // findByEmail(email).then(async (result: any) => {
-                //         if (!result[0]) {
-                //                 await User.updateOne({ 'id': userUid }, req.body);
-                //                 const userUpdated = await User.findOne({'id' :userUid});
-                //                 return res.status(200).send({ data: userUpdated });
-                //         }
-                //         return res.status(403).json({ message: 'User with this email already exists', code: 403 });
-                // });
-                await User.updateOne({ 'id': userUid }, req.body);
-                const userUpdated = await User.findOne({ 'id': userUid });
+                await User.updateOne({ 'id': jwt?.userId }, req.body);
+                const userUpdate = await User.findOne({ 'id': jwt?.userId }).exec();
 
-                return res.status(200).send({ data: userUpdated });
+                return res.status(200).send({ ...userUpdate?.toJSON() });
         } catch (error) {
-                console.log('er', error)
                 return res.status(404).json({ message: 'User not found', code: 404 });
         }
+       
 };
 
 const deleteUser = async (req: Request, res: Response) => {

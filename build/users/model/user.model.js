@@ -47,7 +47,7 @@ var userShema = new mongoose_1.Schema({
         required: true,
     },
     userImage: {
-        type: mongoose_1.Schema.Types.ObjectId,
+        type: mongoose_1.Schema.Types.Mixed,
         required: false,
     },
     individualStyles: {

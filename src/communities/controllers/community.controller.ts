@@ -45,9 +45,17 @@ const insertCommunity = async (req: Request, res: Response) => {
         }
 };
 
-const getAllCommunities = async (_req: Request, res: Response) => {
-        const communities = await Community.find().exec();
-
+const getAllCommunities = async (req: Request, res: Response) => {
+        const {location} = req.params;
+        // const communities = await Community.find().exec();
+        const communities = await Community.aggregate([
+                {
+                  '$match': {
+                        "location": location
+                  }
+                }
+        ])
+        // console.log('getAllCommunities', location, data);
         return res.status(200).json({ data: communities });
 };
 

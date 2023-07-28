@@ -155,27 +155,23 @@ var getUserById = function (req, res) { return __awaiter(void 0, void 0, void 0,
 }); };
 exports.getUserById = getUserById;
 var updateUser = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var jwt, userUid, email, userUpdated, error_1;
+    var jwt, userUpdate, error_1;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
                 jwt = req.body.jwt;
-                userUid = jwt === null || jwt === void 0 ? void 0 : jwt.userId;
-                email = req.body.email;
-                console.log('updateUser', req.body);
                 _a.label = 1;
             case 1:
                 _a.trys.push([1, 4, , 5]);
-                return [4, user_model_1.User.updateOne({ 'id': userUid }, req.body)];
+                return [4, user_model_1.User.updateOne({ 'id': jwt === null || jwt === void 0 ? void 0 : jwt.userId }, req.body)];
             case 2:
                 _a.sent();
-                return [4, user_model_1.User.findOne({ 'id': userUid })];
+                return [4, user_model_1.User.findOne({ 'id': jwt === null || jwt === void 0 ? void 0 : jwt.userId }).exec()];
             case 3:
-                userUpdated = _a.sent();
-                return [2, res.status(200).send({ data: userUpdated })];
+                userUpdate = _a.sent();
+                return [2, res.status(200).send(__assign({}, userUpdate === null || userUpdate === void 0 ? void 0 : userUpdate.toJSON()))];
             case 4:
                 error_1 = _a.sent();
-                console.log('er', error_1);
                 return [2, res.status(404).json({ message: 'User not found', code: 404 })];
             case 5: return [2];
         }

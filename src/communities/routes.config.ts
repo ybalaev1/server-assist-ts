@@ -10,7 +10,7 @@ const communitiesRoute = () => {
         app.post('/communities/:id/update', [validJWTNeeded, updateCommunity]);
         app.post('/communities/:id/subscribe', [validJWTNeeded, subscribeCommunity]);
         app.post('/communities/:id/unsubscribe', [validJWTNeeded, unSubscribeCommunity]);
-        app.get('/communities/', getAllCommunities);
+        app.get('/communities/:location', getAllCommunities);
         app.get('/communities/:id', getCommunityById);
         app.delete('/communities/:id', [validJWTNeeded, deleteCommunity]);
 
