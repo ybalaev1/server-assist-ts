@@ -94,6 +94,7 @@ var getEventById = function (req, res) { return __awaiter(void 0, void 0, void 0
                 return [4, event_model_1.Event.findOne({ 'id': id }).exec()];
             case 1:
                 event = _a.sent();
+                console.log('getEventById', id, event);
                 if (!event) {
                     return [2, res.status(404).json({ message: 'event not found' })];
                 }
@@ -139,38 +140,33 @@ var insertEvent = function (req, res) { return __awaiter(void 0, void 0, void 0,
             case 0:
                 data = req.body.data;
                 jwt = req.body.jwt;
-                return [4, user_model_1.User.findById({ 'id': jwt === null || jwt === void 0 ? void 0 : jwt.userId })];
+                return [4, user_model_1.User.findOne({ 'id': jwt === null || jwt === void 0 ? void 0 : jwt.userId })];
             case 1:
                 user = _b.sent();
                 requestData = __assign(__assign({}, data), { creator: {
                         uid: user === null || user === void 0 ? void 0 : user.id,
                         image: (_a = user === null || user === void 0 ? void 0 : user.userImage) !== null && _a !== void 0 ? _a : null,
                         name: user === null || user === void 0 ? void 0 : user.userName,
-                    }, attendedPeople: [{ uid: user === null || user === void 0 ? void 0 : user.id }] });
+                    }, attendedPeople: [{ userUid: user === null || user === void 0 ? void 0 : user.id }] });
                 return [2, eventCreate(requestData).then(function (event) { return __awaiter(void 0, void 0, void 0, function () {
-                        var user, community, userEvents, events, dataEvent;
+                        var community, userEvents, events, dataEvent;
                         var _a, _b;
                         return __generator(this, function (_c) {
                             switch (_c.label) {
-                                case 0: return [4, user_model_1.User.findById({ 'id': jwt === null || jwt === void 0 ? void 0 : jwt.userId })];
+                                case 0: return [4, community_model_1.Community.findOne({ 'id': data.communityUid })];
                                 case 1:
-                                    user = _c.sent();
-                                    return [4, community_model_1.Community.findById({ 'id': data.communityUid })];
-                                case 2:
                                     community = _c.sent();
-                                    userEvents = !((_a = user === null || user === void 0 ? void 0 : user.events) === null || _a === void 0 ? void 0 : _a.length) ? [event === null || event === void 0 ? void 0 : event.id] : __spreadArray(__spreadArray([], user === null || user === void 0 ? void 0 : user.events, true), [event === null || event === void 0 ? void 0 : event.id], false);
-                                    events = !((_b = community === null || community === void 0 ? void 0 : community.eventsIds) === null || _b === void 0 ? void 0 : _b.length) ? [event === null || event === void 0 ? void 0 : event.id] : __spreadArray(__spreadArray([], community === null || community === void 0 ? void 0 : community.eventsIds, true), [event === null || event === void 0 ? void 0 : event.id], false);
-                                    return [4, user_model_1.User.updateOne({ 'id': jwt === null || jwt === void 0 ? void 0 : jwt.userId }, { $set: { goingEvent: userEvents } })];
-                                case 3:
-                                    _c.sent();
-                                    return [4, user_model_1.User.updateOne({ 'id': jwt === null || jwt === void 0 ? void 0 : jwt.userId }, { $set: { events: userEvents } })];
-                                case 4:
+                                    console.log('event create', event);
+                                    userEvents = !((_a = user === null || user === void 0 ? void 0 : user.events) === null || _a === void 0 ? void 0 : _a.length) ? [event === null || event === void 0 ? void 0 : event._id] : __spreadArray(__spreadArray([], user === null || user === void 0 ? void 0 : user.events, true), [event === null || event === void 0 ? void 0 : event._id], false);
+                                    events = !((_b = community === null || community === void 0 ? void 0 : community.eventsIds) === null || _b === void 0 ? void 0 : _b.length) ? [event === null || event === void 0 ? void 0 : event._id] : __spreadArray(__spreadArray([], community === null || community === void 0 ? void 0 : community.eventsIds, true), [event === null || event === void 0 ? void 0 : event._id], false);
+                                    return [4, user_model_1.User.updateOne({ 'id': jwt === null || jwt === void 0 ? void 0 : jwt.userId }, { $set: { goingEvent: userEvents, events: userEvents } })];
+                                case 2:
                                     _c.sent();
                                     return [4, community_model_1.Community.updateOne({ 'id': data.communityUid }, { $set: { eventsIds: events } })];
-                                case 5:
+                                case 3:
                                     _c.sent();
                                     return [4, event_model_1.Event.updateOne({ _id: event === null || event === void 0 ? void 0 : event._id }, { 'id': event === null || event === void 0 ? void 0 : event._id })];
-                                case 6:
+                                case 4:
                                     _c.sent();
                                     dataEvent = __assign(__assign({}, event === null || event === void 0 ? void 0 : event.toJSON()), { id: event === null || event === void 0 ? void 0 : event._id });
                                     return [2, res.status(200).json(__assign({}, dataEvent))];

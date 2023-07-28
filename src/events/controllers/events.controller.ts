@@ -22,6 +22,7 @@ const findById = async (req: Request, res: Response) => {
 const getEventById = async (req: Request, res: Response) => {
   const { id } = req.params;
   const event = await Event.findOne({ 'id': id }).exec();
+  console.log('getEventById', id, event);
   
 
   if (!event) {
@@ -46,7 +47,7 @@ const getAllEvents = async (req: Request, res: Response) => {
 const insertEvent = async (req: Request, res: Response) => {
   const { data } = req.body;
   const { jwt } = req.body;
-  const user = await User.findById({ 'id': jwt?.userId });
+  const user = await User.findOne({ 'id': jwt?.userId });
   const requestData = {
           ...data,
           creator: {
@@ -54,17 +55,18 @@ const insertEvent = async (req: Request, res: Response) => {
                   image: user?.userImage ?? null,
                   name: user?.userName,
           },
-          attendedPeople: [{uid: user?.id}]
+          attendedPeople: [{userUid: user?.id}]
   }
     return eventCreate(requestData).then(async(event: any) => {
-      const user = await User.findById({ 'id': jwt?.userId });
-      const community = await Community.findById({ 'id': data.communityUid })
+      const community = await Community.findOne({ 'id': data.communityUid })
+      console.log('event create', event);
 
-      const userEvents = !user?.events?.length ?  [event?.id] : [...user?.events, event?.id];
-      const events = !community?.eventsIds?.length ?  [event?.id] : [...community?.eventsIds, event?.id];
-
-      await User.updateOne({ 'id': jwt?.userId }, {$set: {goingEvent: userEvents}});
-      await User.updateOne({ 'id': jwt?.userId }, {$set: {events: userEvents}});
+      const userEvents = !user?.events?.length ?  [event?._id] : [...user?.events, event?._id];
+      const events = !community?.eventsIds?.length ?  [event?._id] : [...community?.eventsIds, event?._id];
+      // await User.updateOne({ 'id': jwt?.userId }, {$set: {myCommunities: myCommunities}});
+ 
+      await User.updateOne({ 'id': jwt?.userId }, {$set: {goingEvent: userEvents, events: userEvents}});
+      // await User.updateOne({ 'id': jwt?.userId }, {$set: {events: userEvents}});
       await Community.updateOne({ 'id': data.communityUid }, {$set: {eventsIds: events}});
       await Event.updateOne({_id: event?._id}, {'id': event?._id});
                                 // await Event.updateOne({ 'id': event?.id }, {$set: {id: event?.id}});

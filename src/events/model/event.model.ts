@@ -6,6 +6,7 @@ type EventCreatedModel = Document & {
   attendedPeople: string[];
   categories: string[]
   communityUid: string;
+  id: string;
   creator: {
     uid: string;
     image: string;
@@ -72,6 +73,10 @@ const eventShema = new Schema(
     typeEvent: {
       type: Schema.Types.String,
       required: true,
+    },
+    id: {
+      type: Schema.Types.String,
+      required: false,
     },
   },
   {
