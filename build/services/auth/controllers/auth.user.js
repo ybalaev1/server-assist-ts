@@ -64,8 +64,7 @@ var login = function (req, res, next) { return __awaiter(void 0, void 0, void 0,
                     return [2, next()];
                 }
                 console.log('uw,', user);
-                res.status(404).send({ status: 400, message: 'User don`t exist ' });
-                return [2, next()];
+                return [2, res.status(404).send({ status: 400, message: 'User don`t exist ' })];
         }
     });
 }); };

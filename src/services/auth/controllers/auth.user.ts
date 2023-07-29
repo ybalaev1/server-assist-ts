@@ -21,8 +21,8 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
     return next();
   }
 console.log('uw,', user)
-  res.status(404).send({ status: 400, message: 'User don`t exist '});
-  return next();
+  return res.status(404).send({ status: 400, message: 'User don`t exist '});
+  // return next();
 };
 
 const validJWTNeeded = (req: Request, res: Response, next: NextFunction) => {
