@@ -22,14 +22,15 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
         return next();
       } else {
         res.status(404).json({ status: 400, message: 'User don`t exist '});
+        return;
       }
     } catch (error) {
         console.log('error login', error)
         res.status(404).json({ status: 400, message: 'User don`t exist '});
-      return next();
+      return ;
     }
-  console.log('uw,', user)
-  return next();
+  // console.log('uw,', user)
+  // // return next();
 
 };
 

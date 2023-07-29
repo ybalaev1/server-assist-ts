@@ -66,15 +66,15 @@ var login = function (req, res, next) { return __awaiter(void 0, void 0, void 0,
                     }
                     else {
                         res.status(404).json({ status: 400, message: 'User don`t exist ' });
+                        return [2];
                     }
                 }
                 catch (error) {
                     console.log('error login', error);
                     res.status(404).json({ status: 400, message: 'User don`t exist ' });
-                    return [2, next()];
+                    return [2];
                 }
-                console.log('uw,', user);
-                return [2, next()];
+                return [2];
         }
     });
 }); };
