@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { deleteCommunity, getAllCommunities, getCommunityById, insertCommunity, subscribeCommunity, unSubscribeCommunity, updateCommunity } from './controllers/community.controller';
+import { deleteCommunity, getAllCommunities, getCommunityById, getManagingCommunities, insertCommunity, subscribeCommunity, unSubscribeCommunity, updateCommunity } from './controllers/community.controller';
 import { validJWTNeeded } from '../services/auth/controllers/auth.user';
 
 const communitiesRoute = () => {
@@ -11,6 +11,7 @@ const communitiesRoute = () => {
         app.post('/communities/:id/subscribe', [validJWTNeeded, subscribeCommunity]);
         app.post('/communities/:id/unsubscribe', [validJWTNeeded, unSubscribeCommunity]);
         app.get('/communities/:location', getAllCommunities);
+        app.get('/communities/manage_communities', [validJWTNeeded, getManagingCommunities]);
         app.get('/communities/:id', getCommunityById);
         app.delete('/communities/:id', [validJWTNeeded, deleteCommunity]);
 

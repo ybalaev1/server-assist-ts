@@ -6,68 +6,23 @@ const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
 const jwtSecret = 'yUdmI2BvcLZ8g1lh3f9JztLlkL3NA9gQ';
 const login = async (req: Request, res: Response, next: NextFunction) => {
-  // const token = jwt.sign(req.body.data_auth, jwtSecret);
-  console.log('user', req.body);
+  console.log('user eq.body', req.body);
 
-  const {email} = req.body?.data_auth;
-  User.find({ 'email': email }).exec(async (err, user) => {
-    if (err) {
-      console.log('err', err)
-    }
+  const {email, password} = req.body?.data_auth;
+  const user = await User.findOne({ 'email': email}).exec();
+  if (user !== null) {
     const body = {
-      userId: user[0].id,
+      userId: user?._id,
       email: email,
       provider: 'email',
     }
-    // const use = {
-    //   user: user[0],
-    // }
     const token = jwt.sign(body, jwtSecret);
-    console.log('login',  user[0]);
-
-    res.status(200).send({
-        id: body.userId,
-        accessToken: token,
-        user: user[0],
-      });
-          // if (err) {
-          //         res.status(404);
-          // }
-          // res.status(200).send({ user: result });
-          // res.status(200).send({
-          //   id: user[0]?.id,
-          //   accessToken: token,
-          //   user: user,
-          // });
-          // console.log('afaf', user)
-          return next();
- });
-  // console.log('login user', user);
-  // if (!user) {
-  //   res.status(404);
-  // } else {
-  //   const token = jwt.sign(req.body, jwtSecret);
-  //   const user = await User.findOne({ _id: req.body.userId});
-  //   res.status(200).send({
-  //     id: req.body.userId,
-  //     accessToken: token,
-  //     user: user,
-  //   });
-  //   return next();
-  // }
-  // try {
-    // const token = jwt.sign(req.body, jwtSecret);
-    // const user = await User.findOne({ _id: req.body.userId});
-    // return res.status(200).send({
-    //   id: req.body.userId,
-    //   accessToken: token,
-    //   user: user,
-    // });
-  // } catch (error) {
-  //   console.log('login error', error);
-  //   res.status(500);
-  // }
-  // return next();
+    res.status(200).send({ id: body?.userId, accessToken: token, user: user?.toJSON() });
+    return next();
+  }
+console.log('uw,', user)
+  res.status(404).send({ status: 400, message: 'User don`t exist '});
+  return next();
 };
 
 const validJWTNeeded = (req: Request, res: Response, next: NextFunction) => {

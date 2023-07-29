@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 import { findByEmail } from '../../../users/controllers/user.controller';
+import { User } from '../../../users/model/user.model';
 
 const crypto = require('crypto');
 
@@ -20,32 +21,37 @@ const authValidFields = async (req: Request, res: Response, next: NextFunction) 
 
 const matchUserAndPassword = async (req: Request, res: Response, next: NextFunction) => {
   const { data_auth } = req.body;
-  findByEmail(data_auth.email).then((user: any) => {
-    console.log('matchUserAndPassword', user[0])
-    if (user[0]) {
-      const passField = user[0].password.split('$');
-      console.log('pass', passField, user[0])
+  // console.log('matchUserAndPassword', req.body);
+  const user = await User.findOne({ 'email': data_auth?.email }).exec();
+  
+  // findByEmail(data_auth.email).then((user: any) => {
+    console.log('matchUserAndPassword', user)
+    if (user !== null) {
+      const passField = user.password.split('$');
+      // console.log('pass', passField, user)
       const salt = passField[0];
       const hash = crypto.createHmac('sha512', salt).update(data_auth.password).digest('base64');
       if (hash === passField[1]) {
-        req.body = {
+        req.body.data_auth = {
           // eslint-disable-next-line no-underscore-dangle
-          userId: user[0].id,
-          email: user[0].email,
+          userId: user.id,
+          email: user.email,
           provider: 'email',
-          name: user[0].userName,
+          userName: user.userName,
         };
         return next();
+      } else {
+        return res.status(400).json({ message: 'Invalid e-mail or password' });
       }
-
-      return res.status(400).send({ message: 'Invalid e-mail or password' });
     } else {
-        res.status(404).send({ message: 'User not found' });
-    }
-    return next();
-  }).catch((error) => {
-     return res.status(404).send({ message: 'User not found' });
-  })
+        // res.status(404).send({ message: 'User not found' });
+        res.status(404).json({ status: 404, message: 'User don`t exist '});
+      }
+    // return next();
+  // }).catch((error) => {
+  //    return res.status(404).send({ message: 'User not found' });
+  // })
+  // res.status(404).json({ status: 404, message: 'User don`t exist '});
 };
 
 export { matchUserAndPassword, authValidFields };

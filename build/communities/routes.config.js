@@ -11,6 +11,7 @@ var communitiesRoute = function () {
     app.post('/communities/:id/subscribe', [auth_user_1.validJWTNeeded, community_controller_1.subscribeCommunity]);
     app.post('/communities/:id/unsubscribe', [auth_user_1.validJWTNeeded, community_controller_1.unSubscribeCommunity]);
     app.get('/communities/:location', community_controller_1.getAllCommunities);
+    app.get('/communities/manage_communities', [auth_user_1.validJWTNeeded, community_controller_1.getManagingCommunities]);
     app.get('/communities/:id', community_controller_1.getCommunityById);
     app.delete('/communities/:id', [auth_user_1.validJWTNeeded, community_controller_1.deleteCommunity]);
     return app;

@@ -55,7 +55,7 @@ const getAllCommunities = async (req: Request, res: Response) => {
                   }
                 }
         ])
-        // console.log('getAllCommunities', location, data);
+        // console.log('getAllCommunities', location, communities);
         return res.status(200).json({ data: communities });
 };
 
@@ -63,6 +63,7 @@ const getAllCommunities = async (req: Request, res: Response) => {
 const getCommunityById = async (req: Request, res: Response) => {
         const { id } = req.params;
         const community = await Community.findOne({ 'id': id }).exec();
+        console.log('getCommunityById', community);
 
         if (!community) {
                 return res.status(404).json({ message: 'Community not found' });
@@ -70,6 +71,29 @@ const getCommunityById = async (req: Request, res: Response) => {
         return res.status(200).json({ ...community?.toJSON()});
 };
 
+const getManagingCommunities = async (req: Request, res: Response) => {
+        const { jwt } = req.body;
+        try {
+        const communitiesData = await Community.find().exec();
+        const communities = communitiesData?.filter((item) => item?.creatorUid === jwt?.userId ||  item?.creator?.uid === jwt?.userId);
+        // const communities = await Community.aggregate([
+        //         {
+        //           '$match': {
+        //                 "creator.uid": jwt?.userId 
+        //           }
+        //         },
+        //         {
+        //                 '$match': {
+        //                       "creatorUid": jwt?.userId 
+        //                 }
+        //               }
+        // ])
+                return res.status(200).send({ ...communities });
+        } catch (error) {
+                console.log('error', error)
+                return res.status(404).json({ message: 'User not found', code: 404 });
+        }
+}
 const updateCommunity = async (req: Request, res: Response) => {
         const { id } = req.params;
         try {
@@ -128,4 +152,4 @@ const subscribeCommunity = async (req: Request, res: Response) => {
       
         return res.status(200).send({ ...communityUpdated?.toJSON() });
       }
-export { deleteCommunity, updateCommunity, getAllCommunities, getCommunityById, insertCommunity, subscribeCommunity, unSubscribeCommunity };
+export { deleteCommunity, updateCommunity, getAllCommunities, getCommunityById, insertCommunity, subscribeCommunity, unSubscribeCommunity, getManagingCommunities };

@@ -37,7 +37,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.authValidFields = exports.matchUserAndPassword = void 0;
-var user_controller_1 = require("../../../users/controllers/user.controller");
+var user_model_1 = require("../../../users/model/user.model");
 var crypto = require('crypto');
 var authValidFields = function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var data_auth;
@@ -59,35 +59,37 @@ var authValidFields = function (req, res, next) { return __awaiter(void 0, void 
 }); };
 exports.authValidFields = authValidFields;
 var matchUserAndPassword = function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var data_auth;
+    var data_auth, user, passField, salt, hash;
     return __generator(this, function (_a) {
-        data_auth = req.body.data_auth;
-        (0, user_controller_1.findByEmail)(data_auth.email).then(function (user) {
-            console.log('matchUserAndPassword', user[0]);
-            if (user[0]) {
-                var passField = user[0].password.split('$');
-                console.log('pass', passField, user[0]);
-                var salt = passField[0];
-                var hash = crypto.createHmac('sha512', salt).update(data_auth.password).digest('base64');
-                if (hash === passField[1]) {
-                    req.body = {
-                        userId: user[0].id,
-                        email: user[0].email,
-                        provider: 'email',
-                        name: user[0].userName,
-                    };
-                    return next();
+        switch (_a.label) {
+            case 0:
+                data_auth = req.body.data_auth;
+                return [4, user_model_1.User.findOne({ 'email': data_auth === null || data_auth === void 0 ? void 0 : data_auth.email }).exec()];
+            case 1:
+                user = _a.sent();
+                console.log('matchUserAndPassword', user);
+                if (user !== null) {
+                    passField = user.password.split('$');
+                    salt = passField[0];
+                    hash = crypto.createHmac('sha512', salt).update(data_auth.password).digest('base64');
+                    if (hash === passField[1]) {
+                        req.body.data_auth = {
+                            userId: user.id,
+                            email: user.email,
+                            provider: 'email',
+                            userName: user.userName,
+                        };
+                        return [2, next()];
+                    }
+                    else {
+                        return [2, res.status(400).json({ message: 'Invalid e-mail or password' })];
+                    }
                 }
-                return res.status(400).send({ message: 'Invalid e-mail or password' });
-            }
-            else {
-                res.status(404).send({ message: 'User not found' });
-            }
-            return next();
-        }).catch(function (error) {
-            return res.status(404).send({ message: 'User not found' });
-        });
-        return [2];
+                else {
+                    res.status(404).json({ status: 404, message: 'User don`t exist ' });
+                }
+                return [2];
+        }
     });
 }); };
 exports.matchUserAndPassword = matchUserAndPassword;

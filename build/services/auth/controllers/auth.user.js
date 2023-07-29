@@ -43,33 +43,30 @@ var jwt = require('jsonwebtoken');
 var crypto = require('crypto');
 var jwtSecret = 'yUdmI2BvcLZ8g1lh3f9JztLlkL3NA9gQ';
 var login = function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var email;
-    var _a;
-    return __generator(this, function (_b) {
-        console.log('user', req.body);
-        email = ((_a = req.body) === null || _a === void 0 ? void 0 : _a.data_auth).email;
-        user_model_1.User.find({ 'email': email }).exec(function (err, user) { return __awaiter(void 0, void 0, void 0, function () {
-            var body, token;
-            return __generator(this, function (_a) {
-                if (err) {
-                    console.log('err', err);
+    var _a, email, password, user, body, token;
+    var _b;
+    return __generator(this, function (_c) {
+        switch (_c.label) {
+            case 0:
+                console.log('user eq.body', req.body);
+                _a = (_b = req.body) === null || _b === void 0 ? void 0 : _b.data_auth, email = _a.email, password = _a.password;
+                return [4, user_model_1.User.findOne({ 'email': email }).exec()];
+            case 1:
+                user = _c.sent();
+                if (user !== null) {
+                    body = {
+                        userId: user === null || user === void 0 ? void 0 : user._id,
+                        email: email,
+                        provider: 'email',
+                    };
+                    token = jwt.sign(body, jwtSecret);
+                    res.status(200).send({ id: body === null || body === void 0 ? void 0 : body.userId, accessToken: token, user: user === null || user === void 0 ? void 0 : user.toJSON() });
+                    return [2, next()];
                 }
-                body = {
-                    userId: user[0].id,
-                    email: email,
-                    provider: 'email',
-                };
-                token = jwt.sign(body, jwtSecret);
-                console.log('login', user[0]);
-                res.status(200).send({
-                    id: body.userId,
-                    accessToken: token,
-                    user: user[0],
-                });
+                console.log('uw,', user);
+                res.status(404).send({ status: 400, message: 'User don`t exist ' });
                 return [2, next()];
-            });
-        }); });
-        return [2];
+        }
     });
 }); };
 exports.login = login;
