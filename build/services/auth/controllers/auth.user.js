@@ -54,7 +54,7 @@ var login = function (req, res, next) { return __awaiter(void 0, void 0, void 0,
             case 1:
                 user = _b.sent();
                 try {
-                    if (user !== null) {
+                    if (user) {
                         body = {
                             userId: user === null || user === void 0 ? void 0 : user._id,
                             email: email,
@@ -64,6 +64,9 @@ var login = function (req, res, next) { return __awaiter(void 0, void 0, void 0,
                         res.status(200).send({ id: body === null || body === void 0 ? void 0 : body.userId, accessToken: token, user: user === null || user === void 0 ? void 0 : user.toJSON() });
                         return [2, next()];
                     }
+                    else {
+                        res.status(404).json({ status: 400, message: 'User don`t exist ' });
+                    }
                 }
                 catch (error) {
                     console.log('error login', error);
@@ -71,7 +74,7 @@ var login = function (req, res, next) { return __awaiter(void 0, void 0, void 0,
                     return [2, next()];
                 }
                 console.log('uw,', user);
-                return [2];
+                return [2, next()];
         }
     });
 }); };
