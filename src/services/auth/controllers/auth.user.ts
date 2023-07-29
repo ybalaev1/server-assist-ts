@@ -18,14 +18,13 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
           provider: 'email',
         }
         const token = jwt.sign(body, jwtSecret);
-        res.status(200).send({ id: body?.userId, accessToken: token, user: user?.toJSON() });
-        return next();
+        return res.status(200).send({ id: body?.userId, accessToken: token, user: user?.toJSON() });
+        // return next();
       }
     return next();
     } catch (error) {
         console.log('error login', error)
-        res.status(404).json({ status: 400, message: 'User don`t exist '});
-      return ;
+        return res.status(404).json({ status: 400, message: 'User don`t exist '});
     }
   // console.log('uw,', user)
   // // return next();
