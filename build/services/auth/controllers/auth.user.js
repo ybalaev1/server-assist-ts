@@ -61,12 +61,14 @@ var login = function (req, res, next) { return __awaiter(void 0, void 0, void 0,
                             provider: 'email',
                         };
                         token = jwt.sign(body, jwtSecret);
-                        return [2, res.status(200).send({ id: body === null || body === void 0 ? void 0 : body.userId, accessToken: token, user: user === null || user === void 0 ? void 0 : user.toJSON() })];
+                        res.status(200).send({ id: body === null || body === void 0 ? void 0 : body.userId, accessToken: token, user: user === null || user === void 0 ? void 0 : user.toJSON() });
+                        next();
                     }
                 }
                 catch (error) {
                     console.log('error login', error);
-                    return [2, res.status(404).send({ status: 400, message: 'User don`t exist ' })];
+                    res.status(404).send({ status: 400, message: 'User don`t exist ' });
+                    next();
                 }
                 return [2];
         }
