@@ -10,8 +10,9 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
 
   const {email} = req.body?.data_auth;
   const user = await User.findOne({ 'email': email}).exec();
-    try {
-      if (user) {
+  if (!user) {
+    return res.status(404).json({ status: 400, message: 'User don`t exist '});
+  }
         const body = {
           userId: user?._id,
           email: email,
@@ -19,15 +20,7 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
         }
         const token = jwt.sign(body, jwtSecret);
         res.status(200).send({ id: body?.userId, accessToken: token, user: user?.toJSON() });
-        next();
-        // return next();
-      }
-    // return next();
-    } catch (error) {
-        console.log('error login', error);
-        res.status(404).send({ status: 400, message: 'User don`t exist '});
-        next();
-    }
+        return next();
   // console.log('uw,', user)
   // // return next();
 
