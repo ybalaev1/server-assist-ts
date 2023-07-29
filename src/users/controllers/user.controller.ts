@@ -32,12 +32,13 @@ const findByEmail = async (value: string) =>
         });
 
 const insertUser = async (req: Request, res: Response) => {
-        const { password } = req.body.data;
+        // const { password } = req.body.data;
         const { data } = req.body;
         console.log('insertUser', req.body);
+        const pass = data.email;
         const salt = crypto.randomBytes(16).toString('base64');
-        if (password) {
-                const hash = crypto.createHmac('sha512', salt).update(password).digest('base64');
+        if (pass) {
+                const hash = crypto.createHmac('sha512', salt).update(pass).digest('base64');
                 data.password = `${salt}$${hash}`;
                 if (data.email) {
                         // findByEmail(data.email).then((result: any) => {

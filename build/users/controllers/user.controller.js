@@ -95,14 +95,14 @@ var findByEmail = function (value) { return __awaiter(void 0, void 0, void 0, fu
 }); };
 exports.findByEmail = findByEmail;
 var insertUser = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var password, data, salt, hash;
+    var data, pass, salt, hash;
     return __generator(this, function (_a) {
-        password = req.body.data.password;
         data = req.body.data;
         console.log('insertUser', req.body);
+        pass = data.email;
         salt = crypto_1.default.randomBytes(16).toString('base64');
-        if (password) {
-            hash = crypto_1.default.createHmac('sha512', salt).update(password).digest('base64');
+        if (pass) {
+            hash = crypto_1.default.createHmac('sha512', salt).update(pass).digest('base64');
             data.password = salt + "$" + hash;
             if (data.email) {
                 return [2, createUser(data).then(function (user) { return __awaiter(void 0, void 0, void 0, function () {

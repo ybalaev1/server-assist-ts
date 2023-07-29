@@ -43,16 +43,16 @@ var jwt = require('jsonwebtoken');
 var crypto = require('crypto');
 var jwtSecret = 'yUdmI2BvcLZ8g1lh3f9JztLlkL3NA9gQ';
 var login = function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var _a, email, password, user, body, token;
-    var _b;
-    return __generator(this, function (_c) {
-        switch (_c.label) {
+    var email, user, body, token;
+    var _a;
+    return __generator(this, function (_b) {
+        switch (_b.label) {
             case 0:
                 console.log('user eq.body', req.body);
-                _a = (_b = req.body) === null || _b === void 0 ? void 0 : _b.data_auth, email = _a.email, password = _a.password;
+                email = ((_a = req.body) === null || _a === void 0 ? void 0 : _a.data_auth).email;
                 return [4, user_model_1.User.findOne({ 'email': email }).exec()];
             case 1:
-                user = _c.sent();
+                user = _b.sent();
                 if (user !== null) {
                     body = {
                         userId: user === null || user === void 0 ? void 0 : user._id,

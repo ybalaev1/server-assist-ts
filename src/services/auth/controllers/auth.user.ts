@@ -8,7 +8,7 @@ const jwtSecret = 'yUdmI2BvcLZ8g1lh3f9JztLlkL3NA9gQ';
 const login = async (req: Request, res: Response, next: NextFunction) => {
   console.log('user eq.body', req.body);
 
-  const {email, password} = req.body?.data_auth;
+  const {email} = req.body?.data_auth;
   const user = await User.findOne({ 'email': email}).exec();
   if (user !== null) {
     const body = {
