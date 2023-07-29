@@ -10,19 +10,24 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
 
   const {email} = req.body?.data_auth;
   const user = await User.findOne({ 'email': email}).exec();
-  if (user !== null) {
-    const body = {
-      userId: user?._id,
-      email: email,
-      provider: 'email',
+    try {
+      if (user !== null) {
+        const body = {
+          userId: user?._id,
+          email: email,
+          provider: 'email',
+        }
+        const token = jwt.sign(body, jwtSecret);
+        res.status(200).send({ id: body?.userId, accessToken: token, user: user?.toJSON() });
+        return next();
+      }
+    } catch (error) {
+        console.log('error login', error)
+        res.status(404).json({ status: 400, message: 'User don`t exist '});
+      return next();
     }
-    const token = jwt.sign(body, jwtSecret);
-    res.status(200).send({ id: body?.userId, accessToken: token, user: user?.toJSON() });
-    return next();
-  }
-console.log('uw,', user)
-  res.status(404).json({ status: 400, message: 'User don`t exist '});
-  return next();
+  console.log('uw,', user)
+
 };
 
 const validJWTNeeded = (req: Request, res: Response, next: NextFunction) => {

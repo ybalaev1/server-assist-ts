@@ -53,19 +53,25 @@ var login = function (req, res, next) { return __awaiter(void 0, void 0, void 0,
                 return [4, user_model_1.User.findOne({ 'email': email }).exec()];
             case 1:
                 user = _b.sent();
-                if (user !== null) {
-                    body = {
-                        userId: user === null || user === void 0 ? void 0 : user._id,
-                        email: email,
-                        provider: 'email',
-                    };
-                    token = jwt.sign(body, jwtSecret);
-                    res.status(200).send({ id: body === null || body === void 0 ? void 0 : body.userId, accessToken: token, user: user === null || user === void 0 ? void 0 : user.toJSON() });
+                try {
+                    if (user !== null) {
+                        body = {
+                            userId: user === null || user === void 0 ? void 0 : user._id,
+                            email: email,
+                            provider: 'email',
+                        };
+                        token = jwt.sign(body, jwtSecret);
+                        res.status(200).send({ id: body === null || body === void 0 ? void 0 : body.userId, accessToken: token, user: user === null || user === void 0 ? void 0 : user.toJSON() });
+                        return [2, next()];
+                    }
+                }
+                catch (error) {
+                    console.log('error login', error);
+                    res.status(404).json({ status: 400, message: 'User don`t exist ' });
                     return [2, next()];
                 }
                 console.log('uw,', user);
-                res.status(404).json({ status: 400, message: 'User don`t exist ' });
-                return [2, next()];
+                return [2];
         }
     });
 }); };
