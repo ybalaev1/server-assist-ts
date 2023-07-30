@@ -34,7 +34,13 @@ const findByEmail = async (value: string) =>
 const insertUser = async (req: Request, res: Response) => {
         // const { password } = req.body.data;
         const { data } = req.body;
-        console.log('insertUser', req.body);
+        // let pass = '';
+        // console.log('insertUser', req.body);
+        // if (data?.authProvider === 'email') {
+        //         pass = data.password
+        // } else {
+        //         pass = data?.email;
+        // }
         const pass = data.email;
         const salt = crypto.randomBytes(16).toString('base64');
         if (pass) {

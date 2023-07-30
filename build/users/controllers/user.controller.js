@@ -98,7 +98,6 @@ var insertUser = function (req, res) { return __awaiter(void 0, void 0, void 0, 
     var data, pass, salt, hash;
     return __generator(this, function (_a) {
         data = req.body.data;
-        console.log('insertUser', req.body);
         pass = data.email;
         salt = crypto_1.default.randomBytes(16).toString('base64');
         if (pass) {

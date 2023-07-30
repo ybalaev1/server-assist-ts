@@ -37,7 +37,6 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.refreshPassword = exports.validJWTNeeded = exports.login = void 0;
-var user_controller_1 = require("../../../users/controllers/user.controller");
 var user_model_1 = require("../../../users/model/user.model");
 var jwt = require('jsonwebtoken');
 var crypto = require('crypto');
@@ -86,37 +85,30 @@ var validJWTNeeded = function (req, res, next) {
     return res.status(401).json({ message: 'Need auth token', code: 401 });
 };
 exports.validJWTNeeded = validJWTNeeded;
-var refreshPassword = function (req, res) {
-    var _a = req.body, email = _a.email, new_pass = _a.new_pass;
-    if (email) {
-        if (new_pass) {
-            (0, user_controller_1.findByEmail)(email).then(function (result) { return __awaiter(void 0, void 0, void 0, function () {
-                var salt, hash, ref_pass;
-                return __generator(this, function (_a) {
-                    switch (_a.label) {
-                        case 0:
-                            if (!result[0]) return [3, 3];
-                            salt = crypto.randomBytes(16).toString('base64');
-                            hash = crypto.createHmac('sha512', salt).update(new_pass).digest('base64');
-                            req.body.password = salt + '$' + hash;
-                            return [4, user_model_1.User.updateOne({ _id: result[0].id }, req.body)];
-                        case 1:
-                            _a.sent();
-                            return [4, user_model_1.User.findById(result[0].id)];
-                        case 2:
-                            ref_pass = _a.sent();
-                            return [2, res.status(200).json({ message: 'New password has been updated', code: 200, data: ref_pass })];
-                        case 3: return [2, result];
-                    }
-                });
-            }); });
+var refreshPassword = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var _a, jwt, new_pass, user, salt, hash, ref_pass;
+    return __generator(this, function (_b) {
+        switch (_b.label) {
+            case 0:
+                _a = req.body, jwt = _a.jwt, new_pass = _a.new_pass;
+                console.log('refreshPassword', req.body);
+                return [4, user_model_1.User.findOne({ 'id': jwt === null || jwt === void 0 ? void 0 : jwt.userId }).exec()];
+            case 1:
+                user = _b.sent();
+                if (!user) {
+                    return [2, res.status(404).json({ status: 400, message: 'User don`t exist ' })];
+                }
+                salt = crypto.randomBytes(16).toString('base64');
+                hash = crypto.createHmac('sha512', salt).update(new_pass).digest('base64');
+                req.body.email = salt + '$' + hash;
+                return [4, user_model_1.User.updateOne({ _id: user === null || user === void 0 ? void 0 : user.id }, req.body)];
+            case 2:
+                _b.sent();
+                return [4, user_model_1.User.findOne({ 'id': jwt === null || jwt === void 0 ? void 0 : jwt.userId })];
+            case 3:
+                ref_pass = _b.sent();
+                return [2, res.status(200).json({ message: 'New password has been updated', code: 200, data: ref_pass })];
         }
-        else {
-            return res.status(400).json({ message: 'The fields new_pass are required', code: 401 });
-        }
-    }
-    else {
-        return res.status(400).json({ message: 'The fields email are required', code: 401 });
-    }
-};
+    });
+}); };
 exports.refreshPassword = refreshPassword;
