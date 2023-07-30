@@ -24,7 +24,7 @@ const insertCommunity = async (req: Request, res: Response) => {
         if (data.title) {
                 if (data.description) {
                         return createCommunity(requestData).then(async (community: any) => {
-                                console.log('comm', community);
+                                // console.log('comm', community);
                                 const myCommunities = !user?.myCommunities?.length ?  [community?._id] : [...user?.myCommunities, community?._id];
                                 await User.updateOne({ 'id': jwt?.userId }, {$set: {myCommunities: myCommunities}});
                                 await Community.updateOne({_id: community?._id}, {'id': community?._id});
@@ -55,7 +55,7 @@ const getAllCommunities = async (req: Request, res: Response) => {
                   }
                 }
         ])
-        // console.log('getAllCommunities', location, communities);
+        // console.log('getAllCommunities', communities);
         return res.status(200).json({ data: communities });
 };
 
@@ -63,32 +63,28 @@ const getAllCommunities = async (req: Request, res: Response) => {
 const getCommunityById = async (req: Request, res: Response) => {
         const { id } = req.params;
         const community = await Community.findOne({ 'id': id }).exec();
-        console.log('getCommunityById', community);
+        const creator = await User.findOne({ 'id': community?.creator?.uid }).exec();
 
+        const data = {
+                ...community?.toJSON(),
+                creator: {
+                        ...community?.creator,
+                        image: creator?.userImage,
+                },
+        }
         if (!community) {
                 return res.status(404).json({ message: 'Community not found' });
         }
-        return res.status(200).json({ ...community?.toJSON()});
+        return res.status(200).json({ ...data });
 };
 
 const getManagingCommunities = async (req: Request, res: Response) => {
         const { jwt } = req.body;
         try {
         const communitiesData = await Community.find().exec();
-        const communities = communitiesData?.filter((item) => item?.creatorUid === jwt?.userId ||  item?.creator?.uid === jwt?.userId);
-        // const communities = await Community.aggregate([
-        //         {
-        //           '$match': {
-        //                 "creator.uid": jwt?.userId 
-        //           }
-        //         },
-        //         {
-        //                 '$match': {
-        //                       "creatorUid": jwt?.userId 
-        //                 }
-        //               }
-        // ])
-                return res.status(200).send({ ...communities });
+        const communities = communitiesData?.filter((item) => item?.creator?.uid === jwt?.userId);
+
+        return res.status(200).send({ data: communities });
         } catch (error) {
                 console.log('error', error)
                 return res.status(404).json({ message: 'User not found', code: 404 });
@@ -109,7 +105,7 @@ const updateCommunity = async (req: Request, res: Response) => {
 const deleteCommunity = async (req: Request, res: Response) => {
         const { id } = req.params;
         const community = await Community.findOne({ 'id': id });
-        const creatorId = community?.creatorUid || community?.creator?.uid;
+        const creatorId = community?.creator?.uid;
         const user = await User.findOne({ 'id': creatorId });
         const communities = user?.myCommunities?.filter(i => i !== id);
         

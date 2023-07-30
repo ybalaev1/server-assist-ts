@@ -56,7 +56,7 @@ var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
     return to.concat(ar || Array.prototype.slice.call(from));
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.unSubscribeEvent = exports.subscribeEvent = exports.getEventById = exports.getEventsByCommunityId = exports.getAllEvents = exports.updateEvent = exports.insertEvent = exports.findById = exports.deleteEvent = void 0;
+exports.getManagingEvents = exports.unSubscribeEvent = exports.subscribeEvent = exports.getEventById = exports.getEventsByCommunityId = exports.getAllEvents = exports.updateEvent = exports.insertEvent = exports.findById = exports.deleteEvent = void 0;
 var user_model_1 = require("../../users/model/user.model");
 var event_model_1 = require("../model/event.model");
 var community_model_1 = require("../../communities/model/community.model");
@@ -86,19 +86,23 @@ var findById = function (req, res) { return __awaiter(void 0, void 0, void 0, fu
 }); };
 exports.findById = findById;
 var getEventById = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var id, event;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
+    var id, event, creator, data;
+    var _a;
+    return __generator(this, function (_b) {
+        switch (_b.label) {
             case 0:
                 id = req.params.id;
                 return [4, event_model_1.Event.findOne({ 'id': id }).exec()];
             case 1:
-                event = _a.sent();
-                console.log('getEventById', id, event);
+                event = _b.sent();
+                return [4, user_model_1.User.findOne({ 'id': (_a = event === null || event === void 0 ? void 0 : event.creator) === null || _a === void 0 ? void 0 : _a.uid }).exec()];
+            case 2:
+                creator = _b.sent();
+                data = __assign(__assign({}, event === null || event === void 0 ? void 0 : event.toJSON()), { creator: __assign(__assign({}, event === null || event === void 0 ? void 0 : event.creator), { image: creator === null || creator === void 0 ? void 0 : creator.userImage }) });
                 if (!event) {
                     return [2, res.status(404).json({ message: 'event not found' })];
                 }
-                return [2, res.status(200).json(__assign({}, event === null || event === void 0 ? void 0 : event.toJSON()))];
+                return [2, res.status(200).json(__assign({}, data))];
         }
     });
 }); };
@@ -156,7 +160,6 @@ var insertEvent = function (req, res) { return __awaiter(void 0, void 0, void 0,
                                 case 0: return [4, community_model_1.Community.findOne({ 'id': data.communityUid })];
                                 case 1:
                                     community = _c.sent();
-                                    console.log('event create', event);
                                     userEvents = !((_a = user === null || user === void 0 ? void 0 : user.events) === null || _a === void 0 ? void 0 : _a.length) ? [event === null || event === void 0 ? void 0 : event._id] : __spreadArray(__spreadArray([], user === null || user === void 0 ? void 0 : user.events, true), [event === null || event === void 0 ? void 0 : event._id], false);
                                     events = !((_b = community === null || community === void 0 ? void 0 : community.eventsIds) === null || _b === void 0 ? void 0 : _b.length) ? [event === null || event === void 0 ? void 0 : event._id] : __spreadArray(__spreadArray([], community === null || community === void 0 ? void 0 : community.eventsIds, true), [event === null || event === void 0 ? void 0 : event._id], false);
                                     return [4, user_model_1.User.updateOne({ 'id': jwt === null || jwt === void 0 ? void 0 : jwt.userId }, { $set: { goingEvent: userEvents, events: userEvents } })];
@@ -201,6 +204,29 @@ var updateEvent = function (req, res) { return __awaiter(void 0, void 0, void 0,
     });
 }); };
 exports.updateEvent = updateEvent;
+var getManagingEvents = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var jwt, eventsData, events, error_2;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                jwt = req.body.jwt;
+                _a.label = 1;
+            case 1:
+                _a.trys.push([1, 3, , 4]);
+                return [4, event_model_1.Event.find().exec()];
+            case 2:
+                eventsData = _a.sent();
+                events = eventsData === null || eventsData === void 0 ? void 0 : eventsData.filter(function (item) { var _a; return ((_a = item === null || item === void 0 ? void 0 : item.creator) === null || _a === void 0 ? void 0 : _a.uid) === (jwt === null || jwt === void 0 ? void 0 : jwt.userId); });
+                return [2, res.status(200).send({ data: events })];
+            case 3:
+                error_2 = _a.sent();
+                console.log('error', error_2);
+                return [2, res.status(404).json({ message: 'User not found', code: 404 })];
+            case 4: return [2];
+        }
+    });
+}); };
+exports.getManagingEvents = getManagingEvents;
 var deleteEvent = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
     var id, jwt, event, user, community, userEvents, events;
     var _a, _b;

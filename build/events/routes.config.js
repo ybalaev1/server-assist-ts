@@ -12,6 +12,7 @@ var eventsRoute = function () {
     app.post('/events/:id/unsubscribe', [auth_user_1.validJWTNeeded, events_controller_1.unSubscribeEvent]);
     app.get('/events/', [auth_user_1.validJWTNeeded, events_controller_1.getAllEvents]);
     app.get('/events/:id', [auth_user_1.validJWTNeeded, events_controller_1.getEventById]);
+    app.get('/managing_events/', [auth_user_1.validJWTNeeded, events_controller_1.getManagingEvents]);
     app.delete('/events/:id', [auth_user_1.validJWTNeeded, events_controller_1.deleteEvent]);
     return app;
 };

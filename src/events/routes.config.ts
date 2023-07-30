@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import {
-  findById, insertEvent, getAllEvents, updateEvent, deleteEvent, getEventById, subscribeEvent, unSubscribeEvent,
+  findById, insertEvent, getAllEvents, updateEvent, deleteEvent, getEventById, subscribeEvent, unSubscribeEvent, getManagingEvents,
 } from './controllers/events.controller';
 import { validJWTNeeded } from '../services/auth/controllers/auth.user';
 
@@ -13,6 +13,7 @@ const eventsRoute = () => {
   app.post('/events/:id/unsubscribe', [validJWTNeeded, unSubscribeEvent]);
   app.get('/events/', [validJWTNeeded, getAllEvents]);
   app.get('/events/:id', [validJWTNeeded, getEventById]);
+  app.get('/managing_events/', [validJWTNeeded, getManagingEvents]);
   app.delete('/events/:id', [validJWTNeeded, deleteEvent]);
 
   return app;

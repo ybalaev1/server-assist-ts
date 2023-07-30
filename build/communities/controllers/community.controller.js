@@ -94,7 +94,6 @@ var insertCommunity = function (req, res) { return __awaiter(void 0, void 0, voi
                                 return __generator(this, function (_b) {
                                     switch (_b.label) {
                                         case 0:
-                                            console.log('comm', community);
                                             myCommunities = !((_a = user === null || user === void 0 ? void 0 : user.myCommunities) === null || _a === void 0 ? void 0 : _a.length) ? [community === null || community === void 0 ? void 0 : community._id] : __spreadArray(__spreadArray([], user === null || user === void 0 ? void 0 : user.myCommunities, true), [community === null || community === void 0 ? void 0 : community._id], false);
                                             return [4, user_model_1.User.updateOne({ 'id': jwt === null || jwt === void 0 ? void 0 : jwt.userId }, { $set: { myCommunities: myCommunities } })];
                                         case 1:
@@ -143,19 +142,23 @@ var getAllCommunities = function (req, res) { return __awaiter(void 0, void 0, v
 }); };
 exports.getAllCommunities = getAllCommunities;
 var getCommunityById = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var id, community;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
+    var id, community, creator, data;
+    var _a;
+    return __generator(this, function (_b) {
+        switch (_b.label) {
             case 0:
                 id = req.params.id;
                 return [4, community_model_1.Community.findOne({ 'id': id }).exec()];
             case 1:
-                community = _a.sent();
-                console.log('getCommunityById', community);
+                community = _b.sent();
+                return [4, user_model_1.User.findOne({ 'id': (_a = community === null || community === void 0 ? void 0 : community.creator) === null || _a === void 0 ? void 0 : _a.uid }).exec()];
+            case 2:
+                creator = _b.sent();
+                data = __assign(__assign({}, community === null || community === void 0 ? void 0 : community.toJSON()), { creator: __assign(__assign({}, community === null || community === void 0 ? void 0 : community.creator), { image: creator === null || creator === void 0 ? void 0 : creator.userImage }) });
                 if (!community) {
                     return [2, res.status(404).json({ message: 'Community not found' })];
                 }
-                return [2, res.status(200).json(__assign({}, community === null || community === void 0 ? void 0 : community.toJSON()))];
+                return [2, res.status(200).json(__assign({}, data))];
         }
     });
 }); };
@@ -172,8 +175,8 @@ var getManagingCommunities = function (req, res) { return __awaiter(void 0, void
                 return [4, community_model_1.Community.find().exec()];
             case 2:
                 communitiesData = _a.sent();
-                communities = communitiesData === null || communitiesData === void 0 ? void 0 : communitiesData.filter(function (item) { var _a; return (item === null || item === void 0 ? void 0 : item.creatorUid) === (jwt === null || jwt === void 0 ? void 0 : jwt.userId) || ((_a = item === null || item === void 0 ? void 0 : item.creator) === null || _a === void 0 ? void 0 : _a.uid) === (jwt === null || jwt === void 0 ? void 0 : jwt.userId); });
-                return [2, res.status(200).send(__assign({}, communities))];
+                communities = communitiesData === null || communitiesData === void 0 ? void 0 : communitiesData.filter(function (item) { var _a; return ((_a = item === null || item === void 0 ? void 0 : item.creator) === null || _a === void 0 ? void 0 : _a.uid) === (jwt === null || jwt === void 0 ? void 0 : jwt.userId); });
+                return [2, res.status(200).send({ data: communities })];
             case 3:
                 error_1 = _a.sent();
                 console.log('error', error_1);
@@ -217,7 +220,7 @@ var deleteCommunity = function (req, res) { return __awaiter(void 0, void 0, voi
                 return [4, community_model_1.Community.findOne({ 'id': id })];
             case 1:
                 community = _c.sent();
-                creatorId = (community === null || community === void 0 ? void 0 : community.creatorUid) || ((_a = community === null || community === void 0 ? void 0 : community.creator) === null || _a === void 0 ? void 0 : _a.uid);
+                creatorId = (_a = community === null || community === void 0 ? void 0 : community.creator) === null || _a === void 0 ? void 0 : _a.uid;
                 return [4, user_model_1.User.findOne({ 'id': creatorId })];
             case 2:
                 user = _c.sent();

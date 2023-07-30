@@ -22,13 +22,21 @@ const findById = async (req: Request, res: Response) => {
 const getEventById = async (req: Request, res: Response) => {
   const { id } = req.params;
   const event = await Event.findOne({ 'id': id }).exec();
-  console.log('getEventById', id, event);
-  
+  // console.log('getEventById', id, event);
+  const creator = await User.findOne({ 'id': event?.creator?.uid }).exec();
+
+  const data = {
+          ...event?.toJSON(),
+          creator: {
+                  ...event?.creator,
+                  image: creator?.userImage,
+          },
+  }
 
   if (!event) {
           return res.status(404).json({ message: 'event not found' });
   }
-  return res.status(200).json({ ...event?.toJSON()});
+  return res.status(200).json({ ...data });
 };
 const getEventsByCommunityId = async (id: string) => {
   const community = await Community.findById({ 'id': id });
@@ -59,7 +67,7 @@ const insertEvent = async (req: Request, res: Response) => {
   }
     return eventCreate(requestData).then(async(event: any) => {
       const community = await Community.findOne({ 'id': data.communityUid })
-      console.log('event create', event);
+      // console.log('event create', event);
 
       const userEvents = !user?.events?.length ?  [event?._id] : [...user?.events, event?._id];
       const events = !community?.eventsIds?.length ?  [event?._id] : [...community?.eventsIds, event?._id];
@@ -91,6 +99,18 @@ const updateEvent = async (req: Request, res: Response) => {
           return res.status(404).json({ message: 'Event not found', code: 404 });
   }
 };
+const getManagingEvents = async (req: Request, res: Response) => {
+  const { jwt } = req.body;
+  try {
+  const eventsData = await Event.find().exec();
+  const events = eventsData?.filter((item) => item?.creator?.uid === jwt?.userId);
+
+  return res.status(200).send({ data: events });
+  } catch (error) {
+          console.log('error', error)
+          return res.status(404).json({ message: 'User not found', code: 404 });
+  }
+}
 const deleteEvent = async (req: Request, res: Response) => {
         const { id } = req.params;
         const { jwt } = req.body;
@@ -142,5 +162,5 @@ const unSubscribeEvent = async (req: Request, res: Response) => {
 }
 export {
   deleteEvent, findById, insertEvent, updateEvent, getAllEvents, getEventsByCommunityId, getEventById, subscribeEvent,
-  unSubscribeEvent
+  unSubscribeEvent, getManagingEvents
 };
