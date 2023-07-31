@@ -164,7 +164,7 @@ var getCommunityById = function (req, res) { return __awaiter(void 0, void 0, vo
     });
 }); };
 exports.getCommunityById = getCommunityById;
-var getManagingCommunities = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+var getManagingCommunities = function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var jwt, communitiesData, communities, error_1;
     return __generator(this, function (_a) {
         switch (_a.label) {
@@ -177,7 +177,8 @@ var getManagingCommunities = function (req, res) { return __awaiter(void 0, void
             case 2:
                 communitiesData = _a.sent();
                 communities = communitiesData === null || communitiesData === void 0 ? void 0 : communitiesData.filter(function (item) { var _a; return ((_a = item === null || item === void 0 ? void 0 : item.creator) === null || _a === void 0 ? void 0 : _a.uid) === (jwt === null || jwt === void 0 ? void 0 : jwt.userId); });
-                return [2, res.status(200).send({ data: communities })];
+                res.status(200).send({ data: communities });
+                return [2, next()];
             case 3:
                 error_1 = _a.sent();
                 console.log('error', error_1);

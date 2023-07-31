@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+import { NextFunction, Request, Response } from 'express';
 import { Community } from '../model/community.model';
 import { User } from '../../users/model/user.model';
 import { Event, EventCreatedModel } from '../../events/model/event.model';
@@ -78,13 +78,14 @@ const getCommunityById = async (req: Request, res: Response) => {
         return res.status(200).json({ ...data });
 };
 
-const getManagingCommunities = async (req: Request, res: Response) => {
+const getManagingCommunities = async (req: Request, res: Response, next: NextFunction) => {
         const { jwt } = req.body;
         try {
         const communitiesData = await Community.find().exec();
         const communities = communitiesData?.filter((item) => item?.creator?.uid === jwt?.userId);
 
-        return res.status(200).send({ data: communities });
+        res.status(200).send({ data: communities });
+        return next();
         } catch (error) {
                 console.log('error', error)
                 return res.status(404).json({ message: 'User not found', code: 404 });
