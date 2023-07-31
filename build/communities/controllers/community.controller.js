@@ -128,13 +128,7 @@ var getAllCommunities = function (req, res) { return __awaiter(void 0, void 0, v
         switch (_a.label) {
             case 0:
                 location = req.params.location;
-                return [4, community_model_1.Community.aggregate([
-                        {
-                            '$match': {
-                                "location": location
-                            }
-                        }
-                    ])];
+                return [4, community_model_1.Community.find({ location: location }).exec()];
             case 1:
                 communities = _a.sent();
                 return [2, res.status(200).json({ data: communities })];
@@ -164,32 +158,26 @@ var getCommunityById = function (req, res) { return __awaiter(void 0, void 0, vo
     });
 }); };
 exports.getCommunityById = getCommunityById;
-var getManagingCommunities = function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var jwt, communitiesData, communities, error_1;
+var getManagingCommunities = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var jwt, userId, communitiesData;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
                 jwt = req.body.jwt;
-                _a.label = 1;
+                userId = jwt === null || jwt === void 0 ? void 0 : jwt.userId;
+                return [4, community_model_1.Community.find({ "creator.uid": userId }).exec()];
             case 1:
-                _a.trys.push([1, 3, , 4]);
-                return [4, community_model_1.Community.find().exec()];
-            case 2:
                 communitiesData = _a.sent();
-                communities = communitiesData === null || communitiesData === void 0 ? void 0 : communitiesData.filter(function (item) { var _a; return ((_a = item === null || item === void 0 ? void 0 : item.creator) === null || _a === void 0 ? void 0 : _a.uid) === (jwt === null || jwt === void 0 ? void 0 : jwt.userId); });
-                res.status(200).send({ data: communities });
-                return [2, next()];
-            case 3:
-                error_1 = _a.sent();
-                console.log('error', error_1);
-                return [2, res.status(404).json({ message: 'User not found', code: 404 })];
-            case 4: return [2];
+                if (!communitiesData.length) {
+                    return [2, res.status(404).json({ message: 'communities not found', code: 404 })];
+                }
+                return [2, res.status(200).json({ data: communitiesData })];
         }
     });
 }); };
 exports.getManagingCommunities = getManagingCommunities;
 var updateCommunity = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var id, communityUpdated, error_2;
+    var id, communityUpdated, error_1;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -205,7 +193,7 @@ var updateCommunity = function (req, res) { return __awaiter(void 0, void 0, voi
                 communityUpdated = _a.sent();
                 return [2, res.status(200).send(__assign({}, communityUpdated === null || communityUpdated === void 0 ? void 0 : communityUpdated.toJSON()))];
             case 4:
-                error_2 = _a.sent();
+                error_1 = _a.sent();
                 return [2, res.status(404).json({ message: 'Community not found', code: 404 })];
             case 5: return [2];
         }

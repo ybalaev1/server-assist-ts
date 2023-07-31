@@ -12,8 +12,8 @@ const express = require('express');
 
 const app = express();
 
-app.use(express.json({limit: '500mb'}));
-app.use(express.urlencoded({limit: '500mb', extended: true, parameterLimit: 5000 }));
+app.use(express.json({limit: '50mb'}));
+app.use(express.urlencoded({limit: '50mb', extended: true, parameterLimit: 500 }));
 app.use(express.json());
 
 app.use('/', userRoute());
@@ -25,11 +25,11 @@ app.use('/', constansRoute());
 const PORT = process.env.PORT || 3000;
 app.use(
   cors({
-        // origin: `http://localhost:${PORT}`,
-    origin: `https://dance-connect-528e8b559e89.herokuapp.com:${PORT}`,
+        origin: `http://localhost:${PORT}`,
+    // origin: `https://dance-connect-528e8b559e89.herokuapp.com:${PORT}`,
     optionsSuccessStatus: 200,
     credentials: true,
-    maxAge: 3600000,
+    // maxAge: 3600000,
   }),
 );
   const server = app.listen(PORT, async () => {

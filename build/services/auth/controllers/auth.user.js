@@ -61,8 +61,7 @@ var login = function (req, res, next) { return __awaiter(void 0, void 0, void 0,
                     provider: 'email',
                 };
                 token = jwt.sign(body, jwtSecret);
-                res.status(200).send({ id: body === null || body === void 0 ? void 0 : body.userId, accessToken: token, user: user === null || user === void 0 ? void 0 : user.toJSON() });
-                return [2, next()];
+                return [2, res.status(200).json({ id: body === null || body === void 0 ? void 0 : body.userId, accessToken: token, user: user === null || user === void 0 ? void 0 : user.toJSON() })];
         }
     });
 }); };

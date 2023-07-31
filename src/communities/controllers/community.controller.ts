@@ -47,15 +47,23 @@ const insertCommunity = async (req: Request, res: Response) => {
 
 const getAllCommunities = async (req: Request, res: Response) => {
         const {location} = req.params;
-        // const communities = await Community.find().exec();
-        const communities = await Community.aggregate([
-                {
-                  '$match': {
-                        "location": location
-                  }
-                }
-        ])
-        // console.log('getAllCommunities', communities);
+
+        const communities = await Community.find({location: location}).exec();
+        // const communities = communitiesData.map(item => {
+        //         return {
+        //                 title: item.title,
+        //                 description: item.description,
+        //                 images: item?.images,
+        //                 categories: item.categories,
+        //                 followers: item?.followers,
+        //                 location: item?.location,
+        //                 id: item.id,
+        //                 creator: {
+        //                         uid: item.creator.uid,
+        //                 }
+        //         }
+        // })
+
         return res.status(200).json({ data: communities });
 };
 
@@ -78,18 +86,26 @@ const getCommunityById = async (req: Request, res: Response) => {
         return res.status(200).json({ ...data });
 };
 
-const getManagingCommunities = async (req: Request, res: Response, next: NextFunction) => {
+const getManagingCommunities = async (req: Request, res: Response) => {
         const { jwt } = req.body;
-        try {
-        const communitiesData = await Community.find().exec();
-        const communities = communitiesData?.filter((item) => item?.creator?.uid === jwt?.userId);
-
-        res.status(200).send({ data: communities });
-        return next();
-        } catch (error) {
-                console.log('error', error)
-                return res.status(404).json({ message: 'User not found', code: 404 });
+        // console.log('getManagingCommunities', req.body);
+        const userId = jwt?.userId;
+        const communitiesData = await Community.find({ "creator.uid": userId }).exec();
+        // console.log('getManagingCommunities', communitiesData)
+        // const communities = communitiesData.filter((item) => item?.creator?.uid === userId);
+        if (!communitiesData.length) {
+             return res.status(404).json({ message: 'communities not found', code: 404 });
         }
+
+        return res.status(200).json({ data: communitiesData });
+
+        // try {
+
+        // return res.status(200).json({ data: communities });
+        // } catch (error) {
+        //         console.log('error', error)
+        //         return res.status(404).json({ message: 'User not found', code: 404 });
+        // }
 }
 const updateCommunity = async (req: Request, res: Response) => {
         const { id } = req.params;

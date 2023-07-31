@@ -19,8 +19,8 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
           provider: 'email',
         }
         const token = jwt.sign(body, jwtSecret);
-        res.status(200).send({ id: body?.userId, accessToken: token, user: user?.toJSON() });
-        return next();
+        return res.status(200).json({ id: body?.userId, accessToken: token, user: user?.toJSON() });
+        // return next();
   // console.log('uw,', user)
   // // return next();
 

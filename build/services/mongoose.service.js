@@ -51,7 +51,7 @@ var connectToDatabase = function () { return __awaiter(void 0, void 0, void 0, f
             case 1:
                 _a.sent();
                 options = {
-                    useNewUrlParser: true, useFindAndModify: false, useCreateIndex: true, useUnifiedTopology: true,
+                    useNewUrlParser: true, useFindAndModify: false, useCreateIndex: true, useUnifiedTopology: true, connectTimeoutMS: 500000,
                 };
                 return [4, mongoose_1.default.connect("mongodb+srv://" + process.env.db_user + ":" + process.env.db_pass + "@cluster0.tozhfgs.mongodb.net/testingDB?retryWrites=true&w=majority", options)];
             case 2:

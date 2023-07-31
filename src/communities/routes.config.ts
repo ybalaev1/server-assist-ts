@@ -6,12 +6,12 @@ const communitiesRoute = () => {
         const app = Router();
 
         // app.post('/communities/', insertCommunity);
+        app.get('/communities/:location', getAllCommunities);
         app.post('/communities/', [validJWTNeeded, insertCommunity]);
         app.post('/communities/:id/update', [validJWTNeeded, updateCommunity]);
         app.post('/communities/:id/subscribe', [validJWTNeeded, subscribeCommunity]);
         app.post('/communities/:id/unsubscribe', [validJWTNeeded, unSubscribeCommunity]);
-        app.get('/communities/:location', getAllCommunities);
-        app.get('/manage_communities/', [validJWTNeeded, getManagingCommunities]);
+        app.get('/managing_communities/', [validJWTNeeded, getManagingCommunities]);
         app.get('/community/:id', [validJWTNeeded, getCommunityById]);
         app.delete('/communities/:id', [validJWTNeeded, deleteCommunity]);
 
