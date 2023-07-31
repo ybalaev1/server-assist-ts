@@ -70,3 +70,4 @@ var server = app.listen(PORT, function () { return __awaiter(void 0, void 0, voi
         }
     });
 }); });
+server.setTimeout(50000);
