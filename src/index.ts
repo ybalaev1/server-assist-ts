@@ -32,8 +32,8 @@ app.use(
     // maxAge: 360,
   }),
 );
-  // const server = app.listen(PORT, async () => {
-app.listen(PORT, async () => {
+  const server = app.listen(PORT, async () => {
+// app.listen(PORT, async () => {
   await connectToDatabase();
   // eslint-disable-next-line no-console
   console.log(`Server running on port ${PORT}.`);
