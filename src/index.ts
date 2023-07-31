@@ -12,9 +12,9 @@ const express = require('express');
 
 const app = express();
 
-app.use(express.json({limit: '15000mb'}));
-app.use(express.urlencoded({limit: '11500mb', extended: true, parameterLimit: 5000 }));
-// app.use(express.json());
+app.use(express.json({limit: '500mb'}));
+app.use(express.urlencoded({limit: '500mb', extended: true, parameterLimit: 5000 }));
+app.use(express.json());
 
 app.use('/', userRoute());
 app.use('/', authRoute());
