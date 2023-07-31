@@ -8,7 +8,7 @@ var authRoute = function () {
     var app = (0, express_1.Router)();
     app.post('/auth_email/', [verify_user_1.matchUserAndPassword, auth_user_1.login]);
     app.post('/auth_social/', auth_user_1.login);
-    app.post('/refresh/', auth_user_1.refreshPassword);
+    app.post('/refresh/', [auth_user_1.validJWTNeeded, auth_user_1.refreshPassword]);
     return app;
 };
 exports.authRoute = authRoute;

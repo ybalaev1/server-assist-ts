@@ -12,9 +12,9 @@ const express = require('express');
 
 const app = express();
 
-app.use(express.json({limit: '50mb'}));
-app.use(express.urlencoded({limit: '50mb', extended: true, parameterLimit:50000 }));
-app.use(express.json());
+app.use(express.json({limit: '15000mb'}));
+app.use(express.urlencoded({limit: '11500mb', extended: true, parameterLimit: 5000 }));
+// app.use(express.json());
 
 app.use('/', userRoute());
 app.use('/', authRoute());
@@ -29,9 +29,11 @@ app.use(
     origin: `https://dance-connect-528e8b559e89.herokuapp.com:${PORT}`,
     optionsSuccessStatus: 200,
     credentials: true,
+    maxAge: 360,
   }),
 );
-const server = app.listen(PORT, async () => {
+  // const server = app.listen(PORT, async () => {
+app.listen(PORT, async () => {
   await connectToDatabase();
   // eslint-disable-next-line no-console
   console.log(`Server running on port ${PORT}.`);

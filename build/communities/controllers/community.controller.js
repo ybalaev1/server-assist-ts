@@ -59,6 +59,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.getManagingCommunities = exports.unSubscribeCommunity = exports.subscribeCommunity = exports.insertCommunity = exports.getCommunityById = exports.getAllCommunities = exports.updateCommunity = exports.deleteCommunity = void 0;
 var community_model_1 = require("../model/community.model");
 var user_model_1 = require("../../users/model/user.model");
+var event_model_1 = require("../../events/model/event.model");
 var createCommunity = function (data) { return __awaiter(void 0, void 0, void 0, function () {
     var community;
     return __generator(this, function (_a) {
@@ -212,25 +213,39 @@ var updateCommunity = function (req, res) { return __awaiter(void 0, void 0, voi
 exports.updateCommunity = updateCommunity;
 var deleteCommunity = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
     var id, community, creatorId, user, communities;
-    var _a, _b;
-    return __generator(this, function (_c) {
-        switch (_c.label) {
+    var _a, _b, _c;
+    return __generator(this, function (_d) {
+        switch (_d.label) {
             case 0:
                 id = req.params.id;
                 return [4, community_model_1.Community.findOne({ 'id': id })];
             case 1:
-                community = _c.sent();
+                community = _d.sent();
                 creatorId = (_a = community === null || community === void 0 ? void 0 : community.creator) === null || _a === void 0 ? void 0 : _a.uid;
                 return [4, user_model_1.User.findOne({ 'id': creatorId })];
             case 2:
-                user = _c.sent();
+                user = _d.sent();
                 communities = (_b = user === null || user === void 0 ? void 0 : user.myCommunities) === null || _b === void 0 ? void 0 : _b.filter(function (i) { return i !== id; });
+                (_c = community === null || community === void 0 ? void 0 : community.eventsIds) === null || _c === void 0 ? void 0 : _c.map(function (value) { return __awaiter(void 0, void 0, void 0, function () {
+                    var idEvent;
+                    return __generator(this, function (_a) {
+                        switch (_a.label) {
+                            case 0: return [4, event_model_1.Event.findOne({ _id: value })];
+                            case 1:
+                                idEvent = _a.sent();
+                                return [4, event_model_1.Event.findByIdAndDelete(idEvent)];
+                            case 2:
+                                _a.sent();
+                                return [2];
+                        }
+                    });
+                }); });
                 return [4, user_model_1.User.updateOne({ 'id': creatorId }, { $set: { myCommunities: communities } })];
             case 3:
-                _c.sent();
+                _d.sent();
                 return [4, community_model_1.Community.findByIdAndDelete(id)];
             case 4:
-                _c.sent();
+                _d.sent();
                 return [2, res.status(200).json({ message: 'Community deleted successfully.' })];
         }
     });
@@ -275,6 +290,7 @@ var unSubscribeCommunity = function (req, res) { return __awaiter(void 0, void 0
             case 0:
                 id = req.params.id;
                 jwt = req.body.jwt;
+                console.log('unSubscribeCommunity jwt', jwt, id);
                 return [4, community_model_1.Community.findOne({ 'id': id })];
             case 1:
                 community = _c.sent();
@@ -283,7 +299,8 @@ var unSubscribeCommunity = function (req, res) { return __awaiter(void 0, void 0
                 user = _c.sent();
                 userUid = jwt === null || jwt === void 0 ? void 0 : jwt.userId;
                 userCommunities = (_a = user === null || user === void 0 ? void 0 : user.joinedCommunities) === null || _a === void 0 ? void 0 : _a.filter(function (i) { return i !== id; });
-                followers = (_b = community === null || community === void 0 ? void 0 : community.followers) === null || _b === void 0 ? void 0 : _b.filter(function (i) { return i.userUid !== userUid; });
+                followers = (_b = community === null || community === void 0 ? void 0 : community.followers) === null || _b === void 0 ? void 0 : _b.filter(function (i) { return i !== userUid; });
+                console.log('unSubscribeCommunity', userUid, userCommunities, followers);
                 return [4, user_model_1.User.updateOne({ 'id': jwt === null || jwt === void 0 ? void 0 : jwt.userId }, { $set: { joinedCommunities: userCommunities } })];
             case 3:
                 _c.sent();

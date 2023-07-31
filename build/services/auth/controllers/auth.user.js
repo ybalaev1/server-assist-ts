@@ -86,12 +86,12 @@ var validJWTNeeded = function (req, res, next) {
 };
 exports.validJWTNeeded = validJWTNeeded;
 var refreshPassword = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var _a, jwt, new_pass, user, salt, hash, ref_pass;
+    var _a, jwt, new_pass, user, salt, hash;
     return __generator(this, function (_b) {
         switch (_b.label) {
             case 0:
                 _a = req.body, jwt = _a.jwt, new_pass = _a.new_pass;
-                console.log('refreshPassword', req.body);
+                console.log('refreshPassword', req.body, new_pass);
                 return [4, user_model_1.User.findOne({ 'id': jwt === null || jwt === void 0 ? void 0 : jwt.userId }).exec()];
             case 1:
                 user = _b.sent();
@@ -100,14 +100,11 @@ var refreshPassword = function (req, res) { return __awaiter(void 0, void 0, voi
                 }
                 salt = crypto.randomBytes(16).toString('base64');
                 hash = crypto.createHmac('sha512', salt).update(new_pass).digest('base64');
-                req.body.email = salt + '$' + hash;
+                req.body.password = salt + '$' + hash;
                 return [4, user_model_1.User.updateOne({ _id: user === null || user === void 0 ? void 0 : user.id }, req.body)];
             case 2:
                 _b.sent();
-                return [4, user_model_1.User.findOne({ 'id': jwt === null || jwt === void 0 ? void 0 : jwt.userId })];
-            case 3:
-                ref_pass = _b.sent();
-                return [2, res.status(200).json({ message: 'New password has been updated', code: 200, data: ref_pass })];
+                return [2, res.status(200).json({ message: 'New password has been updated', code: 200 })];
         }
     });
 }); };

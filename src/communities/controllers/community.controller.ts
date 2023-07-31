@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { Community } from '../model/community.model';
 import { User } from '../../users/model/user.model';
-import { Event } from '../../events/model/event.model';
+import { Event, EventCreatedModel } from '../../events/model/event.model';
 
 const createCommunity = async (data: any) => {
         const community = await Community.create(data);
@@ -108,7 +108,11 @@ const deleteCommunity = async (req: Request, res: Response) => {
         const creatorId = community?.creator?.uid;
         const user = await User.findOne({ 'id': creatorId });
         const communities = user?.myCommunities?.filter(i => i !== id);
-        
+        community?.eventsIds?.map(async (value) => {
+                const idEvent = await Event.findOne({ _id: value})
+                await Event.findByIdAndDelete(idEvent);
+        });
+        //TODO удалить у пользователей из joinedEvents евенты
         await User.updateOne({ 'id': creatorId }, {$set: {myCommunities: communities}});
         await Community.findByIdAndDelete(id);
 
@@ -135,12 +139,14 @@ const subscribeCommunity = async (req: Request, res: Response) => {
       const unSubscribeCommunity = async (req: Request, res: Response) => {
         const { id } = req.params;
         const { jwt } = req.body;
+        console.log('unSubscribeCommunity jwt', jwt, id)
         const community = await Community.findOne({ 'id': id});
         const user = await User.findOne({ 'id': jwt?.userId });
-        
+
         const userUid = jwt?.userId;
         const userCommunities = user?.joinedCommunities?.filter(i => i !== id);
-        const followers = community?.followers?.filter((i: any) => i.userUid !== userUid);
+        const followers = community?.followers?.filter((i: any) => i !== userUid);
+        console.log('unSubscribeCommunity', userUid, userCommunities, followers )
       
         await User.updateOne({ 'id': jwt?.userId }, {$set: {joinedCommunities: userCommunities}});
         await Community.updateOne({ 'id': id }, {$set: {followers: followers}});

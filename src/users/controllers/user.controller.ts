@@ -101,6 +101,18 @@ const updateUser = async (req: Request, res: Response) => {
        
 };
 
+const onChangeLocation = async (req: Request, res: Response) => {
+        const { jwt, userCountry } = req.body;
+        console.log('onChangeLocation', req.body);
+        try {
+                await User.updateOne({ 'id': jwt?.userId }, {userCountry: userCountry});
+                const userUpdate = await User.findOne({ 'id': jwt?.userId }).exec();
+
+                return res.status(200).send({ ...userUpdate?.toJSON() });
+        } catch (error) {
+                return res.status(404).json({ message: 'User not found', code: 404 });
+        }
+}
 const deleteUser = async (req: Request, res: Response) => {
         const { id } = req.params;
 
@@ -109,4 +121,4 @@ const deleteUser = async (req: Request, res: Response) => {
         return res.status(200).json({ message: 'User deleted successfully.' });
 };
 
-export { insertUser, deleteUser, getAllUsers, getUserById, updateUser, findByEmail, userExistByEmail };
+export { insertUser, deleteUser, getAllUsers, getUserById, updateUser, findByEmail, userExistByEmail, onChangeLocation };

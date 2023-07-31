@@ -11,6 +11,7 @@ var userRoute = function () {
     app.get('/user/:email', user_controller_1.userExistByEmail);
     app.get('/users/:id', [auth_user_1.validJWTNeeded, user_controller_1.getUserById]);
     app.post('/user/update', [auth_user_1.validJWTNeeded, user_controller_1.updateUser]);
+    app.post('/user/update_county', [auth_user_1.validJWTNeeded, user_controller_1.onChangeLocation]);
     app.delete('/users/:id', [auth_user_1.validJWTNeeded, user_controller_1.deleteUser]);
     return app;
 };

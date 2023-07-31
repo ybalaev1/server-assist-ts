@@ -50,7 +50,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.userExistByEmail = exports.findByEmail = exports.updateUser = exports.getUserById = exports.getAllUsers = exports.deleteUser = exports.insertUser = void 0;
+exports.onChangeLocation = exports.userExistByEmail = exports.findByEmail = exports.updateUser = exports.getUserById = exports.getAllUsers = exports.deleteUser = exports.insertUser = void 0;
 var crypto_1 = __importDefault(require("crypto"));
 var user_model_1 = require("../model/user.model");
 var createUser = function (data) { return __awaiter(void 0, void 0, void 0, function () {
@@ -181,6 +181,31 @@ var updateUser = function (req, res) { return __awaiter(void 0, void 0, void 0, 
     });
 }); };
 exports.updateUser = updateUser;
+var onChangeLocation = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var _a, jwt, userCountry, userUpdate, error_2;
+    return __generator(this, function (_b) {
+        switch (_b.label) {
+            case 0:
+                _a = req.body, jwt = _a.jwt, userCountry = _a.userCountry;
+                console.log('onChangeLocation', req.body);
+                _b.label = 1;
+            case 1:
+                _b.trys.push([1, 4, , 5]);
+                return [4, user_model_1.User.updateOne({ 'id': jwt === null || jwt === void 0 ? void 0 : jwt.userId }, { userCountry: userCountry })];
+            case 2:
+                _b.sent();
+                return [4, user_model_1.User.findOne({ 'id': jwt === null || jwt === void 0 ? void 0 : jwt.userId }).exec()];
+            case 3:
+                userUpdate = _b.sent();
+                return [2, res.status(200).send(__assign({}, userUpdate === null || userUpdate === void 0 ? void 0 : userUpdate.toJSON()))];
+            case 4:
+                error_2 = _b.sent();
+                return [2, res.status(404).json({ message: 'User not found', code: 404 })];
+            case 5: return [2];
+        }
+    });
+}); };
+exports.onChangeLocation = onChangeLocation;
 var deleteUser = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
     var id;
     return __generator(this, function (_a) {

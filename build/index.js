@@ -45,9 +45,8 @@ var constants_config_1 = require("./services/constans/constants.config");
 var cors = require('cors');
 var express = require('express');
 var app = express();
-app.use(express.json({ limit: '50mb' }));
-app.use(express.urlencoded({ limit: '50mb', extended: true, parameterLimit: 50000 }));
-app.use(express.json());
+app.use(express.json({ limit: '15000mb' }));
+app.use(express.urlencoded({ limit: '11500mb', extended: true, parameterLimit: 5000 }));
 app.use('/', (0, routes_config_1.userRoute)());
 app.use('/', (0, auth_config_1.authRoute)());
 app.use('/', (0, routes_config_2.communitiesRoute)());
@@ -58,8 +57,9 @@ app.use(cors({
     origin: "https://dance-connect-528e8b559e89.herokuapp.com:" + PORT,
     optionsSuccessStatus: 200,
     credentials: true,
+    maxAge: 360,
 }));
-var server = app.listen(PORT, function () { return __awaiter(void 0, void 0, void 0, function () {
+app.listen(PORT, function () { return __awaiter(void 0, void 0, void 0, function () {
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0: return [4, (0, mongoose_service_1.connectToDatabase)()];

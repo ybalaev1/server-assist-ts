@@ -46,7 +46,7 @@ const validJWTNeeded = (req: Request, res: Response, next: NextFunction) => {
 // eslint-disable-next-line consistent-return
 const refreshPassword = async (req: Request, res: Response) => {
   const { jwt, new_pass } = req.body;
-  console.log('refreshPassword', req.body)
+  console.log('refreshPassword', req.body, new_pass)
   const user = await User.findOne({ 'id': jwt?.userId }).exec();
   if (!user) {
     return res.status(404).json({ status: 400, message: 'User don`t exist '});
@@ -58,11 +58,11 @@ const refreshPassword = async (req: Request, res: Response) => {
           const salt = crypto.randomBytes(16).toString('base64');
           const hash = crypto.createHmac('sha512', salt).update(new_pass).digest('base64');
           // eslint-disable-next-line prefer-template
-          req.body.email = salt + '$' + hash;
+          req.body.password = salt + '$' + hash;
           await User.updateOne({ _id: user?.id }, req.body);
-          const ref_pass = await User.findOne({ 'id': jwt?.userId });
+          // const ref_pass = await User.findOne({ 'id': jwt?.userId });
 
-          return res.status(200).json({ message: 'New password has been updated', code: 200, data: ref_pass });
+          return res.status(200).json({ message: 'New password has been updated', code: 200 });
         // return result;
       // });
     // } else {
