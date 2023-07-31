@@ -11,7 +11,7 @@ const communitiesRoute = () => {
         app.post('/communities/:id/subscribe', [validJWTNeeded, subscribeCommunity]);
         app.post('/communities/:id/unsubscribe', [validJWTNeeded, unSubscribeCommunity]);
         app.get('/communities/:location', getAllCommunities);
-        app.get('/managing_communities/', [validJWTNeeded, getManagingCommunities]);
+        app.get('/manage_communities/', [validJWTNeeded, getManagingCommunities]);
         app.get('/community/:id', [validJWTNeeded, getCommunityById]);
         app.delete('/communities/:id', [validJWTNeeded, deleteCommunity]);
 
