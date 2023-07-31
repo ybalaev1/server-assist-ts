@@ -128,7 +128,7 @@ var getAllCommunities = function (req, res) { return __awaiter(void 0, void 0, v
         switch (_a.label) {
             case 0:
                 location = req.params.location;
-                return [4, community_model_1.Community.find({ location: location }).limit(5).exec()];
+                return [4, community_model_1.Community.find({ location: location }, { title: 1, description: 1, images: 1, categories: 1, id: 1, followers: 1, location: 1, creator: 1 }).maxTimeMS(60000).limit(5).exec()];
             case 1:
                 communities = _a.sent();
                 return [2, res.status(200).json({ data: communities })];

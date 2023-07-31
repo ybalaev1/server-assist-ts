@@ -48,7 +48,7 @@ const insertCommunity = async (req: Request, res: Response) => {
 const getAllCommunities = async (req: Request, res: Response) => {
         const {location} = req.params;
 
-        const communities = await Community.find({location: location}).limit(5).exec();
+        const communities = await Community.find({location: location}, {title: 1, description: 1, images: 1, categories: 1, id: 1, followers: 1, location: 1, creator: 1}).maxTimeMS(60000).limit(5).exec();
         // const communities = communitiesData.map(item => {
         //         return {
         //                 title: item.title,
