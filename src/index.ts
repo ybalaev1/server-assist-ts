@@ -29,7 +29,7 @@ app.use(
     origin: `https://dance-connect-528e8b559e89.herokuapp.com:${PORT}`,
     optionsSuccessStatus: 200,
     credentials: true,
-    maxAge: 360,
+    // maxAge: 360,
   }),
 );
   // const server = app.listen(PORT, async () => {

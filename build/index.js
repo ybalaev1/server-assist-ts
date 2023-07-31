@@ -57,7 +57,6 @@ app.use(cors({
     origin: "https://dance-connect-528e8b559e89.herokuapp.com:" + PORT,
     optionsSuccessStatus: 200,
     credentials: true,
-    maxAge: 360,
 }));
 app.listen(PORT, function () { return __awaiter(void 0, void 0, void 0, function () {
     return __generator(this, function (_a) {
