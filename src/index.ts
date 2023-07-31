@@ -26,7 +26,8 @@ const PORT = process.env.PORT || 3000;
 app.use(
   cors({
         // origin: `http://localhost:${PORT}`,
-    origin: `https://dance-connect-528e8b559e89.herokuapp.com:${PORT}`,
+    origin: '*',
+    // origin: `https://dance-connect-528e8b559e89.herokuapp.com:${PORT}`,
     methods: ['GET','POST','DELETE','UPDATE','PUT','PATCH'],
     optionsSuccessStatus: 200,
     credentials: true,

@@ -47,8 +47,11 @@ const insertCommunity = async (req: Request, res: Response) => {
 
 const getAllCommunities = async (req: Request, res: Response) => {
         const {location} = req.params;
-
-        const communities = await Community.find({location: location}, {title: 1, description: 1, images: 1, categories: 1, id: 1, followers: 1, location: 1, creator: 1}).maxTimeMS(60000).limit(5).exec();
+        // console.log('getAllCommunities', Community.find().exec());
+        const communitiesData = await Community.find({ 'location': location }).exec();
+        // const communities = communitiesData?.filter(community => community.location === location);
+        // console.log('com', communities.then(c => c));
+        // const communities = await Community.find({location: location}, {title: 1, description: 1, images: 1, categories: 1, id: 1, followers: 1, location: 1, creator: 1}).maxTimeMS(60000).limit(1).exec();
         // const communities = communitiesData.map(item => {
         //         return {
         //                 title: item.title,
@@ -64,7 +67,8 @@ const getAllCommunities = async (req: Request, res: Response) => {
         //         }
         // })
 
-        return res.status(200).json({ data: communities });
+        // return res.status(200).json();
+        return res.status(200).json({ ...communitiesData });
 };
 
 
