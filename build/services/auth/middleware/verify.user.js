@@ -64,6 +64,7 @@ var matchUserAndPassword = function (req, res, next) { return __awaiter(void 0, 
         switch (_a.label) {
             case 0:
                 data_auth = req.body.data_auth;
+                console.log('matchUserAndPassword', req.body);
                 return [4, user_model_1.User.findOne({ 'email': data_auth === null || data_auth === void 0 ? void 0 : data_auth.email }).exec()];
             case 1:
                 user = _a.sent();
@@ -71,7 +72,7 @@ var matchUserAndPassword = function (req, res, next) { return __awaiter(void 0, 
                 if (user !== null) {
                     passField = user.password.split('$');
                     salt = passField[0];
-                    hash = crypto.createHmac('sha512', salt).update(data_auth.password).digest('base64');
+                    hash = crypto.createHmac('sha512', salt).update(data_auth.email).digest('base64');
                     if (hash === passField[1]) {
                         req.body.data_auth = {
                             userId: user.id,
