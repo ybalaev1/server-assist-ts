@@ -9,7 +9,6 @@ var communitiesRoute = function () {
     app.get('/communities/:location', community_controller_1.getAllCommunities);
     app.post('/communities/', [auth_user_1.validJWTNeeded, community_controller_1.insertCommunity]);
     app.post('/communities/:id/update', [auth_user_1.validJWTNeeded, community_controller_1.updateCommunity]);
-    app.post('/communities/:id/subscribe', [auth_user_1.validJWTNeeded, community_controller_1.subscribeCommunity]);
     app.post('/communities/:id/unsubscribe', [auth_user_1.validJWTNeeded, community_controller_1.unSubscribeCommunity]);
     app.get('/managing_communities/', [auth_user_1.validJWTNeeded, community_controller_1.getManagingCommunities]);
     app.get('/community/:id', [auth_user_1.validJWTNeeded, community_controller_1.getCommunityById]);

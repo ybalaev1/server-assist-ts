@@ -1,12 +1,26 @@
-// // import { createNoticeForUserId } from '../../../notice/controllers/notice.controller';
+// import { createNoticeForUserId } from '../../../notice/controllers/notice.controller';
 // import { createMessage, lattestMessage, getSocketTyping } from '../../../chats/controllers/chats.controller';
 
-// const sockets = {};
+import { Community } from "../../../communities/model/community.model";
+import { Socket } from "socket.io";
+import { User } from "../../../users/model/user.model";
+import { subscribeCommunity } from "../../../communities/controllers/community.controller";
 
-// const userInitCocket = (socket) => socket.on('init', (id) => {
-//   sockets[id] = socket;
-// });
+const sockets = {};
 
+const userInitCocket = (socket) => socket.on('init', (id) => {
+    console.log('userInitCocket init', id);
+  sockets[id] = socket;
+});
+
+const subscribeCommunitySocket = (socket: Socket, io) => socket.on('follow_community', async (communityUid: string, userUid: string) => {
+    console.log('subscribeCommunity follow_community', communityUid, userUid);
+        const community = await subscribeCommunity(communityUid, userUid);
+        io.emit('subscribed', community);
+        // socket.to(socket.id).emit('subscribed', community);
+        // console.log('subscribeCommunitySocket', community);
+    // return res.status(200).send({ ...communityUpdated?.toJSON() });
+  })
 // const messagingSocket = (socket, type: string, io) => socket.on(type, async (msg) => {
 //   const message = await createMessage(msg);
 //   io.emit(type, message);
@@ -17,7 +31,7 @@
 //   socket.on('latest', async (id: string) => {
 //     const last = await lattestMessage(id);
 //     socket.join(id);
-//     socket.to(id).emit('latest', last);
+    // socket.to(id).emit('latest', last);
 //   });
 // };
 
@@ -34,6 +48,8 @@
 //   });
 // };
 
-// export {
-//   userInitCocket, messagingSocket, latestMessageSocket, typpingUserSocket,
-// };
+export {
+  userInitCocket, 
+  subscribeCommunitySocket
+//   messagingSocket, latestMessageSocket, typpingUserSocket,
+};

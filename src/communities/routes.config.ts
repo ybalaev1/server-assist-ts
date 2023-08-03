@@ -9,7 +9,7 @@ const communitiesRoute = () => {
         app.get('/communities/:location', getAllCommunities);
         app.post('/communities/', [validJWTNeeded, insertCommunity]);
         app.post('/communities/:id/update', [validJWTNeeded, updateCommunity]);
-        app.post('/communities/:id/subscribe', [validJWTNeeded, subscribeCommunity]);
+        // app.post('/communities/:id/subscribe', [validJWTNeeded, subscribeCommunity]);
         app.post('/communities/:id/unsubscribe', [validJWTNeeded, unSubscribeCommunity]);
         app.get('/managing_communities/', [validJWTNeeded, getManagingCommunities]);
         app.get('/community/:id', [validJWTNeeded, getCommunityById]);

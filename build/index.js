@@ -1,4 +1,23 @@
 "use strict";
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -39,6 +58,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var routes_config_1 = require("./users/routes.config");
 var mongoose_service_1 = require("./services/mongoose.service");
 var auth_config_1 = require("./services/auth/auth.config");
+var socketMiddleware = __importStar(require("./services/socket/middleware/socket.middleware"));
 var routes_config_2 = require("./communities/routes.config");
 var routes_config_3 = require("./events/routes.config");
 var constants_config_1 = require("./services/constans/constants.config");
@@ -55,7 +75,7 @@ app.use('/', (0, routes_config_3.eventsRoute)());
 app.use('/', (0, constants_config_1.constansRoute)());
 var PORT = process.env.PORT || 3000;
 app.use(cors({
-    origin: '*',
+    origin: "https://dance-connect-528e8b559e89.herokuapp.com:" + PORT,
     methods: ['GET', 'POST', 'DELETE', 'UPDATE', 'PUT', 'PATCH'],
     optionsSuccessStatus: 200,
     credentials: true,
@@ -72,3 +92,8 @@ var server = app.listen(PORT, function () { return __awaiter(void 0, void 0, voi
     });
 }); });
 server.setTimeout(50000);
+var io = require('socket.io')(server);
+io.on('connection', function (socket) {
+    console.log('a user connected', socket.id);
+    socketMiddleware.subscribeCommunitySocket(socket, io);
+});

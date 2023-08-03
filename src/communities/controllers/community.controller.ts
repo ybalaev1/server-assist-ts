@@ -140,24 +140,34 @@ const deleteCommunity = async (req: Request, res: Response) => {
         return res.status(200).json({ message: 'Community deleted successfully.' });
 };
 
-const subscribeCommunity = async (req: Request, res: Response) => {
-        const { id } = req.params;
-        const { jwt } = req.body;
-        
-        const community = await Community.findOne({ 'id': id});
-        const user = await User.findOne({ 'id': jwt?.userId });
+const subscribeCommunity = async (communityUid: string, userUid: string) => {
 
-        const userUid = jwt?.userId;
-        const userCommunities = !user?.joinedCommunities?.length ?  [id] : [...user?.joinedCommunities, id];
-        const followers = !community?.followers?.length ? [userUid] : [...community?.followers, {'userUid': userUid}];
-      
-        await User.updateOne({ 'id': userUid }, {$set: {joinedCommunities: userCommunities}});
-        await Community.updateOne({ 'id': id }, {$set: {followers: followers}});
-        const communityUpdated = await Community.findOne({ 'id': id });
-      
-        return res.status(200).send({ ...communityUpdated?.toJSON() });
-      }
-      const unSubscribeCommunity = async (req: Request, res: Response) => {
+        const community = await Community.findOne({ _id: communityUid}).exec();
+        const user = await User.findOne({ _id: userUid}).exec();
+        const isAvailable = community?.followers?.length && community?.followers.map(follower => follower.userUid === userUid);
+        // console.log('isAvailable', isAvailable);
+        if (isAvailable) {
+                const followers = community?.followers?.filter(i => i.userUid !== userUid);
+                const userCommunities = user?.joinedCommunities?.filter(i => i !== communityUid);
+                await Community.updateOne({ _id: communityUid }, {$set: {followers: followers}});
+                await User.updateOne({ _id: userUid }, {$set: {joinedCommunities: userCommunities}});
+                const communityUpdated = await Community.findOne({ _id: communityUid });
+                return communityUpdated?.toJSON();
+        
+        } else {
+
+                const userCommunities = !user?.joinedCommunities?.length ?  [communityUid] : [...user?.joinedCommunities, communityUid];
+                const followers = !community?.followers?.length ? [{'userUid': userUid}] : [...community?.followers, {'userUid': userUid}];
+        
+                await User.updateOne({ _id: userUid }, {$set: {joinedCommunities: userCommunities}});
+                await Community.updateOne({ _id: communityUid }, {$set: {followers: followers}});
+                const communityUpdated = await Community.findOne({ _id: communityUid });
+                return communityUpdated?.toJSON();
+        }
+
+}
+
+ const unSubscribeCommunity = async (req: Request, res: Response) => {
         const { id } = req.params;
         const { jwt } = req.body;
         console.log('unSubscribeCommunity jwt', jwt, id)
@@ -174,5 +184,5 @@ const subscribeCommunity = async (req: Request, res: Response) => {
         const communityUpdated = await Community.findOne({ 'id': id });
       
         return res.status(200).send({ ...communityUpdated?.toJSON() });
-      }
+}
 export { deleteCommunity, updateCommunity, getAllCommunities, getCommunityById, insertCommunity, subscribeCommunity, unSubscribeCommunity, getManagingCommunities };

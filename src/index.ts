@@ -1,10 +1,11 @@
 import { userRoute } from './users/routes.config';
 import { connectToDatabase } from './services/mongoose.service';
 import { authRoute } from './services/auth/auth.config';
-// import * as socketMiddleware from './services/socket/middleware/socket.middleware';
+import * as socketMiddleware from './services/socket/middleware/socket.middleware';
 import { communitiesRoute } from './communities/routes.config';
 import { eventsRoute } from './events/routes.config';
 import { constansRoute } from './services/constans/constants.config';
+import { Socket } from 'socket.io';
 
 const cors = require('cors');
 
@@ -26,8 +27,8 @@ const PORT = process.env.PORT || 3000;
 app.use(
   cors({
         // origin: `http://localhost:${PORT}`,
-    origin: '*',
-    // origin: `https://dance-connect-528e8b559e89.herokuapp.com:${PORT}`,
+    // origin: '*',
+    origin: `https://dance-connect-528e8b559e89.herokuapp.com:${PORT}`,
     methods: ['GET','POST','DELETE','UPDATE','PUT','PATCH'],
     optionsSuccessStatus: 200,
     credentials: true,
@@ -42,18 +43,27 @@ app.use(
 });
 server.setTimeout(50000);
 
-// const io = require('socket.io')(server);
+const io = require('socket.io')(server);
+io.on('connection', (socket: Socket) => {
+  console.log('a user connected', socket.id);
+  socketMiddleware.subscribeCommunitySocket(socket, io);
+  // socket.on('init', (id: string) => {
+  //   console.log('init id', id);
+  // });
+});
 
 // io.on('connection', (socket) => {
 //   socketMiddleware.userInitCocket(socket);
-//   socketMiddleware.messagingSocket(socket, 'message', io);
-//   socketMiddleware.latestMessageSocket(socket);
-//   socketMiddleware.typpingUserSocket(socket, io);
+  // socketMiddleware.messagingSocket(socket, 'message', io);
+//   // socketMiddleware.latestMessageSocket(socket);
+//   // socketMiddleware.typpingUserSocket(socket, io);
 //   //   socket.on('online', async (id: string) => {
 //   //     socket.emit('online', id);
 //   //   });
 
-//   socket.on('notyping', async () => {
-//     io.emit('typing', '');
+//   console.log('a user connected');
+//   socket.on('init', async (id: string) => {
+//     console.log('userInitCocket init', id);
+//     io.emit('connected', id);
 //   });
 // });

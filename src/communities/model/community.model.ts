@@ -10,7 +10,7 @@ type CommunityModel = Document & {
         id: string;
         eventsIds: string[];
         events: string[];
-        followers: string[];
+        followers: Array<{userUid: string}>;
         creatorUid?: string;
         creator: {
           uid: string;
