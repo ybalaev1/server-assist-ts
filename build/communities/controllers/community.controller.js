@@ -241,7 +241,7 @@ var deleteCommunity = function (req, res) { return __awaiter(void 0, void 0, voi
 }); };
 exports.deleteCommunity = deleteCommunity;
 var subscribeCommunity = function (communityUid, userUid) { return __awaiter(void 0, void 0, void 0, function () {
-    var community, user, isAvailable, followers, userCommunities, communityUpdated, userCommunities, followers, communityUpdated;
+    var community, user, isAvailable, newUser, newFollowers, followers, userCommunities, communityUpdated, userCommunities, followers, communityUpdated;
     var _a, _b, _c, _d, _e;
     return __generator(this, function (_f) {
         switch (_f.label) {
@@ -251,7 +251,9 @@ var subscribeCommunity = function (communityUid, userUid) { return __awaiter(voi
                 return [4, user_model_1.User.findOne({ _id: userUid }).exec()];
             case 2:
                 user = _f.sent();
-                isAvailable = ((_a = community === null || community === void 0 ? void 0 : community.followers) === null || _a === void 0 ? void 0 : _a.length) && (community === null || community === void 0 ? void 0 : community.followers.map(function (follower) { return follower.userUid === userUid; }));
+                isAvailable = ((_a = community === null || community === void 0 ? void 0 : community.followers) === null || _a === void 0 ? void 0 : _a.length) && (community === null || community === void 0 ? void 0 : community.followers.map(function (follower) { return follower; }).find(function (user) { return user.userUid === userUid; }));
+                newUser = { 'userUid': userUid };
+                newFollowers = community === null || community === void 0 ? void 0 : community.followers.concat(newUser);
                 if (!isAvailable) return [3, 6];
                 followers = (_b = community === null || community === void 0 ? void 0 : community.followers) === null || _b === void 0 ? void 0 : _b.filter(function (i) { return i.userUid !== userUid; });
                 userCommunities = (_c = user === null || user === void 0 ? void 0 : user.joinedCommunities) === null || _c === void 0 ? void 0 : _c.filter(function (i) { return i !== communityUid; });
@@ -267,7 +269,7 @@ var subscribeCommunity = function (communityUid, userUid) { return __awaiter(voi
                 return [2, communityUpdated === null || communityUpdated === void 0 ? void 0 : communityUpdated.toJSON()];
             case 6:
                 userCommunities = !((_d = user === null || user === void 0 ? void 0 : user.joinedCommunities) === null || _d === void 0 ? void 0 : _d.length) ? [communityUid] : __spreadArray(__spreadArray([], user === null || user === void 0 ? void 0 : user.joinedCommunities, true), [communityUid], false);
-                followers = !((_e = community === null || community === void 0 ? void 0 : community.followers) === null || _e === void 0 ? void 0 : _e.length) ? [{ 'userUid': userUid }] : __spreadArray(__spreadArray([], community === null || community === void 0 ? void 0 : community.followers, true), [{ 'userUid': userUid }], false);
+                followers = !((_e = community === null || community === void 0 ? void 0 : community.followers) === null || _e === void 0 ? void 0 : _e.length) ? [{ 'userUid': userUid }] : newFollowers;
                 return [4, user_model_1.User.updateOne({ _id: userUid }, { $set: { joinedCommunities: userCommunities } })];
             case 7:
                 _f.sent();

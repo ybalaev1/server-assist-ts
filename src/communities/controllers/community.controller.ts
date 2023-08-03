@@ -144,8 +144,12 @@ const subscribeCommunity = async (communityUid: string, userUid: string) => {
 
         const community = await Community.findOne({ _id: communityUid}).exec();
         const user = await User.findOne({ _id: userUid}).exec();
-        const isAvailable = community?.followers?.length && community?.followers.map(follower => follower.userUid === userUid);
+        const isAvailable = community?.followers?.length && community?.followers.map(follower => follower).find(user => user.userUid === userUid);
+        // const followers = community?.followers;
         // console.log('isAvailable', isAvailable);
+        const newUser = {'userUid': userUid};
+        const newFollowers = community?.followers.concat(newUser);
+        // console.log('followers', newFollowers, community?.followers.map(follower => follower).find(user => user.userUid === userUid))
         if (isAvailable) {
                 const followers = community?.followers?.filter(i => i.userUid !== userUid);
                 const userCommunities = user?.joinedCommunities?.filter(i => i !== communityUid);
@@ -157,8 +161,8 @@ const subscribeCommunity = async (communityUid: string, userUid: string) => {
         } else {
 
                 const userCommunities = !user?.joinedCommunities?.length ?  [communityUid] : [...user?.joinedCommunities, communityUid];
-                const followers = !community?.followers?.length ? [{'userUid': userUid}] : [...community?.followers, {'userUid': userUid}];
-        
+                const followers = !community?.followers?.length ? [{'userUid': userUid}] : newFollowers;
+                // console.log('followers', followers)
                 await User.updateOne({ _id: userUid }, {$set: {joinedCommunities: userCommunities}});
                 await Community.updateOne({ _id: communityUid }, {$set: {followers: followers}});
                 const communityUpdated = await Community.findOne({ _id: communityUid });
