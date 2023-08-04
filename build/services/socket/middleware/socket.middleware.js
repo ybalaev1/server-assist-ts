@@ -36,7 +36,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.subscribeCommunitySocket = exports.userInitCocket = void 0;
+exports.updateCommunitySocket = exports.subscribeCommunitySocket = exports.userInitCocket = void 0;
 var community_controller_1 = require("../../../communities/controllers/community.controller");
 var sockets = {};
 var userInitCocket = function (socket) { return socket.on('init', function (id) {
@@ -49,8 +49,8 @@ var subscribeCommunitySocket = function (socket, io) { return socket.on('follow_
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
-                console.log('subscribeCommunity follow_community', communityUid, userUid);
-                return [4, (0, community_controller_1.subscribeCommunity)(communityUid, userUid)];
+                console.log('subscribeCommunity follow_community');
+                return [4, (0, community_controller_1.subscribeCommunity)(communityUid, userUid, socket)];
             case 1:
                 community = _a.sent();
                 io.emit('subscribed', community);
@@ -59,3 +59,19 @@ var subscribeCommunitySocket = function (socket, io) { return socket.on('follow_
     });
 }); }); };
 exports.subscribeCommunitySocket = subscribeCommunitySocket;
+var updateCommunitySocket = function (socket, io) { return socket.on('joined_update', function (location) { return __awaiter(void 0, void 0, void 0, function () {
+    var updated_communities;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                console.log('updateCommunitySocket joined_update', location);
+                return [4, (0, community_controller_1.getCommunities)(location)];
+            case 1:
+                updated_communities = _a.sent();
+                io.emit('updated_communities', updated_communities);
+                console.log('updateCommunitySocket updated_communities', updated_communities);
+                return [2];
+        }
+    });
+}); }); };
+exports.updateCommunitySocket = updateCommunitySocket;

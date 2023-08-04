@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from 'express';
 import { Community } from '../model/community.model';
 import { User } from '../../users/model/user.model';
 import { Event, EventCreatedModel } from '../../events/model/event.model';
+import { Socket } from "socket.io";
 
 const createCommunity = async (data: any) => {
         const community = await Community.create(data);
@@ -140,7 +141,7 @@ const deleteCommunity = async (req: Request, res: Response) => {
         return res.status(200).json({ message: 'Community deleted successfully.' });
 };
 
-const subscribeCommunity = async (communityUid: string, userUid: string) => {
+const subscribeCommunity = async (communityUid: string, userUid: string, socket: Socket) => {
 
         const community = await Community.findOne({ _id: communityUid}).exec();
         const user = await User.findOne({ _id: userUid}).exec();
@@ -156,7 +157,12 @@ const subscribeCommunity = async (communityUid: string, userUid: string) => {
                 await Community.updateOne({ _id: communityUid }, {$set: {followers: followers}});
                 await User.updateOne({ _id: userUid }, {$set: {joinedCommunities: userCommunities}});
                 const communityUpdated = await Community.findOne({ _id: communityUid });
-                return communityUpdated?.toJSON();
+                const communities = await Community.find({ 'location': community?.location}).exec();
+                const data = {
+                        communities: communities,
+                        currentCommunity: communityUpdated?.toJSON(),
+                }
+                return data;
         
         } else {
 
@@ -166,7 +172,13 @@ const subscribeCommunity = async (communityUid: string, userUid: string) => {
                 await User.updateOne({ _id: userUid }, {$set: {joinedCommunities: userCommunities}});
                 await Community.updateOne({ _id: communityUid }, {$set: {followers: followers}});
                 const communityUpdated = await Community.findOne({ _id: communityUid });
-                return communityUpdated?.toJSON();
+                const communities = await Community.find({ 'location': community?.location}).exec();
+                const data = {
+                        communities: communities,
+                        currentCommunity: communityUpdated?.toJSON(),
+                }
+                return data;
+                // return communityUpdated?.toJSON();
         }
 
 }
@@ -189,4 +201,11 @@ const subscribeCommunity = async (communityUid: string, userUid: string) => {
       
         return res.status(200).send({ ...communityUpdated?.toJSON() });
 }
-export { deleteCommunity, updateCommunity, getAllCommunities, getCommunityById, insertCommunity, subscribeCommunity, unSubscribeCommunity, getManagingCommunities };
+
+const getCommunities = async (location: string) => {
+        const communities = await Community.find({ 'location': location }).exec();
+        return communities;
+};
+
+
+export { getCommunities, deleteCommunity, updateCommunity, getAllCommunities, getCommunityById, insertCommunity, subscribeCommunity, unSubscribeCommunity, getManagingCommunities };

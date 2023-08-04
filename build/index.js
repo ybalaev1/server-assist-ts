@@ -55,6 +55,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.io = void 0;
 var routes_config_1 = require("./users/routes.config");
 var mongoose_service_1 = require("./services/mongoose.service");
 var auth_config_1 = require("./services/auth/auth.config");
@@ -75,7 +76,7 @@ app.use('/', (0, routes_config_3.eventsRoute)());
 app.use('/', (0, constants_config_1.constansRoute)());
 var PORT = process.env.PORT || 3000;
 app.use(cors({
-    origin: "https://dance-connect-528e8b559e89.herokuapp.com:" + PORT,
+    origin: '*',
     methods: ['GET', 'POST', 'DELETE', 'UPDATE', 'PUT', 'PATCH'],
     optionsSuccessStatus: 200,
     credentials: true,
@@ -92,8 +93,9 @@ var server = app.listen(PORT, function () { return __awaiter(void 0, void 0, voi
     });
 }); });
 server.setTimeout(50000);
-var io = require('socket.io')(server);
-io.on('connection', function (socket) {
+exports.io = require('socket.io')(server);
+exports.io.on('connection', function (socket) {
     console.log('a user connected', socket.id);
-    socketMiddleware.subscribeCommunitySocket(socket, io);
+    socketMiddleware.subscribeCommunitySocket(socket, exports.io);
+    socketMiddleware.updateCommunitySocket(socket, exports.io);
 });

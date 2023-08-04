@@ -4,7 +4,7 @@
 import { Community } from "../../../communities/model/community.model";
 import { Socket } from "socket.io";
 import { User } from "../../../users/model/user.model";
-import { subscribeCommunity } from "../../../communities/controllers/community.controller";
+import { getCommunities, subscribeCommunity } from "../../../communities/controllers/community.controller";
 
 const sockets = {};
 
@@ -14,13 +14,24 @@ const userInitCocket = (socket) => socket.on('init', (id) => {
 });
 
 const subscribeCommunitySocket = (socket: Socket, io) => socket.on('follow_community', async (communityUid: string, userUid: string) => {
-    console.log('subscribeCommunity follow_community', communityUid, userUid);
-        const community = await subscribeCommunity(communityUid, userUid);
+    console.log('subscribeCommunity follow_community');
+        const community = await subscribeCommunity(communityUid, userUid, socket);
         io.emit('subscribed', community);
+        // io.on('subscribed', data => {
+        //   console.log('subscribeCommunitySocket data', data);
+        // })
         // socket.to(socket.id).emit('subscribed', community);
         // console.log('subscribeCommunitySocket', community);
     // return res.status(200).send({ ...communityUpdated?.toJSON() });
-  })
+  });
+  const updateCommunitySocket = (socket: Socket, io) => socket.on('joined_update', async (location: string) => {
+    console.log('updateCommunitySocket joined_update', location);
+    const updated_communities = await getCommunities(location);
+        io.emit('updated_communities', updated_communities);
+        // socket.emit('updated_communities', updated_communities);
+        console.log('updateCommunitySocket updated_communities', updated_communities);
+    // return res.status(200).send({ ...communityUpdated?.toJSON() });
+  });
 // const messagingSocket = (socket, type: string, io) => socket.on(type, async (msg) => {
 //   const message = await createMessage(msg);
 //   io.emit(type, message);
@@ -50,6 +61,7 @@ const subscribeCommunitySocket = (socket: Socket, io) => socket.on('follow_commu
 
 export {
   userInitCocket, 
-  subscribeCommunitySocket
+  subscribeCommunitySocket,
+  updateCommunitySocket
 //   messagingSocket, latestMessageSocket, typpingUserSocket,
 };

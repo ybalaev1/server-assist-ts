@@ -27,8 +27,8 @@ const PORT = process.env.PORT || 3000;
 app.use(
   cors({
         // origin: `http://localhost:${PORT}`,
-    // origin: '*',
-    origin: `https://dance-connect-528e8b559e89.herokuapp.com:${PORT}`,
+    origin: '*',
+    // origin: `https://dance-connect-528e8b559e89.herokuapp.com:${PORT}`,
     methods: ['GET','POST','DELETE','UPDATE','PUT','PATCH'],
     optionsSuccessStatus: 200,
     credentials: true,
@@ -43,10 +43,11 @@ app.use(
 });
 server.setTimeout(50000);
 
-const io = require('socket.io')(server);
+export const io = require('socket.io')(server);
 io.on('connection', (socket: Socket) => {
   console.log('a user connected', socket.id);
   socketMiddleware.subscribeCommunitySocket(socket, io);
+  socketMiddleware.updateCommunitySocket(socket, io);
   // socket.on('init', (id: string) => {
   //   console.log('init id', id);
   // });

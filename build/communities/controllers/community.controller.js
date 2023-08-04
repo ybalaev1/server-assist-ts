@@ -56,7 +56,7 @@ var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
     return to.concat(ar || Array.prototype.slice.call(from));
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getManagingCommunities = exports.unSubscribeCommunity = exports.subscribeCommunity = exports.insertCommunity = exports.getCommunityById = exports.getAllCommunities = exports.updateCommunity = exports.deleteCommunity = void 0;
+exports.getManagingCommunities = exports.unSubscribeCommunity = exports.subscribeCommunity = exports.insertCommunity = exports.getCommunityById = exports.getAllCommunities = exports.updateCommunity = exports.deleteCommunity = exports.getCommunities = void 0;
 var community_model_1 = require("../model/community.model");
 var user_model_1 = require("../../users/model/user.model");
 var event_model_1 = require("../../events/model/event.model");
@@ -240,8 +240,8 @@ var deleteCommunity = function (req, res) { return __awaiter(void 0, void 0, voi
     });
 }); };
 exports.deleteCommunity = deleteCommunity;
-var subscribeCommunity = function (communityUid, userUid) { return __awaiter(void 0, void 0, void 0, function () {
-    var community, user, isAvailable, newUser, newFollowers, followers, userCommunities, communityUpdated, userCommunities, followers, communityUpdated;
+var subscribeCommunity = function (communityUid, userUid, socket) { return __awaiter(void 0, void 0, void 0, function () {
+    var community, user, isAvailable, newUser, newFollowers, followers, userCommunities, communityUpdated, communities, data, userCommunities, followers, communityUpdated, communities, data;
     var _a, _b, _c, _d, _e;
     return __generator(this, function (_f) {
         switch (_f.label) {
@@ -254,7 +254,7 @@ var subscribeCommunity = function (communityUid, userUid) { return __awaiter(voi
                 isAvailable = ((_a = community === null || community === void 0 ? void 0 : community.followers) === null || _a === void 0 ? void 0 : _a.length) && (community === null || community === void 0 ? void 0 : community.followers.map(function (follower) { return follower; }).find(function (user) { return user.userUid === userUid; }));
                 newUser = { 'userUid': userUid };
                 newFollowers = community === null || community === void 0 ? void 0 : community.followers.concat(newUser);
-                if (!isAvailable) return [3, 6];
+                if (!isAvailable) return [3, 7];
                 followers = (_b = community === null || community === void 0 ? void 0 : community.followers) === null || _b === void 0 ? void 0 : _b.filter(function (i) { return i.userUid !== userUid; });
                 userCommunities = (_c = user === null || user === void 0 ? void 0 : user.joinedCommunities) === null || _c === void 0 ? void 0 : _c.filter(function (i) { return i !== communityUid; });
                 return [4, community_model_1.Community.updateOne({ _id: communityUid }, { $set: { followers: followers } })];
@@ -266,20 +266,34 @@ var subscribeCommunity = function (communityUid, userUid) { return __awaiter(voi
                 return [4, community_model_1.Community.findOne({ _id: communityUid })];
             case 5:
                 communityUpdated = _f.sent();
-                return [2, communityUpdated === null || communityUpdated === void 0 ? void 0 : communityUpdated.toJSON()];
+                return [4, community_model_1.Community.find({ 'location': community === null || community === void 0 ? void 0 : community.location }).exec()];
             case 6:
+                communities = _f.sent();
+                data = {
+                    communities: communities,
+                    currentCommunity: communityUpdated === null || communityUpdated === void 0 ? void 0 : communityUpdated.toJSON(),
+                };
+                return [2, data];
+            case 7:
                 userCommunities = !((_d = user === null || user === void 0 ? void 0 : user.joinedCommunities) === null || _d === void 0 ? void 0 : _d.length) ? [communityUid] : __spreadArray(__spreadArray([], user === null || user === void 0 ? void 0 : user.joinedCommunities, true), [communityUid], false);
                 followers = !((_e = community === null || community === void 0 ? void 0 : community.followers) === null || _e === void 0 ? void 0 : _e.length) ? [{ 'userUid': userUid }] : newFollowers;
                 return [4, user_model_1.User.updateOne({ _id: userUid }, { $set: { joinedCommunities: userCommunities } })];
-            case 7:
-                _f.sent();
-                return [4, community_model_1.Community.updateOne({ _id: communityUid }, { $set: { followers: followers } })];
             case 8:
                 _f.sent();
-                return [4, community_model_1.Community.findOne({ _id: communityUid })];
+                return [4, community_model_1.Community.updateOne({ _id: communityUid }, { $set: { followers: followers } })];
             case 9:
+                _f.sent();
+                return [4, community_model_1.Community.findOne({ _id: communityUid })];
+            case 10:
                 communityUpdated = _f.sent();
-                return [2, communityUpdated === null || communityUpdated === void 0 ? void 0 : communityUpdated.toJSON()];
+                return [4, community_model_1.Community.find({ 'location': community === null || community === void 0 ? void 0 : community.location }).exec()];
+            case 11:
+                communities = _f.sent();
+                data = {
+                    communities: communities,
+                    currentCommunity: communityUpdated === null || communityUpdated === void 0 ? void 0 : communityUpdated.toJSON(),
+                };
+                return [2, data];
         }
     });
 }); };
@@ -317,3 +331,15 @@ var unSubscribeCommunity = function (req, res) { return __awaiter(void 0, void 0
     });
 }); };
 exports.unSubscribeCommunity = unSubscribeCommunity;
+var getCommunities = function (location) { return __awaiter(void 0, void 0, void 0, function () {
+    var communities;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4, community_model_1.Community.find({ 'location': location }).exec()];
+            case 1:
+                communities = _a.sent();
+                return [2, communities];
+        }
+    });
+}); };
+exports.getCommunities = getCommunities;
