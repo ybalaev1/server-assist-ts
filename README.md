@@ -1,6 +1,10 @@
 # DanceConnect-Backend
 
-
+yarn
+touch .env
+add to env
+db_pass = rVsueR6Q4UYwG6pb
+db_user = y1balaev
 
 ## Getting started
 
