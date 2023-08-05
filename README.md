@@ -24,6 +24,15 @@ git branch -M main
 git push -uf origin main
 ```
 
+## To run via container
+```
+docker-compose up 
+```
+rebuild container
+```
+docker-compose up --build -V
+```
+
 ## Integrate with your tools
 
 - [ ] [Set up project integrations](https://gitlab.com/dance-connect/danceconnect-backend/-/settings/integrations)
