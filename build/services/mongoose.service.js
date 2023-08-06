@@ -43,6 +43,10 @@ exports.connectToDatabase = void 0;
 var mongoose_1 = __importDefault(require("mongoose"));
 var dotenv = require('dotenv');
 mongoose_1.default.Promise = global.Promise;
+var dbHost = process.env.db_host || 'mongo_db';
+var dbUser = process.env.db_user || 'y1balaev';
+var dbPass = process.env.db_pass || 'rVsueR6Q4UYwG6pb';
+var connectionString = "mongodb://" + dbUser + ":" + dbPass + "@" + dbHost + "/?authMechanism=DEFAULT";
 var connectToDatabase = function () { return __awaiter(void 0, void 0, void 0, function () {
     var options;
     return __generator(this, function (_a) {
@@ -53,8 +57,7 @@ var connectToDatabase = function () { return __awaiter(void 0, void 0, void 0, f
                 options = {
                     useNewUrlParser: true, useFindAndModify: false, useCreateIndex: true, useUnifiedTopology: true, connectTimeoutMS: 500000,
                 };
-                return [4, mongoose_1.default.connect("mongodb+srv://" + process.env.db_user + ":" + process.env.db_pass + "@cluster0.tozhfgs.mongodb.net/testingDB?retryWrites=true&w=majority", options)];
-                return [4, mongoose_1.default.connect("mongodb+srv://" + process.env.db_user + ":" + process.env.db_pass + "@" + process.env.db_host + "/" + process.env.db_database_name + "?retryWrites=true&w=majority", options)];
+                return [4, mongoose_1.default.connect(connectionString, options)];
             case 2:
                 _a.sent();
                 return [2];
