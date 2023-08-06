@@ -1,15 +1,45 @@
-version: "3.2"
-services:
-  mongo_db:
-    image: mongo:latest
-    container_name: mongo_db
-    build:
-      context: ${PWD}/path/to/Dockerfile
-    volumes:
-     - $PWD/mongo_db:/data/db
+version: '3'
 
-    ports:
-     - "27017:27017"
+services:
+  nodejs:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: nodejs
+    container_name: nodejs
+    restart: unless-stopped
     environment:
-      MONGO_INITDB_ROOT_USERNAME: y1balaev
-      MONGO_INITDB_ROOT_PASSWORD: rVsueR6Q4UYwG6pb
+      MONGO_USERNAME: y1balaev
+      MONGO_PASSWORD: rVsueR6Q4UYwG6pb
+      MONGO_HOSTNAME: db
+      MONGO_PORT: 27017
+      MONGO_DB: dance_connect
+    ports:
+      - "3000:3000"
+      - "27017:27017"
+    volumes:
+      - .:/home/node/app
+      - node_modules:/home/node/app/node_modules
+    networks:
+      - app-network
+    command:  yarn start
+
+  db:
+    image: mongo:4.1.8-xenial
+    container_name: db
+    restart: unless-stopped
+    environment:
+      MONGO_USERNAME: y1balaev
+      MONGO_PASSWORD: rVsueR6Q4UYwG6pb
+    volumes:     
+      - dbdata:/data/db
+    networks:
+      - app-network  
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  dbdata:
+  node_modules:  
