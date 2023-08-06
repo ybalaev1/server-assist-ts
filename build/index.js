@@ -76,11 +76,12 @@ app.use('/', (0, routes_config_3.eventsRoute)());
 app.use('/', (0, constants_config_1.constansRoute)());
 var PORT = process.env.PORT || 3000;
 app.use(cors({
-    origin: '*',
+    origin: "https://dance-connect-528e8b559e89.herokuapp.com:" + PORT,
     methods: ['GET', 'POST', 'DELETE', 'UPDATE', 'PUT', 'PATCH'],
     optionsSuccessStatus: 200,
     credentials: true,
 }));
+(0, mongoose_service_1.connectToDatabase)();
 var server = app.listen(PORT, function () { return __awaiter(void 0, void 0, void 0, function () {
     return __generator(this, function (_a) {
         switch (_a.label) {

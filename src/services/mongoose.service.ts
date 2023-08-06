@@ -16,7 +16,7 @@ const connectToDatabase = async (): Promise<void> => {
   const options: ConnectionOptions = {
     useNewUrlParser: true, useFindAndModify: false, useCreateIndex: true, useUnifiedTopology: true, connectTimeoutMS: 500000,
   };
-    await mongoose.connect(connectionString, options);
+    await mongoose.connect(connectionString, options).then((conn) => console.log('connected', conn));
 };
 
 export { connectToDatabase };

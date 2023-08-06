@@ -57,7 +57,7 @@ var connectToDatabase = function () { return __awaiter(void 0, void 0, void 0, f
                 options = {
                     useNewUrlParser: true, useFindAndModify: false, useCreateIndex: true, useUnifiedTopology: true, connectTimeoutMS: 500000,
                 };
-                return [4, mongoose_1.default.connect(connectionString, options)];
+                return [4, mongoose_1.default.connect(connectionString, options).then(function (conn) { return console.log('connected', conn); })];
             case 2:
                 _a.sent();
                 return [2];
