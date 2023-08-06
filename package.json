@@ -6,7 +6,7 @@
         "scripts": {
                 "serve": "nodemon --watch \"*.ts\" --exec \"ts-node\" ./src/index.ts",
                 "eslint:fix": "eslint --fix",
-                "start": "node build/index.js && docker-compose up",
+                "start": "node build/index.js",
                 "build": "tsc",
                 "format": "npx prettier --write . && npx prettier --check 'src/**/*.ts'",
                 "postinstall": "npm run build",

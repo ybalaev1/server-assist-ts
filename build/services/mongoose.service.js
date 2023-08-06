@@ -43,7 +43,7 @@ exports.connectToDatabase = void 0;
 var mongoose_1 = __importDefault(require("mongoose"));
 var dotenv = require('dotenv');
 mongoose_1.default.Promise = global.Promise;
-var dbHost = process.env.MONGODB_URI || 'mongo_db';
+var dbHost = process.env.db_host || 'mongo_db';
 var dbUser = process.env.db_user || 'y1balaev';
 var dbPass = process.env.db_pass || 'rVsueR6Q4UYwG6pb';
 var connectionString = "mongodb://" + dbUser + ":" + dbPass + "@" + dbHost + "/?authMechanism=DEFAULT";
