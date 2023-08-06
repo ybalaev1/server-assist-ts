@@ -1,3 +1,30 @@
-build:
-  docker:
-    web: Dockerfile
+version: '3.7'
+services:
+  nodejs_app:
+    build:
+      context: .
+    volumes:
+      - .:/app
+      - /app/node_modules
+    ports:
+      - '3000:3000'
+    environment:
+      - db_host=mongo_db
+      - db_user=y1balaev
+      - db_pass=rVsueR6Q4UYwG6pb
+    command: yarn start
+
+  mongo_db:
+    image: mongo:latest
+    container_name: mongo_db
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: y1balaev
+      MONGO_INITDB_ROOT_PASSWORD: rVsueR6Q4UYwG6pb
+    ports:
+      - '27017:27017'
+    volumes:
+      - mongo_data:/data/db
+
+
+volumes:
+  mongo_data:
