@@ -16,7 +16,7 @@ const connectToDatabase = async (): Promise<void> => {
   const options: ConnectionOptions = {
     useNewUrlParser: true, useFindAndModify: false, useCreateIndex: true, useUnifiedTopology: true, connectTimeoutMS: 500000,
   };
-  console.log('mongoose connected: ', process.env.MONGO_URI, 'MONGODB_URI', process.env.MONGODB_URI)
+  console.log('mongoose connected: ', process.env, 'MONGODB_URI',)
     await mongoose.connect(connectionString, options).then(() => console.log('mongoose connected: ', process.env.MONGO_URI, 'MONGODB_URI', process.env.MONGODB_URI));
 };
 

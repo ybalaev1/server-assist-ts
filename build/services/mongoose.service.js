@@ -57,7 +57,7 @@ var connectToDatabase = function () { return __awaiter(void 0, void 0, void 0, f
                 options = {
                     useNewUrlParser: true, useFindAndModify: false, useCreateIndex: true, useUnifiedTopology: true, connectTimeoutMS: 500000,
                 };
-                console.log('mongoose connected: ', process.env.MONGO_URI, 'MONGODB_URI', process.env.MONGODB_URI);
+                console.log('mongoose connected: ', process.env, 'MONGODB_URI');
                 return [4, mongoose_1.default.connect(connectionString, options).then(function () { return console.log('mongoose connected: ', process.env.MONGO_URI, 'MONGODB_URI', process.env.MONGODB_URI); })];
             case 2:
                 _a.sent();
