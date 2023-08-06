@@ -9,7 +9,7 @@ const dbPass = process.env.db_pass || 'rVsueR6Q4UYwG6pb' ;
 
 
 // Construct the Mongoose connection string
-const connectionString = `mongodb://${dbUser}:${dbPass}@${dbHost}/testingDB?authMechanism=DEFAULT`;
+const connectionString = `mongodb://${dbUser}:${dbPass}@${dbHost}/?authMechanism=DEFAULT`;
 
 const connectToDatabase = async (): Promise<void> => {
   await dotenv.config();
