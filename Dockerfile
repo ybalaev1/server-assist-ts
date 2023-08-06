@@ -12,4 +12,4 @@ RUN yarn install
 
 EXPOSE 27017
 
-CMD ["docker-compose", "up"]
+CMD ["yarn", "run", "start"]

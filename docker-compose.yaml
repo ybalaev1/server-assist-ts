@@ -1,36 +1,32 @@
-version: '3.7'
+version: "3.8"
+
 services:
-  dance-connect-db:
-    image: mongo
-    restart: always
-    container_name: dance-connect-db
-    ports:
-      - 27017:27017 
-    volumes:
-      - dance-connect-db:/data/db
-    networks: 
-      - dance-connect-network
-  dance-connect-app:
-    image: dance-connect-app:prod
-    build: 
-      context: .
-      target: prod
-    container_name: dance-connect-app
-    restart: always
-    volumes: 
-      - .:/app
-    ports:
-      - "27017:27017"
-      - "3000:3000"
-    depends_on:
-      - dance-connect-db
+  mongodb:
+    image: mongo:5.0.2
+    restart: unless-stopped
+    env_file: ./.env
     environment:
-      - MONGODB_URI=mongodb://dance-connect-db/dance-connect-db
-    networks: 
-      - dance-connect-network
-volumes: 
-  dance-connect-db:
-    name: dance-connect-db
-networks: 
-  dance-connect-network:
-    name: dance-connect-network
+      - MONGO_INITDB_ROOT_USERNAME=y1balaev
+      - MONGO_INITDB_ROOT_PASSWORD=rVsueR6Q4UYwG6pb
+    ports:
+      - 27017:27017
+    volumes:
+      - db:/data/db
+  app:
+    depends_on:
+      - mongodb
+    build: ./src
+    restart: unless-stopped
+    ports:
+      - 27017:27017
+    environment:
+      - DB_HOST=mongodb
+      - DB_USER=y1balaev
+      - DB_PASSWORD=rVsueR6Q4UYwG6pb
+      - DB_NAME=testingDB
+      - DB_PORT=27017
+    stdin_open: true
+    tty: true
+
+volumes:
+  db:

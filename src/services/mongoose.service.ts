@@ -3,13 +3,14 @@ const dotenv = require('dotenv');
 
 mongoose.Promise = global.Promise;
 
-const dbHost = process.env.db_host || 'localhost:27017'
+const dbHost = process.env.db_host || 'mongodb'
 const dbUser = process.env.db_user || 'y1balaev' ;
 const dbPass = process.env.db_pass || 'rVsueR6Q4UYwG6pb' ;
+const dbName = process.env.db_name || 'testingDB' ;
 
 
 // Construct the Mongoose connection string
-const connectionString = `mongodb://${dbUser}:${dbPass}@${dbHost}/?authMechanism=DEFAULT`;
+const connectionString = `mongodb://${dbUser}:${dbPass}@${dbHost}/${dbName}?authMechanism=DEFAULT`;
 
 const connectToDatabase = async (): Promise<void> => {
   await dotenv.config();
