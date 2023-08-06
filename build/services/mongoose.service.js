@@ -43,7 +43,7 @@ exports.connectToDatabase = void 0;
 var mongoose_1 = __importDefault(require("mongoose"));
 var dotenv = require('dotenv');
 mongoose_1.default.Promise = global.Promise;
-var dbHost = process.env.MONGO_URI || 'mongo_db';
+var dbHost = process.env.MONGODB_URI || 'mongo_db';
 var dbUser = process.env.db_user || 'y1balaev';
 var dbPass = process.env.db_pass || 'rVsueR6Q4UYwG6pb';
 var connectionString = "mongodb://" + dbUser + ":" + dbPass + "@" + dbHost + "/?authMechanism=DEFAULT";
@@ -57,7 +57,7 @@ var connectToDatabase = function () { return __awaiter(void 0, void 0, void 0, f
                 options = {
                     useNewUrlParser: true, useFindAndModify: false, useCreateIndex: true, useUnifiedTopology: true, connectTimeoutMS: 500000,
                 };
-                return [4, mongoose_1.default.connect(connectionString, options)];
+                return [4, mongoose_1.default.connect(connectionString, options).then(function () { return console.log('mongoose connected: ', process.env.MONGO_URI, 'MONGODB_URI', process.env.MONGODB_URI); })];
             case 2:
                 _a.sent();
                 return [2];

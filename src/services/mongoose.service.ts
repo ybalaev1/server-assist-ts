@@ -3,7 +3,7 @@ const dotenv = require('dotenv');
 
 mongoose.Promise = global.Promise;
 
-const dbHost = process.env.MONGO_URI || 'mongo_db'
+const dbHost = process.env.MONGODB_URI || 'mongo_db'
 const dbUser = process.env.db_user || 'y1balaev' ;
 const dbPass = process.env.db_pass || 'rVsueR6Q4UYwG6pb' ;
 
@@ -16,7 +16,7 @@ const connectToDatabase = async (): Promise<void> => {
   const options: ConnectionOptions = {
     useNewUrlParser: true, useFindAndModify: false, useCreateIndex: true, useUnifiedTopology: true, connectTimeoutMS: 500000,
   };
-    await mongoose.connect(connectionString, options);
+    await mongoose.connect(connectionString, options).then(() => console.log('mongoose connected: ', process.env.MONGO_URI, 'MONGODB_URI', process.env.MONGODB_URI));
 };
 
 export { connectToDatabase };
