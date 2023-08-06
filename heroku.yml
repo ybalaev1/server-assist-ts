@@ -2,7 +2,3 @@ build:
   docker:
     web: Dockerfile
     worker: Dockerfile
-release:
-  command:
-    - docker-compose up
-  image: mongo_db
