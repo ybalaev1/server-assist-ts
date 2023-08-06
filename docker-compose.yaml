@@ -1,32 +1,15 @@
-version: "3.8"
-
+version: "3.2"
 services:
-  mongodb:
-    image: mongo:5.0.2
-    restart: unless-stopped
-    env_file: ./.env
-    environment:
-      - MONGO_INITDB_ROOT_USERNAME=y1balaev
-      - MONGO_INITDB_ROOT_PASSWORD=rVsueR6Q4UYwG6pb
-    ports:
-      - 27017:27017
+  mongo_db:
+    image: mongo:latest
+    container_name: mongo_db
+    build:
+      context: ${PWD}/path/to/Dockerfile
     volumes:
-      - db:/data/db
-  app:
-    depends_on:
-      - mongodb
-    build: ./src
-    restart: unless-stopped
-    ports:
-      - 27017:27017
-    environment:
-      - DB_HOST=mongodb
-      - DB_USER=y1balaev
-      - DB_PASSWORD=rVsueR6Q4UYwG6pb
-      - DB_NAME=testingDB
-      - DB_PORT=27017
-    stdin_open: true
-    tty: true
+     - $PWD/mongo_db:/data/db
 
-volumes:
-  db:
+    ports:
+     - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: y1balaev
+      MONGO_INITDB_ROOT_PASSWORD: rVsueR6Q4UYwG6pb
