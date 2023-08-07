@@ -1,31 +1,28 @@
-version: '3.7'
+version: '3'
+
 services:
-  nodejs_app:
+  app:
     build:
       context: .
-    volumes:
-      - .:/app
-      - /app/node_modules
-    ports:
-      - '3000:3000'
+      dockerfile: Dockerfile
+    depends_on:
+      - mongo_db
     environment:
       - db_host=mongo_db
       - db_user=y1balaev
       - db_pass=rVsueR6Q4UYwG6pb
-    command: yarn start
+
+    ports:
+      - 3000:3000
+    volumes:
+      - ./build:/build
 
   mongo_db:
-    image: mongo:latest
-    container_name: mongo_db
+    image: mongo
+    ports:
+      - 27017:27017
     environment:
       MONGO_INITDB_ROOT_USERNAME: y1balaev
       MONGO_INITDB_ROOT_PASSWORD: rVsueR6Q4UYwG6pb
-    ports:
-      - '27017:27017'
     volumes:
-      # - ./mongo-init.sh:/docker-entrypoint-initdb.d/mongo-init.sh:ro
-      - mongo_data:/data/db
-
-
-volumes:
-  mongo_data:
+      - ./mongo_db:/mongo_db
