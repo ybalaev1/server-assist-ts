@@ -12,7 +12,6 @@ services:
       MONGO_USERNAME: y1balaev
       MONGO_PASSWORD: rVsueR6Q4UYwG6pb
       MONGO_HOSTNAME: db
-      MONGO_PORT: 27017
       MONGO_DB: dance_connect
     ports:
       - "3000:3000"
