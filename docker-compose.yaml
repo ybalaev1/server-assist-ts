@@ -1,49 +1,31 @@
-version: '3'
-
+version: '3.7'
 services:
-  nodejs:
+  nodejs_app:
     build:
       context: .
-      dockerfile: Dockerfile
-    image: nodejs
-    container_name: nodejs
-    restart: unless-stopped
+    volumes:
+      - .:/app
+      - /app/node_modules
+    ports:
+      - '3000:3000'
     environment:
       - db_host=mongo_db
       - db_user=y1balaev
       - db_pass=rVsueR6Q4UYwG6pb
-      # MONGO_DB: dance_connect
-    links:
-      - mongo_db
-    ports:
-      - "27017:27017"
-      - "3000:3000"
-    volumes:
-      - .:/home/node/app
-      - node_modules:/home/node/app/node_modules
-    networks:
-      - app-network
-    command:  yarn start
+    command: yarn start
 
   mongo_db:
     image: mongo:latest
     container_name: mongo_db
-    restart: on-failure
     environment:
-      MONGO_INITDB_DATABASE: dc
       MONGO_INITDB_ROOT_USERNAME: y1balaev
       MONGO_INITDB_ROOT_PASSWORD: rVsueR6Q4UYwG6pb
+    ports:
+      - '27017:27017'
     volumes:
-      - ./mongo-init.sh:/docker-entrypoint-initdb.d/mongo-init.sh:ro
+      # - ./mongo-init.sh:/docker-entrypoint-initdb.d/mongo-init.sh:ro
       - mongo_data:/data/db
-    networks:
-      - app-network  
 
-networks:
-  app-network:
-    driver: bridge
 
 volumes:
   mongo_data:
-    driver: local
-  node_modules:
