@@ -6,11 +6,11 @@ mongoose.Promise = global.Promise;
 const dbHost = process.env.db_host || 'mongo_db'
 const dbUser = process.env.db_user || 'y1balaev' ;
 const dbPass = process.env.db_pass || 'rVsueR6Q4UYwG6pb' ;
-const dbName = process.env.db_name || 'dance_connect' ;
+const dbName = process.env.db_name || 'dc' ;
 
 
 // Construct the Mongoose connection string
-const connectionString = `mongodb://${dbUser}:${dbPass}@${dbHost}/${dbName}?authMechanism=DEFAULT`;
+const connectionString = `mongodb://${dbUser}:${dbPass}@${dbHost}/?authSource=admin`;
 
 const connectToDatabase = async (): Promise<void> => {
   await dotenv.config();

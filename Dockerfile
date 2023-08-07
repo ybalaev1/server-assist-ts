@@ -9,7 +9,6 @@ COPY . .
 
 RUN yarn cache clean
 RUN yarn install
-
 EXPOSE 27017
 
 CMD ["yarn", "run", "start"]

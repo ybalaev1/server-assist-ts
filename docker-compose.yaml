@@ -9,10 +9,12 @@ services:
     container_name: nodejs
     restart: unless-stopped
     environment:
-      MONGO_USERNAME: y1balaev
-      MONGO_PASSWORD: rVsueR6Q4UYwG6pb
-      MONGO_HOSTNAME: mongo_db
-      MONGO_DB: dance_connect
+      - db_host=mongo_db
+      - db_user=y1balaev
+      - db_pass=rVsueR6Q4UYwG6pb
+      # MONGO_DB: dance_connect
+    links:
+      - mongo_db
     ports:
       - "27017:27017"
       - "3000:3000"
@@ -24,13 +26,15 @@ services:
     command:  yarn start
 
   mongo_db:
-    image: mongo:4.1.8-xenial
+    image: mongo:latest
     container_name: mongo_db
-    restart: unless-stopped
+    restart: on-failure
     environment:
-      MONGO_USERNAME: y1balaev
-      MONGO_PASSWORD: rVsueR6Q4UYwG6pb
-    volumes:     
+      MONGO_INITDB_DATABASE: dc
+      MONGO_INITDB_ROOT_USERNAME: y1balaev
+      MONGO_INITDB_ROOT_PASSWORD: rVsueR6Q4UYwG6pb
+    volumes:
+      - ./mongo-init.sh:/docker-entrypoint-initdb.d/mongo-init.sh:ro
       - mongo_data:/data/db
     networks:
       - app-network  
@@ -41,4 +45,5 @@ networks:
 
 volumes:
   mongo_data:
-  node_modules:  
+    driver: local
+  node_modules:

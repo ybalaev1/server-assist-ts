@@ -46,8 +46,8 @@ mongoose_1.default.Promise = global.Promise;
 var dbHost = process.env.db_host || 'mongo_db';
 var dbUser = process.env.db_user || 'y1balaev';
 var dbPass = process.env.db_pass || 'rVsueR6Q4UYwG6pb';
-var dbName = process.env.db_name || 'dance_connect';
-var connectionString = "mongodb://" + dbUser + ":" + dbPass + "@" + dbHost + "/" + dbName + "?authMechanism=DEFAULT";
+var dbName = process.env.db_name || 'dc';
+var connectionString = "mongodb://" + dbUser + ":" + dbPass + "@" + dbHost + "/?authSource=admin";
 var connectToDatabase = function () { return __awaiter(void 0, void 0, void 0, function () {
     var options;
     return __generator(this, function (_a) {
