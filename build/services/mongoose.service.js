@@ -48,7 +48,7 @@ var dbUser = process.env.db_user || 'y1balaev';
 var dbPass = process.env.db_pass || 'rVsueR6Q4UYwG6pb';
 var dbName = process.env.db_name || 'dance_connect';
 var dbPort = process.env.db_port || 27017;
-var connectionString = "mongodb://" + dbUser + ":" + dbPass + "@" + dbHost + ":" + dbPort + "/" + dbName + "?authMechanism=DEFAULT";
+var connectionString = "mongodb://" + dbUser + ":" + dbPass + "@" + dbHost + "/" + dbName + "?authMechanism=DEFAULT";
 var connectToDatabase = function () { return __awaiter(void 0, void 0, void 0, function () {
     var options;
     return __generator(this, function (_a) {

@@ -11,7 +11,7 @@ const dbPort = process.env.db_port || 27017 ;
 
 
 // Construct the Mongoose connection string
-const connectionString = `mongodb://${dbUser}:${dbPass}@${dbHost}:${dbPort}/${dbName}?authMechanism=DEFAULT`;
+const connectionString = `mongodb://${dbUser}:${dbPass}@${dbHost}/${dbName}?authMechanism=DEFAULT`;
 
 const connectToDatabase = async (): Promise<void> => {
   await dotenv.config();
