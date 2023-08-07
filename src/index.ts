@@ -35,7 +35,6 @@ app.use(
     // maxAge: 3600000,
   }),
 );
-connectToDatabase();
   const server = app.listen(PORT, async () => {
 // app.listen(PORT, async () => {
   await connectToDatabase();

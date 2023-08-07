@@ -81,7 +81,6 @@ app.use(cors({
     optionsSuccessStatus: 200,
     credentials: true,
 }));
-(0, mongoose_service_1.connectToDatabase)();
 var server = app.listen(PORT, function () { return __awaiter(void 0, void 0, void 0, function () {
     return __generator(this, function (_a) {
         switch (_a.label) {
