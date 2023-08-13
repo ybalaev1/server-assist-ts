@@ -13,7 +13,7 @@ const express = require('express');
 
 const stripeKey = 'sk_test_51NVTpaEh2JOoqoGgfr2g2dUR9PNWbFVtENMBkCZ2NCLwhPVNt96Qg7ajdI7YCe92RK3mhIKYTrCtjlRsbiye5bMm00WKN05uGh'
 const app = express();
-export const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY || stripeKey);
+export const stripe = require('stripe')(stripeKey);
 app.use(express.json({limit: '50mb'}));
 app.use(express.urlencoded({limit: '50mb', extended: true, parameterLimit: 500 }));
 app.use(express.json());
