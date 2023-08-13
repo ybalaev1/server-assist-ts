@@ -10,7 +10,7 @@ const dbName = process.env.db_name || 'dc' ;
 
 
 // Construct the Mongoose connection string
-const connectionString = `mongodb://${dbUser}:${dbPass}@${dbHost}/?authSource=admin`;
+const connectionString = `mongodb://${dbUser}:${dbPass}@${dbHost}/dc?authSource=admin`;
 
 const connectToDatabase = async (): Promise<void> => {
   await dotenv.config();
@@ -18,7 +18,7 @@ const connectToDatabase = async (): Promise<void> => {
     useNewUrlParser: true, useFindAndModify: false, useCreateIndex: true, useUnifiedTopology: true, connectTimeoutMS: 500000,
   };
   await mongoose.connect(connectionString, options).then( function() {
-    console.log('MongoDB is connected');
+    console.log('MongoDB is connected', connectionString);
   })
     .catch( function(err) {
     console.log('connected err', err);

@@ -74,6 +74,10 @@ var eventShema = new mongoose_1.Schema({
         type: mongoose_1.Schema.Types.String,
         required: false,
     },
+    price: {
+        type: mongoose_1.Schema.Types.String,
+        required: false,
+    },
 }, {
     collection: 'events',
 });

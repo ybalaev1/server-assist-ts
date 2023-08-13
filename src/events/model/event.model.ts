@@ -1,9 +1,9 @@
-import mongosee, { Schema, Model, Document } from 'mongoose';
+import mongosee, { Schema, Model, Document, _AllowStringsForIds } from 'mongoose';
 
 type EventCreatedModel = Document & {
   title: string;
   description: string;
-  attendedPeople: string[];
+  attendedPeople: Array<{userUid: string}>;
   categories: string[]
   communityUid: string;
   id: string;
@@ -22,6 +22,20 @@ type EventCreatedModel = Document & {
   place: string;
   typeEvent: string;
   images: string[];
+  price: string;
+  product_info?: {
+    id: string,
+    name: string,
+    description: string,
+    default_price_data: {
+        unit_amount: number,
+        unit_amount_decimal: number,
+        currency: 'USD',
+      },
+      metadata: { 
+        'eventUid' : string, 
+      },
+  };
 };
 
 const eventShema = new Schema(
@@ -78,6 +92,14 @@ const eventShema = new Schema(
       type: Schema.Types.String,
       required: false,
     },
+    price: {
+      type: Schema.Types.String,
+      required: false,
+    },
+    product_info: {
+      type: Schema.Types.Mixed,
+      required: false,
+    }
   },
   {
     collection: 'events',

@@ -11,8 +11,9 @@ const cors = require('cors');
 
 const express = require('express');
 
+const stripeKey = 'sk_test_51NVTpaEh2JOoqoGgfr2g2dUR9PNWbFVtENMBkCZ2NCLwhPVNt96Qg7ajdI7YCe92RK3mhIKYTrCtjlRsbiye5bMm00WKN05uGh'
 const app = express();
-
+export const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY || stripeKey);
 app.use(express.json({limit: '50mb'}));
 app.use(express.urlencoded({limit: '50mb', extended: true, parameterLimit: 500 }));
 app.use(express.json());
@@ -27,8 +28,8 @@ const PORT = process.env.PORT || 3000;
 app.use(
   cors({
         // origin: `http://localhost:${PORT}`,
-    // origin: '*',
-    origin: `https://dance-connect-528e8b559e89.herokuapp.com:${PORT}`,
+    origin: '*',
+    // // origin: `https://dance-connect-528e8b559e89.herokuapp.com:${PORT}`,
     methods: ['GET','POST','DELETE','UPDATE','PUT','PATCH'],
     optionsSuccessStatus: 200,
     credentials: true,
@@ -47,7 +48,9 @@ export const io = require('socket.io')(server);
 io.on('connection', (socket: Socket) => {
   console.log('a user connected', socket.id);
   socketMiddleware.subscribeCommunitySocket(socket, io);
-  socketMiddleware.updateCommunitySocket(socket, io);
+  socketMiddleware.subscribeEventSocket(socket, io);
+  socketMiddleware.subscribedToUpdateEvents(socket, io);
+  // socketMiddleware.updateCommunitySocket(socket, io);
   // socket.on('init', (id: string) => {
   //   console.log('init id', id);
   // });

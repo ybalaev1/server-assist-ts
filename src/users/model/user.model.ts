@@ -22,6 +22,7 @@ type UserModel = Document & {
         joinedCommunities: string[];
         events: string[];
         goingEvent: string[];
+        paidEvents: Array<{userUid: string, id: string, eventUid: string, payed: boolean}>;
 };
 
 const userShema = new Schema(
@@ -71,6 +72,10 @@ const userShema = new Schema(
       required: false,
     },
     goingEvent: {
+      type: Schema.Types.Array,
+      required: false,
+    },
+    paidEvents: {
       type: Schema.Types.Array,
       required: false,
     },

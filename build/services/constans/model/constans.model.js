@@ -30,6 +30,10 @@ var constansShema = new mongoose_1.Schema({
         type: mongoose_1.Schema.Types.Array,
         required: false,
     },
+    countries: {
+        type: mongoose_1.Schema.Types.Array,
+        required: false,
+    },
 }, {
     collection: 'appConstans',
 });
