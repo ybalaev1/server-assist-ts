@@ -21,6 +21,7 @@ const insertCommunity = async (req: Request, res: Response) => {
                         image: user?.userImage ?? null,
                         name: user?.userName,
                 },
+                followers: [{userUid: user?.id}]
         }
         if (data.title) {
                 if (data.description) {
@@ -50,6 +51,25 @@ const getAllCommunities = async (req: Request, res: Response) => {
         const {location} = req.params;
         // console.log('getAllCommunities', Community.find().exec());
         const communitiesData = await Community.find({ 'location': location }).exec();
+        let allCommunities: any = [];
+        if (communitiesData.length) {
+                for (let index in communitiesData){
+                        let currentCommunity = communitiesData[index];
+                        const followers = currentCommunity?.followers.map(i => i.userUid);
+                        const records = await User.find({ '_id': { $in: followers } }, 'userImage');
+                        const item = {
+                          ...currentCommunity.toJSON(),
+                          userImages: records,
+                        }
+                        allCommunities.push(item);
+                       //  console.log('index', item);
+                      }
+                return res.status(200).json({ ...allCommunities });
+        }
+
+        if(!communitiesData.length) {
+                return res.status(404).json({ message: 'Communities not found' });
+        }
         // const communities = communitiesData?.filter(community => community.location === location);
         // console.log('com', communities.then(c => c));
         // const communities = await Community.find({location: location}, {title: 1, description: 1, images: 1, categories: 1, id: 1, followers: 1, location: 1, creator: 1}).maxTimeMS(60000).limit(1).exec();
@@ -69,7 +89,7 @@ const getAllCommunities = async (req: Request, res: Response) => {
         // })
 
         // return res.status(200).json();
-        return res.status(200).json({ ...communitiesData });
+        // return res.status(200).json({ ...allCommunities });
 };
 
 
@@ -158,9 +178,12 @@ const subscribeCommunity = async (communityUid: string, userUid: string, socket:
                 await User.updateOne({ _id: userUid }, {$set: {joinedCommunities: userCommunities}});
                 const communityUpdated = await Community.findOne({ _id: communityUid });
                 const communities = await Community.find({ 'location': community?.location}).exec();
+                const records = await User.find({ _id: { $in: communityUpdated?.followers.map(i => i.userUid) } }, 'userImage');
+      
                 const data = {
                         communities: communities,
                         currentCommunity: communityUpdated?.toJSON(),
+                        userImages: records,
                 }
                 return data;
         
@@ -173,9 +196,11 @@ const subscribeCommunity = async (communityUid: string, userUid: string, socket:
                 await Community.updateOne({ _id: communityUid }, {$set: {followers: followers}});
                 const communityUpdated = await Community.findOne({ _id: communityUid });
                 const communities = await Community.find({ 'location': community?.location}).exec();
+                const records = await User.find({ _id: { $in: newFollowers?.map(i => i.userUid) } }, 'userImage');
                 const data = {
                         communities: communities,
                         currentCommunity: communityUpdated?.toJSON(),
+                        userImages: records,
                 }
                 return data;
                 // return communityUpdated?.toJSON();

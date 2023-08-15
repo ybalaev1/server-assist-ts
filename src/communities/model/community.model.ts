@@ -17,6 +17,7 @@ type CommunityModel = Document & {
           image: string;
           name: string;
         };
+      userImages: Array<{userImage: object}>;
 };
 
 const communityShema = new Schema(
@@ -59,6 +60,10 @@ const communityShema = new Schema(
     },
     id: {
       type: Schema.Types.String,
+      required: false,
+    },
+    userImages: {
+      type: Schema.Types.Array,
       required: false,
     },
   },

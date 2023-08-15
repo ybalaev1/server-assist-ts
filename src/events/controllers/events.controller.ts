@@ -120,11 +120,10 @@ const getEventsByCommunityId = async (id: string) => {
 };
 
 const getUserImagesFromEvent = async(req:Request, res: Response) => {
-  const {id, limit} = req.params;
-  const usersLimit = Number(limit);
+  const {id} = req.params;
   const event = await Event.findOne({ _id: id}).exec();
   const attendedPeople = event?.attendedPeople.map(i => i.userUid);
-  const records = await User.find({ '_id': { $in: attendedPeople } }, 'userImage').limit(usersLimit ?? 3);
+  const records = await User.find({ '_id': { $in: attendedPeople } }, 'userImage');
   // console.log('attendedPeople', records);
 
   return res.status(200).json({images: records});
@@ -137,7 +136,7 @@ const getAllEvents = async (req: Request, res: Response) => {
  for (let index in eventsList){
   let currentEvent = eventsList[index];
   const attendedPeople = currentEvent?.attendedPeople.map(i => i.userUid);
-  const records = await User.find({ '_id': { $in: attendedPeople } }, 'userImage').limit(3);
+  const records = await User.find({ '_id': { $in: attendedPeople } }, 'userImage');
   const item = {
     ...currentEvent.toJSON(),
     userImages: records,
@@ -288,7 +287,7 @@ const updatedEvents = async () => {
   for (let index in events){
    let currentEvent = events[index];
    const attendedPeople = currentEvent?.attendedPeople.map(i => i.userUid);
-   const records = await User.find({ '_id': { $in: attendedPeople } }, 'userImage').limit(3);
+   const records = await User.find({ '_id': { $in: attendedPeople } }, 'userImage');
    const item = {
      ...currentEvent.toJSON(),
      userImages: records,

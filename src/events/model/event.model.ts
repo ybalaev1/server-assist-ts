@@ -23,7 +23,7 @@ type EventCreatedModel = Document & {
   typeEvent: string;
   images: string[];
   price: string;
-  userImages: Array<{userImage: string}>;
+  userImages: Array<{userImage: object}>;
 
 };
 

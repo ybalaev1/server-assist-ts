@@ -37,7 +37,7 @@ app.use(
     // maxAge: 3600000,
   }),
 );
-  const server = app.listen(PORT, async () => {
+const server = app.listen(PORT, async () => {
 // app.listen(PORT, async () => {
   await connectToDatabase();
   // eslint-disable-next-line no-console
