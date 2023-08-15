@@ -10,7 +10,7 @@ type UserModel = Document & {
         userName: string;
         userGender: string;
         userCountry: string;
-        userImage?: object;
+        userImage: object;
         name?: string;
         gender?: string;
         country?: string;
@@ -23,6 +23,7 @@ type UserModel = Document & {
         events: string[];
         goingEvent: string[];
         paidEvents: Array<{userUid: string, id: string, eventUid: string, payed: boolean}>;
+        customer: {id: string};
 };
 
 const userShema = new Schema(
@@ -81,6 +82,10 @@ const userShema = new Schema(
     },
     id: {
       type: Schema.Types.String,
+      required: false,
+    },
+    customer: {
+      type: Schema.Types.Mixed,
       required: false,
     },
   },

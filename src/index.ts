@@ -12,6 +12,7 @@ const cors = require('cors');
 const express = require('express');
 
 const stripeKey = 'sk_test_51NVTpaEh2JOoqoGgfr2g2dUR9PNWbFVtENMBkCZ2NCLwhPVNt96Qg7ajdI7YCe92RK3mhIKYTrCtjlRsbiye5bMm00WKN05uGh'
+// const stripeKey = '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'
 const app = express();
 export const stripe = require('stripe')(stripeKey);
 app.use(express.json({limit: '50mb'}));

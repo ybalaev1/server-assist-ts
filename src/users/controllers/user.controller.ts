@@ -103,7 +103,7 @@ const updateUser = async (req: Request, res: Response) => {
 
 const onChangeLocation = async (req: Request, res: Response) => {
         const { jwt, userCountry } = req.body;
-        console.log('onChangeLocation', req.body);
+        // console.log('onChangeLocation', req.body);
         try {
                 await User.updateOne({ 'id': jwt?.userId }, {userCountry: userCountry});
                 const userUpdate = await User.findOne({ 'id': jwt?.userId }).exec();

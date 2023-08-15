@@ -23,19 +23,8 @@ type EventCreatedModel = Document & {
   typeEvent: string;
   images: string[];
   price: string;
-  product_info?: {
-    id: string,
-    name: string,
-    description: string,
-    default_price_data: {
-        unit_amount: number,
-        unit_amount_decimal: number,
-        currency: 'USD',
-      },
-      metadata: { 
-        'eventUid' : string, 
-      },
-  };
+  userImages: Array<{userImage: string}>;
+
 };
 
 const eventShema = new Schema(
@@ -96,10 +85,11 @@ const eventShema = new Schema(
       type: Schema.Types.String,
       required: false,
     },
-    product_info: {
-      type: Schema.Types.Mixed,
+    userImages: {
+      type: Schema.Types.Array,
       required: false,
-    }
+    },
+    
   },
   {
     collection: 'events',

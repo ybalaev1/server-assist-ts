@@ -10,7 +10,8 @@
                 "build": "tsc",
                 "format": "npx prettier --write . && npx prettier --check 'src/**/*.ts'",
                 "postinstall": "npm run build",
-                "local": "rm -rf build && npm run build && npm run start"
+                "local": "rm -rf build && npm run build && npm run start",
+                "docker-up": "docker-compose up --build -V"
         },
         "keywords": [],
         "author": "",

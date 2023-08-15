@@ -37,12 +37,13 @@ const subscribeCommunitySocket = (socket: Socket, io) => socket.on('follow_commu
 const subscribeEventSocket = (socket: Socket, io) => socket.on('follow_event', async (eventUid: string, userUid: string) => {
   console.log('subscribeEventSocket follow_event');
       const event = await subscribeEvent(eventUid, userUid);
-      console.log('subscribed_event', event);
+      // console.log('subscribed_event', event);
       io.emit('subscribed_event', event);
 });
 const subscribedToUpdateEvents = (socket: Socket, io) => socket.on('updated_events', async () => {
-  console.log('subscribedToUpdateEvents')
+  // console.log('subscribedToUpdateEvents')
   const events = await updatedEvents();
+  // console.log('subscribedToUpdateEvents', events);
   io.emit('updated_data_events', events);
 });
 // const messagingSocket = (socket, type: string, io) => socket.on(type, async (msg) => {
