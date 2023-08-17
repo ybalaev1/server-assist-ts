@@ -1,6 +1,6 @@
 import { Router } from 'express';
 // import { setFollowId, removeFollowId } from './controllers/update.user_info';
-import { insertUser, deleteUser, getAllUsers, getUserById, updateUser, findByEmail, userExistByEmail, onChangeLocation } from './controllers/user.controller';
+import { insertUser, deleteUser, getAllUsers, getUserById, updateUser, findByEmail, userExistByEmail, onChangeLocation, getTickets } from './controllers/user.controller';
 import { validJWTNeeded } from '../services/auth/controllers/auth.user';
 
 const userRoute = () => {
@@ -8,6 +8,7 @@ const userRoute = () => {
 
         app.post('/users/', insertUser);
         app.get('/users/', [validJWTNeeded, getAllUsers]);
+        app.get('/tickets/', [validJWTNeeded, getTickets]);
         app.get('/user/:email', userExistByEmail);
         app.get('/users/:id', [validJWTNeeded, getUserById]);
         app.post('/user/update', [validJWTNeeded, updateUser]);

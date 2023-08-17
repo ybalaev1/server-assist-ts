@@ -70,26 +70,7 @@ const getAllCommunities = async (req: Request, res: Response) => {
         if(!communitiesData.length) {
                 return res.status(404).json({ message: 'Communities not found' });
         }
-        // const communities = communitiesData?.filter(community => community.location === location);
-        // console.log('com', communities.then(c => c));
-        // const communities = await Community.find({location: location}, {title: 1, description: 1, images: 1, categories: 1, id: 1, followers: 1, location: 1, creator: 1}).maxTimeMS(60000).limit(1).exec();
-        // const communities = communitiesData.map(item => {
-        //         return {
-        //                 title: item.title,
-        //                 description: item.description,
-        //                 images: item?.images,
-        //                 categories: item.categories,
-        //                 followers: item?.followers,
-        //                 location: item?.location,
-        //                 id: item.id,
-        //                 creator: {
-        //                         uid: item.creator.uid,
-        //                 }
-        //         }
-        // })
 
-        // return res.status(200).json();
-        // return res.status(200).json({ ...allCommunities });
 };
 
 

@@ -34,12 +34,13 @@ const paidEvent = async (req: Request, res: Response, next: NextFunction) => {
     currency: currency,
     customer: seller,
     receipt_email: customer?.email,
-    metadata: {event: JSON.stringify({
-      title: event?.title,
-      description: event?.description,
-      eventUid: event?.id,
-      creator: event?.creator.name,
-      location: event?.location
+    metadata: {
+      event: JSON.stringify({
+          title: event?.title,
+          description: event?.description,
+          eventUid: event?.id,
+          creator: event?.creator.name,
+          location: event?.location
     })}
 
   }
@@ -49,9 +50,23 @@ const paidEvent = async (req: Request, res: Response, next: NextFunction) => {
     payed: true,
     userUid: jwt.userId,
     eventUid: id,
+    event: {
+      title: event?.title,
+      description: event?.description,
+      creator: event?.creator.name,
+      location: event?.location,
+      eventDate: event?.eventDate,
+    },
+    user: {
+      name: customer?.userName,
+      gender: customer?.userGender,
+      email: customer?.email,
+    }
   }
-  await User.updateOne({ _id:jwt?.userId }, {$set: {paidEvents: customer?.paidEvents.concat(newIntent)}})
-  console.log('paidEvent', paymentIntent);
+  const paidEvents = customer?.paidEvents?.length ? customer?.paidEvents.concat(newIntent) : [newIntent];
+  
+  await User.updateOne({ _id:jwt?.userId }, {$set: {paidEvents: paidEvents}})
+  // console.log('paidEvent', paymentIntent);
   return res.status(200).json({
     clientSecret: paymentIntent.client_secret,
     // nextAction: paymentIntent.next_action,
@@ -144,19 +159,6 @@ const getAllEvents = async (req: Request, res: Response) => {
   allEvents.push(item);
   // console.log('index', item);
 }
-//   eventsList.map(async ev => {
-//   const event = await Event.findOne({ _id: ev.id}).exec();
-//   const attendedPeople = event?.attendedPeople.map(i => i.userUid);
-//   const records = await User.find({ '_id': { $in: attendedPeople } }, 'userImage').limit(3);
-//   const data = {
-//     ...event?.toJSON(),
-//     images: records,
-//   };
-//   return data;
-//   // return res.status(200).json({ data: items });
-
-//  })
-//  console.log('event', event);
       return res.status(200).json({ data: allEvents });
 
 };
@@ -187,36 +189,6 @@ const insertEvent = async (req: Request, res: Response) => {
   }
     return eventCreate(requestData).then(async(event: any) => {
       const community = await Community.findOne({ 'id': data.communityUid })
-      // // console.log('event create', event);
-      // let product: {
-      //   id: '',
-      //   name: '',
-      //   description: '',
-      //   default_price_data: {
-      //       unit_amount: 0,
-      //       unit_amount_decimal: 0,
-      //       currency: 'USD',
-      //     },
-      //     metadata: { 
-      //       'eventUid' : '', 
-      //     },
-      // } ;
-  // if (Number(data?.price) > 0) {
-  //   const amount = new Number(data?.price);
-  //   product = await stripe.products.create({
-  //     name: data?.title,
-  //     description: data?.description,
-  //     default_price_data: {
-  //         unit_amount: amount,
-  //         unit_amount_decimal: Math.floor(data.price * 100),
-  //         currency: 'USD',
-  //       },
-  //       metadata: { 
-  //         'eventUid' : JSON.stringify(event._id) 
-  //       },
-  //   });
-  //   await Event.updateOne({ _id: event._id}, {$set: {product_info: product}});
-  // }
 
       const userEvents = !user?.events?.length ?  [event?._id] : [...user?.events, event?._id];
       const events = !community?.eventsIds?.length ?  [event?._id] : [...community?.eventsIds, event?._id];

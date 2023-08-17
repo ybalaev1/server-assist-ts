@@ -1,5 +1,26 @@
 import mongosee, { Schema, Model, Document } from 'mongoose';
-
+type paidEventType = {
+  userUid: string;
+  id: string;
+  eventUid: string;
+  payed: boolean;
+  event: {
+    title?: string;
+    description?: string;
+    creator?: string;
+    location?: string;
+    eventDate?: {
+      start: string;
+      end: string;
+      time: number;
+    };
+  },
+  user: {
+    name?: string;
+    gender?: string;
+    email?: string;
+  }
+}
 type UserModel = Document & {
         fullName: string;
         // email: string;
@@ -22,10 +43,9 @@ type UserModel = Document & {
         joinedCommunities: string[];
         events: string[];
         goingEvent: string[];
-        paidEvents: Array<{userUid: string, id: string, eventUid: string, payed: boolean}>;
+        paidEvents: Array<paidEventType>;
         customer: {id: string};
 };
-
 const userShema = new Schema(
   {
     userName: {
