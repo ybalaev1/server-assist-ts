@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import {
   findById, insertEvent, getAllEvents, updateEvent, deleteEvent, getEventById, subscribeEvent, unSubscribeEvent, getManagingEvents, paidEvent, refundPaymentEvent,
-  getUserImagesFromEvent,
+  getUserImagesFromEvent, disablePaidEvent
 } from './controllers/events.controller';
 import { validJWTNeeded } from '../services/auth/controllers/auth.user';
 
@@ -20,6 +20,7 @@ const eventsRoute = () => {
   app.get('/event/:id/attended-people-images', [validJWTNeeded, getUserImagesFromEvent])
 
   app.post('/event/:id/create-payment-intent', [validJWTNeeded, paidEvent])
+  app.post('/event/:id/disable-payment-intent', [validJWTNeeded, disablePaidEvent])
   app.post('/event/:id/refund-payment', [validJWTNeeded, refundPaymentEvent]);
 
   return app;

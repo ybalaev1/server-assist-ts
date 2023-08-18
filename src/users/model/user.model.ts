@@ -8,6 +8,7 @@ type paidEventType = {
     title?: string;
     description?: string;
     creator?: string;
+    place?: string;
     location?: string;
     eventDate?: {
       start: string;

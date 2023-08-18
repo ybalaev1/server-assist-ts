@@ -54,6 +54,7 @@ const paidEvent = async (req: Request, res: Response, next: NextFunction) => {
       title: event?.title,
       description: event?.description,
       creator: event?.creator.name,
+      place: event?.place,
       location: event?.location,
       eventDate: event?.eventDate,
     },
@@ -63,15 +64,25 @@ const paidEvent = async (req: Request, res: Response, next: NextFunction) => {
       email: customer?.email,
     }
   }
+  // if (paymentIntent?.status === 'Succeeded') {
   const paidEvents = customer?.paidEvents?.length ? customer?.paidEvents.concat(newIntent) : [newIntent];
   
   await User.updateOne({ _id:jwt?.userId }, {$set: {paidEvents: paidEvents}})
+
   // console.log('paidEvent', paymentIntent);
   return res.status(200).json({
     clientSecret: paymentIntent.client_secret,
     // nextAction: paymentIntent.next_action,
     ...paymentIntent,
   });
+}
+const disablePaidEvent = async (req: Request, res: Response) => {
+  const {jwt} = req.body;
+  const {id} = req.params;
+  const user = await User.findOne({ _id: jwt?.userId }).exec();
+  const paidEvents = user?.paidEvents.filter(ticket => ticket.id !== id);
+  await User.updateOne({ _id:jwt?.userId }, {$set: {paidEvents: paidEvents}})
+  return res.status(200).json({ message: 'Ticker is deleted', ...paidEvents });
 }
 const refundPaymentEvent = async (req: Request, res: Response) => {
   const {jwt} = req.body;
@@ -352,5 +363,5 @@ const unSubscribeEvent = async (req: Request, res: Response) => {
 }
 export {
   deleteEvent, findById, insertEvent, updateEvent, getAllEvents, getEventsByCommunityId, getEventById, subscribeEvent,
-  unSubscribeEvent, getManagingEvents, paidEvent, refundPaymentEvent, updatedEvents, getUserImagesFromEvent
+  unSubscribeEvent, getManagingEvents, paidEvent, refundPaymentEvent, updatedEvents, getUserImagesFromEvent, disablePaidEvent
 };

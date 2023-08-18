@@ -1,6 +1,8 @@
 import { NextFunction, Request, Response } from 'express';
 import crypto from 'crypto';
 import { User } from '../model/user.model';
+import { stripe } from '../../index';
+import { Event } from '../../events/model/event.model';
 
 const createUser = async (data: string[]) => {
         const user = await User.create(data);
@@ -117,10 +119,26 @@ const getTickets = async (req:Request, res: Response) => {
      const {jwt} = req.body;
      const user = await User.findOne({ _id: jwt?.userId}).exec();
      const tickets = user?.paidEvents;
+     let allEvents: any = [];
+     for (let index in tickets){
+      let currentTicket = tickets[index];
+      const event = await Event.find({ _id : currentTicket.eventUid });
+      const item = {
+        currentTicket: currentTicket,
+        event: event,
+      }
+      allEvents.push(item);
+//       console.log('index', records);
+    }
      if (!tickets) {
         return res.status(404);
      }
-     return res.status(200).json({ ...tickets});
+     return res.status(200).json({ paidEvents: allEvents});
+}
+const getPaymentById = async (req: Request, res: Response) => {
+        const { id } = req.params as any;
+        const paymentIntent = await stripe.paymentIntents.retrieve(id);
+        return res.status(200).json({ paymentDetail: paymentIntent});
 }
 const deleteUser = async (req: Request, res: Response) => {
         const { id } = req.params;
@@ -130,4 +148,4 @@ const deleteUser = async (req: Request, res: Response) => {
         return res.status(200).json({ message: 'User deleted successfully.' });
 };
 
-export { insertUser, deleteUser, getAllUsers, getUserById, updateUser, findByEmail, userExistByEmail, onChangeLocation, getTickets };
+export { insertUser, deleteUser, getAllUsers, getUserById, updateUser, findByEmail, userExistByEmail, onChangeLocation, getTickets, getPaymentById };
