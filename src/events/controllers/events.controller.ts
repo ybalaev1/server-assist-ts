@@ -238,8 +238,19 @@ const getManagingEvents = async (req: Request, res: Response) => {
   try {
   const eventsData = await Event.find().exec();
   const events = eventsData?.filter((item) => item?.creator?.uid === jwt?.userId);
-
-  return res.status(200).send({ data: events });
+  let allEvents: any = [];
+  for (let index in events){
+   let currentEvent = events[index];
+   const attendedPeople = currentEvent?.attendedPeople.map(i => i.userUid);
+   const records = await User.find({ '_id': { $in: attendedPeople } }, 'userImage');
+   const item = {
+     ...currentEvent.toJSON(),
+     userImages: records,
+   }
+   allEvents.push(item);
+   // console.log('index', item);
+ }
+  return res.status(200).send({ data: allEvents });
   } catch (error) {
           console.log('error', error)
           return res.status(404).json({ message: 'User not found', code: 404 });
