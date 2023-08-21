@@ -78,9 +78,12 @@ const getCommunityById = async (req: Request, res: Response) => {
         const { id } = req.params;
         const community = await Community.findOne({ 'id': id }).exec();
         const creator = await User.findOne({ 'id': community?.creator?.uid }).exec();
-
+        const followers = community?.followers.map(i => i.userUid);
+        const records = await User.find({ '_id': { $in: followers } }, 'userImage');
+     
         const data = {
                 ...community?.toJSON(),
+                userImages: records,
                 creator: {
                         ...community?.creator,
                         image: creator?.userImage,

@@ -326,7 +326,7 @@ const subscribeEvent = async (eventUid: string, userUid: string) => {
           await User.updateOne({ _id: userUid }, {$set: {goingEvent: userGoingEvent}});
           const eventUpdated = await Event.findOne({ _id: eventUid }).exec();
           const records = await User.find({ _id: { $in: eventUpdated?.attendedPeople.map(i => i.userUid) } }, 'userImage');
-          const events = await Event.find().exec();
+          const events = await updatedEvents();
 
           const data = {
                   events: events,
@@ -344,8 +344,7 @@ const subscribeEvent = async (eventUid: string, userUid: string) => {
           await Event.updateOne({ _id: eventUid }, {$set: {attendedPeople: attendedPeople}});
           const eventUpdated = await Event.findOne({ _id: eventUid }).exec();
           const records = await User.find({ _id: { $in: newFollowers?.map(i => i.userUid) } }, 'userImage');
-          const events = await Event.find().exec();
-
+          const events = await updatedEvents();
           const data = {
                   events: events,
                   currentEvent: eventUpdated?.toJSON(),
