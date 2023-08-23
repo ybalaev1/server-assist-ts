@@ -20,8 +20,8 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Message = exports.Chat = void 0;
-var mongoose_1 = __importStar(require("mongoose"));
-var readByRecipientSchema = new mongoose_1.Schema({
+const mongoose_1 = __importStar(require("mongoose"));
+const readByRecipientSchema = new mongoose_1.Schema({
     readByUserId: {
         type: mongoose_1.Schema.Types.String,
         require: true,
@@ -34,7 +34,7 @@ var readByRecipientSchema = new mongoose_1.Schema({
 }, {
     timestamps: false,
 });
-var messageSchema = new mongoose_1.Schema({
+const messageSchema = new mongoose_1.Schema({
     chat_id: {
         type: mongoose_1.Schema.Types.String,
         require: true,
@@ -59,7 +59,7 @@ var messageSchema = new mongoose_1.Schema({
     timestamps: true,
     collection: 'messages',
 });
-var chatSchema = new mongoose_1.Schema({
+const chatSchema = new mongoose_1.Schema({
     users: {
         type: mongoose_1.Schema.Types.Array,
         require: true,
@@ -94,7 +94,7 @@ var chatSchema = new mongoose_1.Schema({
     timestamps: false,
     collection: 'chats',
 });
-var Chat = mongoose_1.default.model('Chat', chatSchema);
+const Chat = mongoose_1.default.model('Chat', chatSchema);
 exports.Chat = Chat;
-var Message = mongoose_1.default.model('Message', messageSchema);
+const Message = mongoose_1.default.model('Message', messageSchema);
 exports.Message = Message;

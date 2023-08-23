@@ -1,11 +1,11 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.chatsRoute = void 0;
-var express_1 = require("express");
-var auth_user_1 = require("../services/auth/controllers/auth.user");
-var chats_controller_1 = require("./controllers/chats.controller");
-var chatsRoute = function () {
-    var app = (0, express_1.Router)();
+const express_1 = require("express");
+const auth_user_1 = require("../services/auth/controllers/auth.user");
+const chats_controller_1 = require("./controllers/chats.controller");
+const chatsRoute = () => {
+    const app = (0, express_1.Router)();
     app.post('/chats/', [auth_user_1.validJWTNeeded, chats_controller_1.insertChat]);
     app.get('/chats/', [auth_user_1.validJWTNeeded, chats_controller_1.getChats]);
     app.post('/chats/:id', [auth_user_1.validJWTNeeded, chats_controller_1.postMessageChat]);

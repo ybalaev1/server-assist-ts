@@ -1,5 +1,15 @@
 version: '3.7'
 services:
+  cache:
+    image: redis:6.2-alpine
+    restart: always
+    ports:
+      - '6379:6379'
+    command: redis-server --save 60 1 --loglevel warning 
+    networks:
+    - redis
+    volumes: 
+      - cache:/data
   nodejs_app:
     build:
       context: .
@@ -8,11 +18,24 @@ services:
       - /app/node_modules
     ports:
       - '3000:3000'
+    depends_on:
+      - mongo_db
+      - cache
     environment:
+      # - REDIS_URL=redis://localhost:6379
       - db_host=mongo_db
       - db_user=y1balaev
       - db_pass=rVsueR6Q4UYwG6pb
       - STRIPE_SECRET_KEY=sk_test_51NVTpaEh2JOoqoGgfr2g2dUR9PNWbFVtENMBkCZ2NCLwhPVNt96Qg7ajdI7YCe92RK3mhIKYTrCtjlRsbiye5bMm00WKN05uGh
+      - REDIS_HOST=cache
+      - REDIS_PORT=6379
+      - REDIS_PASSWORD=eYVX7EwVmmxKPCDmwMtyKVge8oLd2t81
+    links:
+      - mongo_db
+      - cache
+    networks:
+      - redis
+
     command: yarn serve
 
   mongo_db:
@@ -25,8 +48,13 @@ services:
       - '27017:27017'
     volumes:
       - mongo_data:/data/db
-
-
+    networks:
+      - redis
 volumes:
+  # mongo_data:
   mongo_data:
-
+  cache:
+    driver: local
+networks:
+  redis:
+    driver: bridge

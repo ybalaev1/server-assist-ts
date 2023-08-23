@@ -2,7 +2,7 @@ import e, { NextFunction, Request, Response } from 'express';
 import { User } from '../../users/model/user.model';
 import { Event, EventCreatedModel } from '../model/event.model';
 import { Community } from '../../communities/model/community.model';
-import { stripe } from '../../index';
+import { redisClient, stripe } from '../../index';
 
 const findCustomerByEmail = async (email: string | undefined) => {
   try {
@@ -155,8 +155,29 @@ const getUserImagesFromEvent = async(req:Request, res: Response) => {
 }
 const getAllEvents = async (req: Request, res: Response) => {
   const {location} = req.params;
-  const events =  await Event.find({ 'location': location }).exec()
+  // const events =  await Event.find({ 'location': location }).exec()
+  let results;
+  let events;
+  // const communities = await Community.find({ 'location': location }).exec();
+  // redisClient.set('communities', JSON.stringify(communities));
+  // console.log('getAllCommunities', Community.find().exec());
+  const cachedEvents = redisClient.get('events');
+  if (cachedEvents) {
+          results = JSON.parse(cachedEvents);
+          events = results.filter(event => event?.location === location);
+   } else {
+          const eventsData = await Event.find({ 'location': location }).exec();
+          const allEvents = await Event.find().exec();
+          events = eventsData;
+          redisClient.set('events', JSON.stringify(allEvents)); 
+  }
 
+  // console.log('cachedEvents', events?.length);
+
+  if(!events?.length) {
+          return res.status(404).json({ message: 'Communities not found' });
+  }
+  return res.status(200).json({ data: events });
   // const eventsList = events.forEach(async (item, index) => {
   //   const attendedPeople = item.attendedPeople?.map(i => i.userUid);
   //   const records = await User.find({ '_id': { $in: attendedPeople } }, 'userImage');
@@ -203,7 +224,7 @@ const getAllEvents = async (req: Request, res: Response) => {
 // const newList = oldList.concat(...results);
 // console.log('count', eventsList);
 
-      return res.status(200).json({ data: events, prevOffset: 1, prevLimit: 1 });
+      // return res.status(200).json({ data: events, prevOffset: 1, prevLimit: 1 });
 
 };
 
@@ -307,8 +328,8 @@ const deleteEvent = async (req: Request, res: Response) => {
         return res.status(200).json({ message: 'Event deleted successfully.' });
 };
 
-const updatedEvents = async () => {
-  const events = await Event.find().exec();
+const updatedEvents = async (location: string | undefined) => {
+  const events = await Event.find({ 'location': location }).exec();
   // console.log('eev', events);
   let allEvents: any = [];
   for (let index in events){
@@ -358,13 +379,13 @@ const subscribeEvent = async (eventUid: string, userUid: string) => {
           await Event.updateOne({ _id: eventUid }, {$set: {attendedPeople: attendedPeople}});
           await User.updateOne({ _id: userUid }, {$set: {goingEvent: userGoingEvent}});
           const eventUpdated = await Event.findOne({ _id: eventUid }).exec();
-          const records = await User.find({ _id: { $in: eventUpdated?.attendedPeople.map(i => i.userUid) } }, 'userImage');
-          const events = await updatedEvents();
+          // const records = await User.find({ _id: { $in: eventUpdated?.attendedPeople.map(i => i.userUid) } }, 'userImage');
+          const events = await updatedEvents(event.location);
 
           const data = {
                   events: events,
                   currentEvent: eventUpdated?.toJSON(),
-                  userImages: records,
+                  // userImages: records,
           }
           return data;
   
@@ -376,12 +397,12 @@ const subscribeEvent = async (eventUid: string, userUid: string) => {
           await User.updateOne({ _id: userUid }, {$set: {goingEvent: userGoingEvent}});
           await Event.updateOne({ _id: eventUid }, {$set: {attendedPeople: attendedPeople}});
           const eventUpdated = await Event.findOne({ _id: eventUid }).exec();
-          const records = await User.find({ _id: { $in: newFollowers?.map(i => i.userUid) } }, 'userImage');
-          const events = await updatedEvents();
+          // const records = await User.find({ _id: { $in: newFollowers?.map(i => i.userUid) } }, 'userImage');
+          const events = await updatedEvents(event?.location);
           const data = {
                   events: events,
                   currentEvent: eventUpdated?.toJSON(),
-                  userImages: records,
+                  // userImages: records,
           }
           return data;
   }

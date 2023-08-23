@@ -20,8 +20,8 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Constans = void 0;
-var mongoose_1 = __importStar(require("mongoose"));
-var constansShema = new mongoose_1.Schema({
+const mongoose_1 = __importStar(require("mongoose"));
+const constansShema = new mongoose_1.Schema({
     typesEvents: {
         type: mongoose_1.Schema.Types.Array,
         required: false,
@@ -37,5 +37,5 @@ var constansShema = new mongoose_1.Schema({
 }, {
     collection: 'appConstans',
 });
-var Constans = mongoose_1.default.model('Constants', constansShema);
+const Constans = mongoose_1.default.model('Constants', constansShema);
 exports.Constans = Constans;

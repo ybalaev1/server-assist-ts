@@ -20,8 +20,8 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Community = void 0;
-var mongoose_1 = __importStar(require("mongoose"));
-var communityShema = new mongoose_1.Schema({
+const mongoose_1 = __importStar(require("mongoose"));
+const communityShema = new mongoose_1.Schema({
     title: {
         type: mongoose_1.Schema.Types.String,
         required: true,
@@ -70,5 +70,5 @@ var communityShema = new mongoose_1.Schema({
     collection: 'communities',
     timestamps: true,
 });
-var Community = mongoose_1.default.model('Community', communityShema);
+const Community = mongoose_1.default.model('Community', communityShema);
 exports.Community = Community;

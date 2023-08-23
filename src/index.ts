@@ -15,6 +15,9 @@ const stripeKey = 'sk_test_51NVTpaEh2JOoqoGgfr2g2dUR9PNWbFVtENMBkCZ2NCLwhPVNt96Q
 // const stripeKey = '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'
 const app = express();
 export const stripe = require('stripe')(stripeKey);
+const redis = require('redis');
+// export const redisClient = redis.createClient();
+
 app.use(express.json({limit: '50mb'}));
 app.use(express.urlencoded({limit: '50mb', extended: true, parameterLimit: 500 }));
 app.use(express.json());
@@ -26,6 +29,14 @@ app.use('/', eventsRoute());
 app.use('/', constansRoute());
 
 const PORT = process.env.PORT || 3000;
+export const redisClient = redis.createClient({
+  legacyMode: true,
+  socket: {
+    port: 6379,
+    host: 'cache',
+    password: 'eYVX7EwVmmxKPCDmwMtyKVge8oLd2t81',
+  }
+});
 app.use(
   cors({
         // origin: `http://localhost:${PORT}`,
@@ -37,9 +48,21 @@ app.use(
     // maxAge: 3600000,
   }),
 );
+// (async () => {
+
+//   redisClient.on("error", (error) => console.log('Что-то пошло не так', error));
+
+//   await redisClient.connect();
+// })();
+
 const server = app.listen(PORT, async () => {
 // app.listen(PORT, async () => {
   await connectToDatabase();
+  // redisClient.on("error", (error) => console.log('Что-то пошло не так', error));
+  // await redisClient.connect();
+  redisClient.on("error", (error) => console.log('Что-то пошло не так', error));
+
+  await redisClient.connect();
   // eslint-disable-next-line no-console
   console.log(`Server running on port ${PORT}.`);
 });
@@ -50,7 +73,7 @@ io.on('connection', (socket: Socket) => {
   console.log('a user connected', socket.id);
   socketMiddleware.subscribeCommunitySocket(socket, io);
   socketMiddleware.subscribeEventSocket(socket, io);
-  socketMiddleware.subscribedToUpdateEvents(socket, io);
+  // socketMiddleware.subscribedToUpdateEvents(socket, io);
   // socketMiddleware.updateCommunitySocket(socket, io);
   // socket.on('init', (id: string) => {
   //   console.log('init id', id);

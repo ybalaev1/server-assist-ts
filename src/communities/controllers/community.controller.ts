@@ -3,6 +3,7 @@ import { Community } from '../model/community.model';
 import { User } from '../../users/model/user.model';
 import { Event, EventCreatedModel } from '../../events/model/event.model';
 import { Socket } from "socket.io";
+import {redisClient} from '../../index';
 
 const createCommunity = async (data: any) => {
         const community = await Community.create(data);
@@ -56,29 +57,54 @@ const getUserImagesFromCommunity = async(req:Request, res: Response) => {
 }
 const getAllCommunities = async (req: Request, res: Response) => {
         const {location} = req.params;
+        let results;
+        let communities;
+        // const communities = await Community.find({ 'location': location }).exec();
+        // redisClient.set('communities', JSON.stringify(communities));
         // console.log('getAllCommunities', Community.find().exec());
-        const communitiesData = await Community.find({ 'location': location }).exec();
-        // let allCommunities: any = [];
-        // if (communitiesData.length) {
-        //         for (let index in communitiesData){
-        //                 let currentCommunity = communitiesData[index];
-        //                 const followers = currentCommunity?.followers.map(i => i.userUid);
-        //                 const records = await User.find({ '_id': { $in: followers } }, 'userImage');
-        //                 const item = {
-        //                   ...currentCommunity.toJSON(),
-        //                   userImages: records,
-        //                 }
-        //                 allCommunities.push(item);
-        //                //  console.log('index', item);
-        //               }
-        //         return res.status(200).json({ ...allCommunities });
-        // }
+        const cachedCommunities = redisClient.get('communities');
+        if (cachedCommunities) {
+                results = JSON.parse(cachedCommunities);
+                communities = results.filter(community => community?.location === location);
+         } else {
+                const communitiesData = await Community.find({ 'location': location }).exec();
+                const allCommunities = await Community.find().exec();
+        //   if(results?.length === 0) {throw "API error"}; 
+                communities = communitiesData;
+                redisClient.set('communities', JSON.stringify(allCommunities)); 
+        }
 
-        if(!communitiesData.length) {
+        console.log('cachedCommunities', communities?.length);
+
+        if(!communities?.length) {
                 return res.status(404).json({ message: 'Communities not found' });
         }
-        return res.status(200).json({ data: communitiesData });
-
+        return res.status(200).json({ data: communities });
+        // const cached = redisClient.get('communities', async (err, communities) => {
+        //         if (!communities?.length) {
+        //                 const data = await Community.find().exec();
+        //                 await redisClient.set('communities', JSON.stringify(data))
+        //         }
+        //         console.log('ca', err, communities);
+        // });
+        // console.log('cached', cached);
+        // return redisClient.get('communities', async (err, communities) => {
+        //         console.log('communities?.length', communities);
+        //         if (!communities?.length) {
+        //                 console.log('er', err)
+        //                 const data = await Community.find().exec();
+        //                 await redisClient.set('communities', JSON.stringify(data))
+        //                 const communities = await Community.find({ 'location': location }).exec();
+        //                 return res.status(200).json({ data: communities });
+        //                 // return res.status(404).json({ message: 'communities not found', code: 404 });
+        //         } else {
+        //                 results = JSON.parse(communities);
+        //                 console.log('res', results)
+        //                 const communitiesList = results?.filter(community => community?.location === location);
+        //                 return res.status(200).json({ data: communitiesList });
+        //         }
+              
+        // })
 };
 
 
@@ -107,14 +133,29 @@ const getManagingCommunities = async (req: Request, res: Response) => {
         const { jwt } = req.body;
         const userId = jwt?.userId;
         // const communitiesData = await Community.find({ "creator.uid": userId }).exec();
-        const communitiesData = await Community.find().exec();
-        const communities = communitiesData?.filter((item) => item?.creator?.uid === userId);
+        let results;
+        // let communities;
+        // const communitiesData = await Community.find().exec();
+        return redisClient.get('communities', (err, data) => {
+                if (err) {
+                        res.status(400).json({ err })
+                }
+                results = JSON.parse(data);
+                const communities = results?.filter((item) => item?.creator?.uid === userId);
+                if (!communities?.length) {
+                        return res.status(404).json({ message: 'communities not found', code: 404 });
+                }
+                return res.status(200).json({ data: communities });
+        })
+        // console.log('results', results);
+        // results = JSON.parse(cachedCommunities);
+        // const communities = results?.filter((item) => item?.creator?.uid === userId);
       
-        if (!communitiesData.length) {
-             return res.status(404).json({ message: 'communities not found', code: 404 });
-        }
+        // if (!communities?.length) {
+        //      return res.status(404).json({ message: 'communities not found', code: 404 });
+        // }
 
-        return res.status(200).json({ data: communities });
+        // return res.status(200).json({ data: communities });
 
         // try {
 

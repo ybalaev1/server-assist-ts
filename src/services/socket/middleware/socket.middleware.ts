@@ -15,7 +15,7 @@ const userInitCocket = (socket) => socket.on('init', (id) => {
 });
 
 const subscribeCommunitySocket = (socket: Socket, io) => socket.on('follow_community', async (communityUid: string, userUid: string) => {
-    console.log('subscribeCommunity follow_community');
+    // console.log('subscribeCommunity follow_community');
         const community = await subscribeCommunity(communityUid, userUid, socket);
         io.emit('subscribed', community);
         // io.on('subscribed', data => {
@@ -26,7 +26,7 @@ const subscribeCommunitySocket = (socket: Socket, io) => socket.on('follow_commu
     // return res.status(200).send({ ...communityUpdated?.toJSON() });
   });
   const updateCommunitySocket = (socket: Socket, io) => socket.on('joined_update', async (location: string) => {
-    console.log('updateCommunitySocket joined_update', location);
+    // console.log('updateCommunitySocket joined_update', location);
     const updated_communities = await getCommunities(location);
         io.emit('updated_communities', updated_communities);
         // socket.emit('updated_communities', updated_communities);
@@ -35,17 +35,17 @@ const subscribeCommunitySocket = (socket: Socket, io) => socket.on('follow_commu
   });
 
 const subscribeEventSocket = (socket: Socket, io) => socket.on('follow_event', async (eventUid: string, userUid: string) => {
-  console.log('subscribeEventSocket follow_event');
+  // console.log('subscribeEventSocket follow_event');
       const event = await subscribeEvent(eventUid, userUid);
       // console.log('subscribed_event', event);
       io.emit('subscribed_event', event);
 });
-const subscribedToUpdateEvents = (socket: Socket, io) => socket.on('updated_events', async () => {
-  // console.log('subscribedToUpdateEvents')
-  const events = await updatedEvents();
-  // console.log('subscribedToUpdateEvents', events);
-  io.emit('updated_data_events', events);
-});
+// const subscribedToUpdateEvents = (socket: Socket, io) => socket.on('updated_events', async () => {
+//   // console.log('subscribedToUpdateEvents')
+//   const events = await updatedEvents();
+//   // console.log('subscribedToUpdateEvents', events);
+//   io.emit('updated_data_events', events);
+// });
 // const messagingSocket = (socket, type: string, io) => socket.on(type, async (msg) => {
 //   const message = await createMessage(msg);
 //   io.emit(type, message);
@@ -78,6 +78,6 @@ export {
   subscribeCommunitySocket,
   updateCommunitySocket,
   subscribeEventSocket,
-  subscribedToUpdateEvents,
+  // subscribedToUpdateEvents,
 //   messagingSocket, latestMessageSocket, typpingUserSocket,
 };
