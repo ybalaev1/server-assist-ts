@@ -55,7 +55,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.io = void 0;
+exports.io = exports.stripe = void 0;
 var routes_config_1 = require("./users/routes.config");
 var mongoose_service_1 = require("./services/mongoose.service");
 var auth_config_1 = require("./services/auth/auth.config");
@@ -65,7 +65,9 @@ var routes_config_3 = require("./events/routes.config");
 var constants_config_1 = require("./services/constans/constants.config");
 var cors = require('cors');
 var express = require('express');
+var stripeKey = 'sk_test_51NVTpaEh2JOoqoGgfr2g2dUR9PNWbFVtENMBkCZ2NCLwhPVNt96Qg7ajdI7YCe92RK3mhIKYTrCtjlRsbiye5bMm00WKN05uGh';
 var app = express();
+exports.stripe = require('stripe')(stripeKey);
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ limit: '50mb', extended: true, parameterLimit: 500 }));
 app.use(express.json());
@@ -97,5 +99,6 @@ exports.io = require('socket.io')(server);
 exports.io.on('connection', function (socket) {
     console.log('a user connected', socket.id);
     socketMiddleware.subscribeCommunitySocket(socket, exports.io);
-    socketMiddleware.updateCommunitySocket(socket, exports.io);
+    socketMiddleware.subscribeEventSocket(socket, exports.io);
+    socketMiddleware.subscribedToUpdateEvents(socket, exports.io);
 });

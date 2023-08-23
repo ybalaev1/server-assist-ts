@@ -70,8 +70,16 @@ var userShema = new mongoose_1.Schema({
         type: mongoose_1.Schema.Types.Array,
         required: false,
     },
+    paidEvents: {
+        type: mongoose_1.Schema.Types.Array,
+        required: false,
+    },
     id: {
         type: mongoose_1.Schema.Types.String,
+        required: false,
+    },
+    customer: {
+        type: mongoose_1.Schema.Types.Mixed,
         required: false,
     },
 }, {

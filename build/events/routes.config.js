@@ -8,12 +8,15 @@ var eventsRoute = function () {
     var app = (0, express_1.Router)();
     app.post('/events/', [auth_user_1.validJWTNeeded, events_controller_1.insertEvent]);
     app.post('/events/:id/update', [auth_user_1.validJWTNeeded, events_controller_1.updateEvent]);
-    app.post('/events/:id/subscribe', [auth_user_1.validJWTNeeded, events_controller_1.subscribeEvent]);
     app.post('/events/:id/unsubscribe', [auth_user_1.validJWTNeeded, events_controller_1.unSubscribeEvent]);
-    app.get('/events/', [auth_user_1.validJWTNeeded, events_controller_1.getAllEvents]);
-    app.get('/events/:id', [auth_user_1.validJWTNeeded, events_controller_1.getEventById]);
+    app.get('/events/:location', events_controller_1.getAllEvents);
+    app.get('/event/:id', [auth_user_1.validJWTNeeded, events_controller_1.getEventById]);
     app.get('/managing_events/', [auth_user_1.validJWTNeeded, events_controller_1.getManagingEvents]);
     app.delete('/events/:id', [auth_user_1.validJWTNeeded, events_controller_1.deleteEvent]);
+    app.get('/event/:id/attended-people-images', [auth_user_1.validJWTNeeded, events_controller_1.getUserImagesFromEvent]);
+    app.post('/event/:id/create-payment-intent', [auth_user_1.validJWTNeeded, events_controller_1.paidEvent]);
+    app.post('/event/:id/disable-payment-intent', [auth_user_1.validJWTNeeded, events_controller_1.disablePaidEvent]);
+    app.post('/event/:id/refund-payment', [auth_user_1.validJWTNeeded, events_controller_1.refundPaymentEvent]);
     return app;
 };
 exports.eventsRoute = eventsRoute;

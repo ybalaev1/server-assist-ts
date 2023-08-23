@@ -118,24 +118,24 @@ const findById = async (req: Request, res: Response) => {
 
 const getEventById = async (req: Request, res: Response) => {
   const { id } = req.params;
-  const event = await Event.findOne({ 'id': id }).exec();
+  const event = await Event.findOne({ _id: id }).exec();
   const creator = await User.findOne({ 'id': event?.creator?.uid }).exec();
 
-   const attendedPeople = event?.attendedPeople.map(i => i.userUid);
-   const records = await User.find({ '_id': { $in: attendedPeople } }, 'userImage');
+  //  const attendedPeople = event?.attendedPeople.map(i => i.userUid);
+  //  const records = await User.find({ '_id': { $in: attendedPeople } }, 'userImage');
 
-  const data = {
-    ...event?.toJSON(),
-    userImages: records,
-    creator: {
-            ...event?.creator,
-              image: creator?.userImage,
-      },
-  }
+  // const data = {
+  //   ...event?.toJSON(),
+  //   userImages: records,
+  //   creator: {
+  //           ...event?.creator,
+  //             image: creator?.userImage,
+  //     },
+  // }
     if (!event) {
       return res.status(404).json({ message: 'event not found' });
     }
-    return res.status(200).json({ ...data });
+    return res.status(200).json({ ...event.toJSON() });
 };
 const getEventsByCommunityId = async (id: string) => {
   const community = await Community.findById({ 'id': id });
@@ -150,27 +150,60 @@ const getUserImagesFromEvent = async(req:Request, res: Response) => {
   const event = await Event.findOne({ _id: id}).exec();
   const attendedPeople = event?.attendedPeople.map(i => i.userUid);
   const records = await User.find({ '_id': { $in: attendedPeople } }, 'userImage');
-  // console.log('attendedPeople', records);
 
-  return res.status(200).json({images: records});
-  // const updatedEvents = await Event.updateMany({ _id: id}, {$set: {attendedPeople: newAttendedPeople}})
-  // console.log('images', newAttendedPeople?.map(i => i));
+  return res.status(200).json({...records});
 }
 const getAllEvents = async (req: Request, res: Response) => {
- const eventsList = await Event.find().exec(); 
- let allEvents: any = [];
- for (let index in eventsList){
-  let currentEvent = eventsList[index];
-  const attendedPeople = currentEvent?.attendedPeople.map(i => i.userUid);
-  const records = await User.find({ '_id': { $in: attendedPeople } }, 'userImage');
-  const item = {
-    ...currentEvent.toJSON(),
-    userImages: records,
-  }
-  allEvents.push(item);
-  // console.log('index', item);
-}
-      return res.status(200).json({ data: allEvents });
+  const {location} = req.params;
+  const events =  await Event.find({ 'location': location }).exec()
+
+  // const eventsList = events.forEach(async (item, index) => {
+  //   const attendedPeople = item.attendedPeople?.map(i => i.userUid);
+  //   const records = await User.find({ '_id': { $in: attendedPeople } }, 'userImage');
+  //   const data = {
+  //     ...item.toJSON(),
+  //     userImages: records,
+  //   }
+  //   return data;
+  // })
+  /* pagination -----
+  // const {offset, limit} = req.query;
+  // // console.log('req', req.query)
+  // const pageOptions = {
+  //   limit: Number(req.query.limit) || 2,
+  //   offset: Number(req.query.offset) || 0,
+  // }
+  // const difference = Math.abs(pageOptions.limit - pageOptions.offset);
+  // const oldList =  await Event.find({ 'location': location }).limit(difference).skip(difference).exec();
+  // const eventsList = await Event.find({ 'location': location }).limit(pageOptions.limit).skip(pageOptions.offset).exec();
+  // const events = Event.find({ 'location': location }).limit(pageOptions.limit).skip(pageOptions.offset).cursor();
+
+  // const results: any = [];
+  // for (let doc = await events.next(); doc != null; doc = await events.next()) {
+  //   results.push(doc);
+  // }
+  ------end
+  */
+  /* images in attended users  -----
+
+//  let allEvents: any = [];
+//  for (let index in eventsList){
+//   let currentEvent = eventsList[index];
+//   const attendedPeople = currentEvent?.attendedPeople.map(i => i.userUid);
+//   const records = await User.find({ '_id': { $in: attendedPeople } }, 'userImage');
+  // const item = {
+  //   ...currentEvent.toJSON(),
+  //   userImages: records,
+  // }
+//   allEvents.push(item);
+//   // console.log('index', item);
+// }
+  */
+
+// const newList = oldList.concat(...results);
+// console.log('count', eventsList);
+
+      return res.status(200).json({ data: events, prevOffset: 1, prevLimit: 1 });
 
 };
 
@@ -234,26 +267,26 @@ const updateEvent = async (req: Request, res: Response) => {
 };
 const getManagingEvents = async (req: Request, res: Response) => {
   const { jwt } = req.body;
-  console.log('jwt', jwt);
+  // console.log('jwt', jwt);
   try {
   const eventsData = await Event.find().exec();
   const events = eventsData?.filter((item) => item?.creator?.uid === jwt?.userId);
-  let allEvents: any = [];
-  for (let index in events){
-   let currentEvent = events[index];
-   const attendedPeople = currentEvent?.attendedPeople.map(i => i.userUid);
-   const records = await User.find({ '_id': { $in: attendedPeople } }, 'userImage');
-   const item = {
-     ...currentEvent.toJSON(),
-     userImages: records,
-   }
-   allEvents.push(item);
-   // console.log('index', item);
- }
-  return res.status(200).send({ data: allEvents });
+//   let allEvents: any = [];
+//   for (let index in events){
+//    let currentEvent = events[index];
+//    const attendedPeople = currentEvent?.attendedPeople.map(i => i.userUid);
+//    const records = await User.find({ '_id': { $in: attendedPeople } }, 'userImage');
+//    const item = {
+//      ...currentEvent.toJSON(),
+//      userImages: records,
+//    }
+//    allEvents.push(item);
+//    // console.log('index', item);
+//  }
+  return res.status(200).send({ data: events });
   } catch (error) {
           console.log('error', error)
-          return res.status(404).json({ message: 'User not found', code: 404 });
+          return res.status(404).json({ message: 'Event not found', code: 404 });
   }
 }
 const deleteEvent = async (req: Request, res: Response) => {

@@ -86,7 +86,7 @@ var insertCommunity = function (req, res) { return __awaiter(void 0, void 0, voi
                         uid: user === null || user === void 0 ? void 0 : user.id,
                         image: (_a = user === null || user === void 0 ? void 0 : user.userImage) !== null && _a !== void 0 ? _a : null,
                         name: user === null || user === void 0 ? void 0 : user.userName,
-                    } });
+                    }, followers: [{ userUid: user === null || user === void 0 ? void 0 : user.id }] });
                 if (data.title) {
                     if (data.description) {
                         return [2, createCommunity(requestData).then(function (community) { return __awaiter(void 0, void 0, void 0, function () {
@@ -131,13 +131,16 @@ var getAllCommunities = function (req, res) { return __awaiter(void 0, void 0, v
                 return [4, community_model_1.Community.find({ 'location': location }).exec()];
             case 1:
                 communitiesData = _a.sent();
+                if (!communitiesData.length) {
+                    return [2, res.status(404).json({ message: 'Communities not found' })];
+                }
                 return [2, res.status(200).json(__assign({}, communitiesData))];
         }
     });
 }); };
 exports.getAllCommunities = getAllCommunities;
 var getCommunityById = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var id, community, creator, data;
+    var id, community, creator, followers, records, data;
     var _a;
     return __generator(this, function (_b) {
         switch (_b.label) {
@@ -149,7 +152,11 @@ var getCommunityById = function (req, res) { return __awaiter(void 0, void 0, vo
                 return [4, user_model_1.User.findOne({ 'id': (_a = community === null || community === void 0 ? void 0 : community.creator) === null || _a === void 0 ? void 0 : _a.uid }).exec()];
             case 2:
                 creator = _b.sent();
-                data = __assign(__assign({}, community === null || community === void 0 ? void 0 : community.toJSON()), { creator: __assign(__assign({}, community === null || community === void 0 ? void 0 : community.creator), { image: creator === null || creator === void 0 ? void 0 : creator.userImage }) });
+                followers = community === null || community === void 0 ? void 0 : community.followers.map(function (i) { return i.userUid; });
+                return [4, user_model_1.User.find({ '_id': { $in: followers } }, 'userImage')];
+            case 3:
+                records = _b.sent();
+                data = __assign(__assign({}, community === null || community === void 0 ? void 0 : community.toJSON()), { userImages: records, creator: __assign(__assign({}, community === null || community === void 0 ? void 0 : community.creator), { image: creator === null || creator === void 0 ? void 0 : creator.userImage }) });
                 if (!community) {
                     return [2, res.status(404).json({ message: 'Community not found' })];
                 }
@@ -241,7 +248,7 @@ var deleteCommunity = function (req, res) { return __awaiter(void 0, void 0, voi
 }); };
 exports.deleteCommunity = deleteCommunity;
 var subscribeCommunity = function (communityUid, userUid, socket) { return __awaiter(void 0, void 0, void 0, function () {
-    var community, user, isAvailable, newUser, newFollowers, followers, userCommunities, communityUpdated, communities, data, userCommunities, followers, communityUpdated, communities, data;
+    var community, user, isAvailable, newUser, newFollowers, followers, userCommunities, communityUpdated, communities, records, data, userCommunities, followers, communityUpdated, communities, records, data;
     var _a, _b, _c, _d, _e;
     return __generator(this, function (_f) {
         switch (_f.label) {
@@ -254,7 +261,7 @@ var subscribeCommunity = function (communityUid, userUid, socket) { return __awa
                 isAvailable = ((_a = community === null || community === void 0 ? void 0 : community.followers) === null || _a === void 0 ? void 0 : _a.length) && (community === null || community === void 0 ? void 0 : community.followers.map(function (follower) { return follower; }).find(function (user) { return user.userUid === userUid; }));
                 newUser = { 'userUid': userUid };
                 newFollowers = community === null || community === void 0 ? void 0 : community.followers.concat(newUser);
-                if (!isAvailable) return [3, 7];
+                if (!isAvailable) return [3, 8];
                 followers = (_b = community === null || community === void 0 ? void 0 : community.followers) === null || _b === void 0 ? void 0 : _b.filter(function (i) { return i.userUid !== userUid; });
                 userCommunities = (_c = user === null || user === void 0 ? void 0 : user.joinedCommunities) === null || _c === void 0 ? void 0 : _c.filter(function (i) { return i !== communityUid; });
                 return [4, community_model_1.Community.updateOne({ _id: communityUid }, { $set: { followers: followers } })];
@@ -269,29 +276,37 @@ var subscribeCommunity = function (communityUid, userUid, socket) { return __awa
                 return [4, community_model_1.Community.find({ 'location': community === null || community === void 0 ? void 0 : community.location }).exec()];
             case 6:
                 communities = _f.sent();
+                return [4, user_model_1.User.find({ _id: { $in: communityUpdated === null || communityUpdated === void 0 ? void 0 : communityUpdated.followers.map(function (i) { return i.userUid; }) } }, 'userImage')];
+            case 7:
+                records = _f.sent();
                 data = {
                     communities: communities,
                     currentCommunity: communityUpdated === null || communityUpdated === void 0 ? void 0 : communityUpdated.toJSON(),
+                    userImages: records,
                 };
                 return [2, data];
-            case 7:
+            case 8:
                 userCommunities = !((_d = user === null || user === void 0 ? void 0 : user.joinedCommunities) === null || _d === void 0 ? void 0 : _d.length) ? [communityUid] : __spreadArray(__spreadArray([], user === null || user === void 0 ? void 0 : user.joinedCommunities, true), [communityUid], false);
                 followers = !((_e = community === null || community === void 0 ? void 0 : community.followers) === null || _e === void 0 ? void 0 : _e.length) ? [{ 'userUid': userUid }] : newFollowers;
                 return [4, user_model_1.User.updateOne({ _id: userUid }, { $set: { joinedCommunities: userCommunities } })];
-            case 8:
-                _f.sent();
-                return [4, community_model_1.Community.updateOne({ _id: communityUid }, { $set: { followers: followers } })];
             case 9:
                 _f.sent();
-                return [4, community_model_1.Community.findOne({ _id: communityUid })];
+                return [4, community_model_1.Community.updateOne({ _id: communityUid }, { $set: { followers: followers } })];
             case 10:
+                _f.sent();
+                return [4, community_model_1.Community.findOne({ _id: communityUid })];
+            case 11:
                 communityUpdated = _f.sent();
                 return [4, community_model_1.Community.find({ 'location': community === null || community === void 0 ? void 0 : community.location }).exec()];
-            case 11:
+            case 12:
                 communities = _f.sent();
+                return [4, user_model_1.User.find({ _id: { $in: newFollowers === null || newFollowers === void 0 ? void 0 : newFollowers.map(function (i) { return i.userUid; }) } }, 'userImage')];
+            case 13:
+                records = _f.sent();
                 data = {
                     communities: communities,
                     currentCommunity: communityUpdated === null || communityUpdated === void 0 ? void 0 : communityUpdated.toJSON(),
+                    userImages: records,
                 };
                 return [2, data];
         }

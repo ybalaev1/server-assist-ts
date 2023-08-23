@@ -46,30 +46,38 @@ const insertCommunity = async (req: Request, res: Response) => {
                 res.status(400).send({ message: 'Field title is required.', code: 400, filed: 'title' });
         }
 };
-
+const getUserImagesFromCommunity = async(req:Request, res: Response) => {
+        const {id} = req.params;
+        const community = await Community.findOne({ _id: id}).exec();
+        const followers = community?.followers.map(i => i.userUid);
+        const records = await User.find({ '_id': { $in: followers } }, 'userImage');
+      
+        return res.status(200).json({...records});
+}
 const getAllCommunities = async (req: Request, res: Response) => {
         const {location} = req.params;
         // console.log('getAllCommunities', Community.find().exec());
         const communitiesData = await Community.find({ 'location': location }).exec();
-        let allCommunities: any = [];
-        if (communitiesData.length) {
-                for (let index in communitiesData){
-                        let currentCommunity = communitiesData[index];
-                        const followers = currentCommunity?.followers.map(i => i.userUid);
-                        const records = await User.find({ '_id': { $in: followers } }, 'userImage');
-                        const item = {
-                          ...currentCommunity.toJSON(),
-                          userImages: records,
-                        }
-                        allCommunities.push(item);
-                       //  console.log('index', item);
-                      }
-                return res.status(200).json({ ...allCommunities });
-        }
+        // let allCommunities: any = [];
+        // if (communitiesData.length) {
+        //         for (let index in communitiesData){
+        //                 let currentCommunity = communitiesData[index];
+        //                 const followers = currentCommunity?.followers.map(i => i.userUid);
+        //                 const records = await User.find({ '_id': { $in: followers } }, 'userImage');
+        //                 const item = {
+        //                   ...currentCommunity.toJSON(),
+        //                   userImages: records,
+        //                 }
+        //                 allCommunities.push(item);
+        //                //  console.log('index', item);
+        //               }
+        //         return res.status(200).json({ ...allCommunities });
+        // }
 
         if(!communitiesData.length) {
                 return res.status(404).json({ message: 'Communities not found' });
         }
+        return res.status(200).json({ data: communitiesData });
 
 };
 
@@ -78,12 +86,12 @@ const getCommunityById = async (req: Request, res: Response) => {
         const { id } = req.params;
         const community = await Community.findOne({ 'id': id }).exec();
         const creator = await User.findOne({ 'id': community?.creator?.uid }).exec();
-        const followers = community?.followers.map(i => i.userUid);
-        const records = await User.find({ '_id': { $in: followers } }, 'userImage');
+        // const followers = community?.followers.map(i => i.userUid);
+        // const records = await User.find({ '_id': { $in: followers } }, 'userImage');
      
         const data = {
                 ...community?.toJSON(),
-                userImages: records,
+                // userImages: records,
                 creator: {
                         ...community?.creator,
                         image: creator?.userImage,
@@ -97,16 +105,16 @@ const getCommunityById = async (req: Request, res: Response) => {
 
 const getManagingCommunities = async (req: Request, res: Response) => {
         const { jwt } = req.body;
-        // console.log('getManagingCommunities', req.body);
         const userId = jwt?.userId;
-        const communitiesData = await Community.find({ "creator.uid": userId }).exec();
-        // console.log('getManagingCommunities', communitiesData)
-        // const communities = communitiesData.filter((item) => item?.creator?.uid === userId);
+        // const communitiesData = await Community.find({ "creator.uid": userId }).exec();
+        const communitiesData = await Community.find().exec();
+        const communities = communitiesData?.filter((item) => item?.creator?.uid === userId);
+      
         if (!communitiesData.length) {
              return res.status(404).json({ message: 'communities not found', code: 404 });
         }
 
-        return res.status(200).json({ data: communitiesData });
+        return res.status(200).json({ data: communities });
 
         // try {
 
@@ -217,4 +225,4 @@ const getCommunities = async (location: string) => {
 };
 
 
-export { getCommunities, deleteCommunity, updateCommunity, getAllCommunities, getCommunityById, insertCommunity, subscribeCommunity, unSubscribeCommunity, getManagingCommunities };
+export { getCommunities, deleteCommunity, updateCommunity, getAllCommunities, getCommunityById, insertCommunity, subscribeCommunity, unSubscribeCommunity, getManagingCommunities, getUserImagesFromCommunity };

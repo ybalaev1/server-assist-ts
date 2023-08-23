@@ -36,8 +36,9 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.updateCommunitySocket = exports.subscribeCommunitySocket = exports.userInitCocket = void 0;
+exports.subscribedToUpdateEvents = exports.subscribeEventSocket = exports.updateCommunitySocket = exports.subscribeCommunitySocket = exports.userInitCocket = void 0;
 var community_controller_1 = require("../../../communities/controllers/community.controller");
+var events_controller_1 = require("../../../events/controllers/events.controller");
 var sockets = {};
 var userInitCocket = function (socket) { return socket.on('init', function (id) {
     console.log('userInitCocket init', id);
@@ -75,3 +76,31 @@ var updateCommunitySocket = function (socket, io) { return socket.on('joined_upd
     });
 }); }); };
 exports.updateCommunitySocket = updateCommunitySocket;
+var subscribeEventSocket = function (socket, io) { return socket.on('follow_event', function (eventUid, userUid) { return __awaiter(void 0, void 0, void 0, function () {
+    var event;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                console.log('subscribeEventSocket follow_event');
+                return [4, (0, events_controller_1.subscribeEvent)(eventUid, userUid)];
+            case 1:
+                event = _a.sent();
+                io.emit('subscribed_event', event);
+                return [2];
+        }
+    });
+}); }); };
+exports.subscribeEventSocket = subscribeEventSocket;
+var subscribedToUpdateEvents = function (socket, io) { return socket.on('updated_events', function () { return __awaiter(void 0, void 0, void 0, function () {
+    var events;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4, (0, events_controller_1.updatedEvents)()];
+            case 1:
+                events = _a.sent();
+                io.emit('updated_data_events', events);
+                return [2];
+        }
+    });
+}); }); };
+exports.subscribedToUpdateEvents = subscribedToUpdateEvents;
