@@ -154,30 +154,71 @@ const getUserImagesFromEvent = async(req:Request, res: Response) => {
   return res.status(200).json({...records});
 }
 const getAllEvents = async (req: Request, res: Response) => {
-  const {location} = req.params;
+  const events = await Event.find({}).exec();
+  // const {location} = req.params;
   // const events =  await Event.find({ 'location': location }).exec()
-  let results;
-  let events;
-  // const communities = await Community.find({ 'location': location }).exec();
-  // redisClient.set('communities', JSON.stringify(communities));
-  // console.log('getAllCommunities', Community.find().exec());
-  const cachedEvents = redisClient.get('events');
-  if (cachedEvents) {
-          results = JSON.parse(cachedEvents);
-          events = results.filter(event => event?.location === location);
-   } else {
-          const eventsData = await Event.find({ 'location': location }).exec();
-          const allEvents = await Event.find().exec();
-          events = eventsData;
-          redisClient.set('events', JSON.stringify(allEvents)); 
+  // await redisClient.set('events', JSON.stringify(events));
+    // let events;
+  const eventsList = await redisClient.get('events');
+  if(eventsList) {
+    return res.status(200).json({ data: JSON.parse(eventsList) });
+  } else {
+    await redisClient.set('events', JSON.stringify(eventsList));
+    return res.status(200).json({ data: events });
   }
+  // const ev = await redisClient.get('events').then(res => console.log(res)).catch(er => console.log('err', er));
+  // if (!ev) {
+  //   const eventsList = await Event.find({}).exec();
+  //   const list = eventsList.map(it => it);
+  //   await redisClient.set('events', JSON.stringify(list))
+  // //     for (let i = 0; i < list.length; i++) {
+  // //     const item = list[i]
+  // //     await redisClient.hSet('eventsList', 'events', JSON.stringify(item))
+  // //     // await redisClient.lPush('events', `item:${item.id}`)
+  // // }
+  // // return res.status(404).json({ message: 'Events not found' });
+  // return res.status(200).json({ data: events });
+  
+  //   // redisClient.lPush('events', JSON.stringify(eventsList));
+  // } else {
+    // if (eventsList) {
+    //   console.log('available events', JSON.parse(eventsList));
+    // } else {
+    //   console.log('eventsList', eventsList);
+    // }
 
-  // console.log('cachedEvents', events?.length);
+    // return res.status(200).json({ data: events });
+  // }
+  // console.log('events', ev);
 
-  if(!events?.length) {
-          return res.status(404).json({ message: 'Communities not found' });
-  }
-  return res.status(200).json({ data: events });
+  // redisClient.GET('events', (reply) => {
+  //   console.log('reply', reply);
+  //   if (!reply) {
+  //       return res.status(404).json({ message: 'Events not found' });
+  //   } else {
+  //     return res.status(200).json({ data: reply });
+  //   }
+  // })
+  // const cachedEvents = redisClient.get('events');
+  // if (cachedEvents) {
+  //         events = JSON.parse(cachedEvents);
+  //         // events = results.filter(event => event?.location === location);
+  //  } else {
+  //         // const eventsData = await Event.find({ 'location': location }).exec();
+  //         const allEvents = await Event.find().exec();
+  //         events = allEvents;
+  //         redisClient.set('events', JSON.stringify(allEvents)); 
+  // }
+
+  // // console.log('cachedEvents', events?.length);
+  // // redisClient.get('events', function(err, reply) {
+  // //   const ev = JSON.parse(reply);
+  // //   console.log('cachedEvents', ev?.length);
+  // // });
+  // if(!events?.length) {
+          // return res.status(404).json({ message: 'Events not found' });
+  // }
+  // return res.status(200).json({ data: events });
   // const eventsList = events.forEach(async (item, index) => {
   //   const attendedPeople = item.attendedPeople?.map(i => i.userUid);
   //   const records = await User.find({ '_id': { $in: attendedPeople } }, 'userImage');

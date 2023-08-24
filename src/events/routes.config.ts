@@ -12,7 +12,7 @@ const eventsRoute = () => {
   app.post('/events/:id/update', [validJWTNeeded, updateEvent]);
   // app.post('/events/:id/subscribe', [validJWTNeeded, subscribeEvent]);
   app.post('/events/:id/unsubscribe', [validJWTNeeded, unSubscribeEvent]);
-  app.get('/events/:location', getAllEvents);
+  app.get('/events/', getAllEvents);
         // app.get('/events/', [validJWTNeeded, getAllEvents]);
   app.get('/event/:id', [validJWTNeeded, getEventById]);
   app.get('/managing_events/', [validJWTNeeded, getManagingEvents]);

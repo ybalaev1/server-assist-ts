@@ -7,15 +7,17 @@ import { eventsRoute } from './events/routes.config';
 import { constansRoute } from './services/constans/constants.config';
 import { Socket } from 'socket.io';
 
-const cors = require('cors');
+import cors from 'cors';
 
-const express = require('express');
+import express from 'express';
 
 const stripeKey = 'sk_test_51NVTpaEh2JOoqoGgfr2g2dUR9PNWbFVtENMBkCZ2NCLwhPVNt96Qg7ajdI7YCe92RK3mhIKYTrCtjlRsbiye5bMm00WKN05uGh'
 // const stripeKey = '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'
 const app = express();
 export const stripe = require('stripe')(stripeKey);
-const redis = require('redis');
+import redis, {createClient} from 'redis';
+import { Event } from './events/model/event.model';
+import { Community } from './communities/model/community.model';
 // export const redisClient = redis.createClient();
 
 app.use(express.json({limit: '50mb'}));
@@ -29,12 +31,12 @@ app.use('/', eventsRoute());
 app.use('/', constansRoute());
 
 const PORT = process.env.PORT || 3000;
-export const redisClient = redis.createClient({
-  legacyMode: true,
+export const redisClient = createClient({
+  // legacyMode: true,
   socket: {
     port: 6379,
     host: 'cache',
-    password: 'eYVX7EwVmmxKPCDmwMtyKVge8oLd2t81',
+    // password: 'eYVX7EwVmmxKPCDmwMtyKVge8oLd2t81',
   }
 });
 app.use(
@@ -60,10 +62,24 @@ const server = app.listen(PORT, async () => {
   await connectToDatabase();
   // redisClient.on("error", (error) => console.log('Что-то пошло не так', error));
   // await redisClient.connect();
+  // redisClient.auth({ password: 'eYVX7EwVmmxKPCDmwMtyKVge8oLd2t81'});
   redisClient.on("error", (error) => console.log('Что-то пошло не так', error));
-
+  redisClient.on('connect', async () => {
+    console.log('redis connected');
+    Event.find({}).exec(async (err, data) => {
+      // console.log('events data', data);
+      if (data?.length) {
+        await redisClient.set('events', JSON.stringify(data));
+      }
+    });
+  });
+  Community.find({}).exec(async (err, data) => {
+    // console.log('events data', data);
+    if (data?.length) {
+      await redisClient.set('communities', JSON.stringify(data));
+    }
+  });
   await redisClient.connect();
-  // eslint-disable-next-line no-console
   console.log(`Server running on port ${PORT}.`);
 });
 server.setTimeout(50000);
